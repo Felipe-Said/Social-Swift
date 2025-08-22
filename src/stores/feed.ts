@@ -1,0 +1,233 @@
+import { create } from 'zustand';
+
+export interface Post {
+  id: string;
+  author: {
+    id: string;
+    name: string;
+    username: string;
+    avatar: string;
+    verified: boolean;
+  };
+  content: string;
+  media?: {
+    type: 'image' | 'video';
+    url: string;
+    thumbnail?: string;
+  };
+  timestamp: string;
+  likes: number;
+  comments: number;
+  shares: number;
+  isLiked: boolean;
+  isSaved: boolean;
+  tags: string[];
+}
+
+export interface Story {
+  id: string;
+  author: {
+    id: string;
+    name: string;
+    username: string;
+    avatar: string;
+  };
+  media: {
+    type: 'image' | 'video';
+    url: string;
+    thumbnail?: string;
+  };
+  timestamp: string;
+  isViewed: boolean;
+}
+
+interface FeedStore {
+  posts: Post[];
+  stories: Story[];
+  isLoading: boolean;
+  
+  // Actions
+  loadFeed: () => Promise<void>;
+  likePost: (postId: string) => void;
+  savePost: (postId: string) => void;
+  markStoryViewed: (storyId: string) => void;
+  addPost: (content: string, media?: { type: 'image' | 'video'; url: string }) => void;
+}
+
+// Mock data
+const mockPosts: Post[] = [
+  {
+    id: '1',
+    author: {
+      id: '2',
+      name: 'Bruno Costa',
+      username: 'brunocosta',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      verified: true
+    },
+    content: 'Acabei de fazer meu primeiro swap para Swift Coin! 🚀 A interface está incrível e o processo foi super rápido. #SwiftCoin #Cripto',
+    media: {
+      type: 'image',
+      url: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=600&h=400&fit=crop'
+    },
+    timestamp: '2 min',
+    likes: 127,
+    comments: 23,
+    shares: 8,
+    isLiked: false,
+    isSaved: false,
+    tags: ['SwiftCoin', 'Cripto']
+  },
+  {
+    id: '2',
+    author: {
+      id: '3',
+      name: 'Carla Mendes',
+      username: 'carlamendes',
+      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+      verified: false
+    },
+    content: 'Compartilhando minha experiência com vendas este mês. Os novos gateways de pagamento estão facilitando muito para meus clientes! 💳✨',
+    timestamp: '15 min',
+    likes: 89,
+    comments: 12,
+    shares: 5,
+    isLiked: true,
+    isSaved: true,
+    tags: []
+  },
+  {
+    id: '3',
+    author: {
+      id: '4',
+      name: 'Rafael Tech',
+      username: 'rafaeltech',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      verified: true
+    },
+    content: 'Tutorial: Como integrar a API do Social Swift em seu e-commerce. Thread completa nos comentários 👇',
+    media: {
+      type: 'video',
+      url: 'https://player.vimeo.com/video/397197647',
+      thumbnail: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=600&h=400&fit=crop'
+    },
+    timestamp: '1h',
+    likes: 342,
+    comments: 67,
+    shares: 89,
+    isLiked: false,
+    isSaved: false,
+    tags: []
+  }
+];
+
+const mockStories: Story[] = [
+  {
+    id: '1',
+    author: {
+      id: '2',
+      name: 'Bruno Costa',
+      username: 'brunocosta',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+    },
+    media: {
+      type: 'image',
+      url: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=600&fit=crop'
+    },
+    timestamp: '3h',
+    isViewed: false
+  },
+  {
+    id: '2',
+    author: {
+      id: '3',
+      name: 'Carla Mendes',
+      username: 'carlamendes',
+      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
+    },
+    media: {
+      type: 'image',
+      url: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400&h=600&fit=crop'
+    },
+    timestamp: '5h',
+    isViewed: true
+  }
+];
+
+export const useFeed = create<FeedStore>()((set, get) => ({
+  posts: [],
+  stories: [],
+  isLoading: false,
+
+  loadFeed: async () => {
+    set({ isLoading: true });
+    
+    // Mock API delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    set({ 
+      posts: mockPosts,
+      stories: mockStories,
+      isLoading: false 
+    });
+  },
+
+  likePost: (postId: string) => {
+    const { posts } = get();
+    const updatedPosts = posts.map(post => 
+      post.id === postId 
+        ? { 
+            ...post, 
+            isLiked: !post.isLiked,
+            likes: post.isLiked ? post.likes - 1 : post.likes + 1
+          }
+        : post
+    );
+    set({ posts: updatedPosts });
+  },
+
+  savePost: (postId: string) => {
+    const { posts } = get();
+    const updatedPosts = posts.map(post => 
+      post.id === postId 
+        ? { ...post, isSaved: !post.isSaved }
+        : post
+    );
+    set({ posts: updatedPosts });
+  },
+
+  markStoryViewed: (storyId: string) => {
+    const { stories } = get();
+    const updatedStories = stories.map(story => 
+      story.id === storyId 
+        ? { ...story, isViewed: true }
+        : story
+    );
+    set({ stories: updatedStories });
+  },
+
+  addPost: (content: string, media?: { type: 'image' | 'video'; url: string }) => {
+    const { posts } = get();
+    const newPost: Post = {
+      id: Date.now().toString(),
+      author: {
+        id: '1', // Current user
+        name: 'Ana Carolina',
+        username: 'anacarolina',
+        avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b619?w=150&h=150&fit=crop&crop=face',
+        verified: true
+      },
+      content,
+      media,
+      timestamp: 'agora',
+      likes: 0,
+      comments: 0,
+      shares: 0,
+      isLiked: false,
+      isSaved: false,
+      tags: []
+    };
+    
+    set({ posts: [newPost, ...posts] });
+  }
+}));
