@@ -11,7 +11,8 @@ import {
   Search,
   MessageCircle,
   Users,
-  UserPlus
+  UserPlus,
+  User
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -26,6 +27,7 @@ const mainNavItems = [
 
 const socialNavItems = [
   { title: "Feed", url: "/app/social/feed", icon: Home },
+  { title: "Meu perfil", url: "/app/social/perfil", icon: User },
   { title: "Stories", url: "/app/social/stories", icon: Heart },
   { title: "Buscar", url: "/app/social/buscar", icon: Search },
   { title: "Mensagens", url: "/app/social/chats", icon: MessageCircle },

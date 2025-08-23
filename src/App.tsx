@@ -18,6 +18,7 @@ import { AppShell } from "@/components/layout/app-shell";
 
 // Social Pages
 import Feed from "./pages/social/Feed";
+import Profile from "./pages/social/Profile";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ const App = () => (
             <Route path="social">
               <Route index element={<Navigate to="/app/social/feed" replace />} />
               <Route path="feed" element={<Feed />} />
+              <Route path="perfil" element={<Profile />} />
               <Route path="stories" element={<div className="p-6 text-center text-text">Stories em breve...</div>} />
               <Route path="buscar" element={<div className="p-6 text-center text-text">Busca em breve...</div>} />
               <Route path="chats" element={<div className="p-6 text-center text-text">Chats em breve...</div>} />
