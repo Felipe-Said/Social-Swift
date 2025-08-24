@@ -40,10 +40,6 @@ export function AppShell() {
           <Outlet />
         </main>
 
-        {/* Floating Swift Button (Desktop) */}
-        <div className="hidden lg:block fixed bottom-6 right-6 z-40">
-          <SwiftButton />
-        </div>
 
         {/* Mobile Bottom Tab */}
         <BottomTab />

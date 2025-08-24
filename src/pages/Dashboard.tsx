@@ -13,19 +13,21 @@ import {
   ArrowDownRight,
   MoreHorizontal
 } from "lucide-react";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 // Dados de demonstração
 const metrics = [
   {
-    title: "Receita Total",
-    value: "R$ 23.340",
+    title: "Pedidos Gerados",
+    value: "1.574",
     change: "+12,5%",
     trend: "up",
     subtitle: "Em relação ao mês passado"
   },
   {
-    title: "Usuários Ativos",
-    value: "2.350",
+    title: "Pedidos Pagos",
+    value: "1.234",
     change: "+2,1%", 
     trend: "up",
     subtitle: "Em relação à semana passada"
@@ -45,6 +47,27 @@ const metrics = [
     subtitle: "Em relação ao mês passado"
   }
 ];
+
+// Dados do gráfico de pedidos
+const ordersChartData = [
+  { month: "Jan", gerados: 186, pagos: 145 },
+  { month: "Fev", gerados: 305, pagos: 289 },
+  { month: "Mar", gerados: 237, pagos: 200 },
+  { month: "Abr", gerados: 273, pagos: 234 },
+  { month: "Mai", gerados: 209, pagos: 178 },
+  { month: "Jun", gerados: 214, pagos: 189 },
+];
+
+const chartConfig = {
+  gerados: {
+    label: "Pedidos Gerados",
+    color: "hsl(var(--primary))",
+  },
+  pagos: {
+    label: "Pedidos Pagos", 
+    color: "hsl(var(--primary-glow))",
+  },
+};
 
 const recentTransactions = [
   { id: 1, type: "Venda", amount: "R$ 850", status: "completed", time: "2h atrás" },
@@ -113,19 +136,43 @@ export default function Dashboard() {
 
         {/* Charts and Tables Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Revenue Chart */}
+          {/* Orders Chart */}
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="text-text">Visão Geral da Receita</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 flex items-center justify-center border border-border rounded-lg bg-muted/20">
-                <div className="text-center text-text/60">
-                  <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Visualização do gráfico ficaria aqui</p>
-                  <p className="text-sm mt-1">Integração com biblioteca de gráficos necessária</p>
-                </div>
-              </div>
+              <ChartContainer config={chartConfig} className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={ordersChartData}>
+                    <XAxis
+                      dataKey="month"
+                      tickLine={false}
+                      tickMargin={10}
+                      axisLine={false}
+                      className="text-text/60"
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      className="text-text/60"
+                    />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar 
+                      dataKey="gerados" 
+                      fill="hsl(var(--primary))" 
+                      radius={[4, 4, 0, 0]}
+                      className="opacity-80 hover:opacity-100"
+                    />
+                    <Bar 
+                      dataKey="pagos" 
+                      fill="hsl(var(--primary))" 
+                      radius={[4, 4, 0, 0]}
+                      className="opacity-60 hover:opacity-80"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
             </CardContent>
           </Card>
 
