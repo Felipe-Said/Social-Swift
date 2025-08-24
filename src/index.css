@@ -19,8 +19,10 @@
     --text-dim: 0 0% 45%; /* Gray */
     
     /* Brand */
-    --brand: 0 0% 0%; /* Pure black */
-    --brand-glow: 0 0% 25%; /* Dark gray */
+    --brand: 210 94% 49%; /* #087FF4 - Blue for all themes */
+    --brand-glow: 210 94% 54%; /* Lighter blue */
+    --button-primary: 210 94% 49%; /* #087FF4 for buttons */
+    --icon-primary: 210 94% 49%; /* #087FF4 for icons */
     
     /* Status */
     --like: 0 0% 30%; /* Dark gray */
@@ -38,7 +40,7 @@
     /* Legacy shadcn vars */
     --background: 0 0% 100%;
     --foreground: 0 0% 0%;
-    --primary: 0 0% 0%;
+    --primary: 210 94% 49%; /* #087FF4 */
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 0%;
@@ -49,7 +51,7 @@
     --destructive: 0 0% 30%;
     --destructive-foreground: 0 0% 100%;
     --input: 0 0% 90%;
-    --ring: 0 0% 0%;
+    --ring: 210 94% 49%; /* #087FF4 */
   }
 
   /* Dark Theme - Pure Black & White */
@@ -65,8 +67,10 @@
     --text-dim: 0 0% 65%; /* Light gray */
     
     /* Brand */
-    --brand: 0 0% 100%; /* Pure white */
-    --brand-glow: 0 0% 80%; /* Light gray */
+    --brand: 210 94% 49%; /* #087FF4 - Blue for all themes */
+    --brand-glow: 210 94% 54%; /* Lighter blue */
+    --button-primary: 210 94% 49%; /* #087FF4 for buttons */
+    --icon-primary: 210 94% 49%; /* #087FF4 for icons */
     
     /* Status */
     --like: 0 0% 70%; /* Light gray */
@@ -84,8 +88,8 @@
     /* Legacy shadcn vars */
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 210 94% 49%; /* #087FF4 */
+    --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 8%;
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 8%;
@@ -99,7 +103,7 @@
     --popover: 0 0% 4%;
     --popover-foreground: 0 0% 100%;
     --input: 0 0% 8%;
-    --ring: 0 0% 100%;
+    --ring: 210 94% 49%; /* #087FF4 */
     --border: 0 0% 8%;
   }
 
@@ -172,6 +176,18 @@
   /* Text Styles */
   .text-brand {
     color: hsl(var(--brand));
+  }
+
+  .text-primary-blue {
+    color: hsl(var(--button-primary));
+  }
+
+  .bg-primary-blue {
+    background-color: hsl(var(--button-primary));
+  }
+
+  .border-primary-blue {
+    border-color: hsl(var(--button-primary));
   }
 
   .text-dim {
