@@ -14,51 +14,51 @@ import {
   MoreHorizontal
 } from "lucide-react";
 
-// Mock data for demonstration
+// Dados de demonstração
 const metrics = [
   {
-    title: "Total Revenue",
-    value: "R$ 23,340",
-    change: "+12.5%",
+    title: "Receita Total",
+    value: "R$ 23.340",
+    change: "+12,5%",
     trend: "up",
-    subtitle: "From last month"
+    subtitle: "Em relação ao mês passado"
   },
   {
-    title: "Active Users",
-    value: "2,350",
-    change: "+2.1%", 
+    title: "Usuários Ativos",
+    value: "2.350",
+    change: "+2,1%", 
     trend: "up",
-    subtitle: "From last week"
+    subtitle: "Em relação à semana passada"
   },
   {
-    title: "Orders",
-    value: "1,234",
-    change: "-0.5%",
+    title: "Pedidos",
+    value: "1.234",
+    change: "-0,5%",
     trend: "down", 
-    subtitle: "From yesterday"
+    subtitle: "Em relação a ontem"
   },
   {
-    title: "Conversion Rate",
-    value: "3.2%",
-    change: "+0.8%",
+    title: "Taxa de Conversão",
+    value: "3,2%",
+    change: "+0,8%",
     trend: "up",
-    subtitle: "From last month"
+    subtitle: "Em relação ao mês passado"
   }
 ];
 
 const recentTransactions = [
-  { id: 1, type: "Sale", amount: "R$ 850", status: "completed", time: "2h ago" },
-  { id: 2, type: "Withdrawal", amount: "R$ 1,200", status: "pending", time: "4h ago" },
-  { id: 3, type: "Sale", amount: "R$ 450", status: "completed", time: "6h ago" },
-  { id: 4, type: "Fee", amount: "R$ 25", status: "completed", time: "8h ago" },
-  { id: 5, type: "Sale", amount: "R$ 680", status: "completed", time: "12h ago" }
+  { id: 1, type: "Venda", amount: "R$ 850", status: "completed", time: "2h atrás" },
+  { id: 2, type: "Saque", amount: "R$ 1.200", status: "pending", time: "4h atrás" },
+  { id: 3, type: "Venda", amount: "R$ 450", status: "completed", time: "6h atrás" },
+  { id: 4, type: "Taxa", amount: "R$ 25", status: "completed", time: "8h atrás" },
+  { id: 5, type: "Venda", amount: "R$ 680", status: "completed", time: "12h atrás" }
 ];
 
 const topProducts = [
-  { name: "Product A", sales: 152, revenue: "R$ 4,820", trend: "up" },
-  { name: "Product B", sales: 98, revenue: "R$ 3,240", trend: "down" },
-  { name: "Product C", sales: 86, revenue: "R$ 2,950", trend: "up" },
-  { name: "Product D", sales: 74, revenue: "R$ 2,180", trend: "up" }
+  { name: "Produto A", sales: 152, revenue: "R$ 4.820", trend: "up" },
+  { name: "Produto B", sales: 98, revenue: "R$ 3.240", trend: "down" },
+  { name: "Produto C", sales: 86, revenue: "R$ 2.950", trend: "up" },
+  { name: "Produto D", sales: 74, revenue: "R$ 2.180", trend: "up" }
 ];
 
 export default function Dashboard() {
@@ -69,11 +69,11 @@ export default function Dashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-text">Dashboard</h1>
-            <p className="text-text/60 mt-1">Monitor your business performance and metrics</p>
+            <p className="text-text/60 mt-1">Monitore o desempenho e métricas do seu negócio</p>
           </div>
           <Button variant="outline" className="gap-2">
             <Activity className="h-4 w-4" />
-            Generate Report
+            Gerar Relatório
           </Button>
         </div>
 
@@ -116,14 +116,14 @@ export default function Dashboard() {
           {/* Revenue Chart */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle className="text-text">Revenue Overview</CardTitle>
+              <CardTitle className="text-text">Visão Geral da Receita</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-64 flex items-center justify-center border border-border rounded-lg bg-muted/20">
                 <div className="text-center text-text/60">
                   <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Chart visualization would go here</p>
-                  <p className="text-sm mt-1">Integration with chart library needed</p>
+                  <p>Visualização do gráfico ficaria aqui</p>
+                  <p className="text-sm mt-1">Integração com biblioteca de gráficos necessária</p>
                 </div>
               </div>
             </CardContent>
@@ -132,26 +132,26 @@ export default function Dashboard() {
           {/* Progress Metrics */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-text">Goals Progress</CardTitle>
+              <CardTitle className="text-text">Progresso das Metas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-text/60">Monthly Target</span>
+                  <span className="text-sm text-text/60">Meta Mensal</span>
                   <span className="text-sm font-medium text-text">78%</span>
                 </div>
                 <Progress value={78} className="h-2" />
               </div>
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-text/60">Customer Satisfaction</span>
+                  <span className="text-sm text-text/60">Satisfação do Cliente</span>
                   <span className="text-sm font-medium text-text">92%</span>
                 </div>
                 <Progress value={92} className="h-2" />
               </div>
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-text/60">Sales Conversion</span>
+                  <span className="text-sm text-text/60">Conversão de Vendas</span>
                   <span className="text-sm font-medium text-text">65%</span>
                 </div>
                 <Progress value={65} className="h-2" />
@@ -165,7 +165,7 @@ export default function Dashboard() {
           {/* Recent Transactions */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-text">Recent Transactions</CardTitle>
+              <CardTitle className="text-text">Transações Recentes</CardTitle>
               <Button variant="ghost" size="sm">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -186,7 +186,7 @@ export default function Dashboard() {
                     <div className="text-right">
                       <p className="text-sm font-medium text-text">{transaction.amount}</p>
                       <Badge variant="outline" className="text-xs">
-                        {transaction.status}
+                        {transaction.status === "completed" ? "concluído" : "pendente"}
                       </Badge>
                     </div>
                   </div>
@@ -198,7 +198,7 @@ export default function Dashboard() {
           {/* Top Products */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-text">Top Selling Products</CardTitle>
+              <CardTitle className="text-text">Produtos Mais Vendidos</CardTitle>
               <Button variant="ghost" size="sm">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -213,7 +213,7 @@ export default function Dashboard() {
                       </div>
                       <div>
                         <p className="text-sm font-medium text-text">{product.name}</p>
-                        <p className="text-xs text-text/60">{product.sales} sales</p>
+                        <p className="text-xs text-text/60">{product.sales} vendas</p>
                       </div>
                     </div>
                     <div className="text-right flex items-center space-x-2">
