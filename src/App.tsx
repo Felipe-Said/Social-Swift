@@ -20,6 +20,9 @@ import { AppShell } from "@/components/layout/app-shell";
 import Feed from "./pages/social/Feed";
 import Profile from "./pages/social/Profile";
 
+// Business Pages
+import Dashboard from "./pages/Dashboard";
+
 const queryClient = new QueryClient();
 
 // Protected Route Component
@@ -88,7 +91,7 @@ const App = () => (
             </Route>
             
             {/* Business Routes */}
-            <Route path="dashboard" element={<div className="p-6 text-center text-text">Dashboard em breve...</div>} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="saques" element={<div className="p-6 text-center text-text">Saques em breve...</div>} />
             <Route path="vendas" element={<div className="p-6 text-center text-text">Vendas em breve...</div>} />
             <Route path="taxas" element={<div className="p-6 text-center text-text">Taxas em breve...</div>} />
