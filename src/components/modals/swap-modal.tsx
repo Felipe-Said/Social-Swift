@@ -28,6 +28,8 @@ export function SwapModal({ open, onOpenChange }: SwapModalProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
+  const currencies = ["USDT", "SWIFT", "BRL", "USD"];
+
   const handleSwap = async () => {
     if (!amount) return;
     
@@ -64,7 +66,17 @@ export function SwapModal({ open, onOpenChange }: SwapModalProps) {
     onOpenChange(false);
   };
 
-  const exchangeRate = fromCurrency === "BRL" ? 3.15 : 0.32;
+  const getExchangeRate = (from: string, to: string) => {
+    const rates: Record<string, Record<string, number>> = {
+      "BRL": { "SWIFT": 3.15, "USDT": 0.18, "USD": 0.18 },
+      "USD": { "SWIFT": 17.5, "USDT": 1.0, "BRL": 5.5 },
+      "USDT": { "SWIFT": 17.5, "USD": 1.0, "BRL": 5.5 },
+      "SWIFT": { "BRL": 0.32, "USD": 0.057, "USDT": 0.057 }
+    };
+    return rates[from]?.[to] || 1;
+  };
+
+  const exchangeRate = getExchangeRate(fromCurrency, toCurrency);
   const estimatedReceive = amount ? (parseFloat(amount) * exchangeRate).toFixed(2) : "0.00";
 
   return (
@@ -145,13 +157,17 @@ export function SwapModal({ open, onOpenChange }: SwapModalProps) {
                       onChange={(e) => setAmount(e.target.value)}
                       className="flex-1 glass border-border/30 focus:border-brand"
                     />
-                    <Button
-                      variant="outline"
-                      onClick={() => setFromCurrency(fromCurrency === "BRL" ? "SWIFT" : "BRL")}
-                      className="glass px-4"
+                    <select
+                      value={fromCurrency}
+                      onChange={(e) => setFromCurrency(e.target.value)}
+                      className="glass border border-border/30 focus:border-brand rounded-md px-4 py-2 bg-transparent text-foreground"
                     >
-                      {fromCurrency}
-                    </Button>
+                      {currencies.map(currency => (
+                        <option key={currency} value={currency} className="bg-background">
+                          {currency}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
@@ -178,13 +194,17 @@ export function SwapModal({ open, onOpenChange }: SwapModalProps) {
                       readOnly
                       className="flex-1 glass border-border/30 bg-muted/50"
                     />
-                    <Button
-                      variant="outline"
-                      disabled
-                      className="glass px-4"
+                    <select
+                      value={toCurrency}
+                      onChange={(e) => setToCurrency(e.target.value)}
+                      className="glass border border-border/30 focus:border-brand rounded-md px-4 py-2 bg-transparent text-foreground"
                     >
-                      {toCurrency}
-                    </Button>
+                      {currencies.filter(c => c !== fromCurrency).map(currency => (
+                        <option key={currency} value={currency} className="bg-background">
+                          {currency}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>

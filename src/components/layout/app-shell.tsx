@@ -19,7 +19,7 @@ export function AppShell() {
   return (
     <div className="min-h-screen bg-bg flex flex-col lg:flex-row">
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block">
+      <div className="hidden lg:block w-64">
         <Sidebar />
       </div>
 

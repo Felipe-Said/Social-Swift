@@ -34,7 +34,7 @@ const businessNavItems = [
 const socialNavItems = [
   { title: "Feed", url: "/app/social/feed", icon: Home },
   { title: "Meu perfil", url: "/app/social/perfil", icon: User },
-  { title: "Stories", url: "/app/social/stories", icon: Heart },
+  { title: "Snaps", url: "/app/social/snaps", icon: Heart },
   { title: "Buscar", url: "/app/social/buscar", icon: Search },
   { title: "Mensagens", url: "/app/social/chats", icon: MessageCircle },
   { title: "Amigos", url: "/app/social/amigos", icon: Users },
@@ -53,7 +53,7 @@ export function Sidebar({ className }: SidebarProps) {
     <motion.aside 
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className={cn("glass-strong border-r border-border/50 w-64 min-h-screen p-4 space-y-6", className)}
+      className={cn("glass-strong border-r border-border/50 w-64 min-h-screen p-4 space-y-6 fixed top-0 left-0 z-10", className)}
     >
       {/* Main Navigation */}
       <nav className="space-y-2">

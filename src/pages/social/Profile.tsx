@@ -38,7 +38,7 @@ export default function Profile() {
       <div className="relative">
         {/* Banner */}
         <div 
-          className="h-48 bg-gradient-to-r from-muted to-muted-foreground/20 relative group cursor-pointer"
+          className="h-32 md:h-48 bg-gradient-to-r from-muted to-muted-foreground/20 relative group cursor-pointer"
           onMouseEnter={() => setShowBannerEdit(true)}
           onMouseLeave={() => setShowBannerEdit(false)}
         >
@@ -57,14 +57,14 @@ export default function Profile() {
         </div>
 
         {/* Profile Content */}
-        <div className="max-w-4xl mx-auto px-6 -mt-20 relative z-10">
+        <div className="max-w-full md:max-w-4xl mx-auto px-4 md:px-6 -mt-16 md:-mt-20 relative z-10">
           {/* Avatar e Info Principal */}
-          <div className="flex flex-col md:flex-row items-start md:items-end gap-6 mb-6">
+          <div className="flex flex-col items-center md:flex-row md:items-end gap-4 md:gap-6 mb-6">
             {/* Avatar */}
             <div className="relative group">
-              <Avatar className="h-32 w-32 border-4 border-background shadow-xl">
+              <Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-background shadow-xl">
                 <AvatarImage src={user?.avatar} />
-                <AvatarFallback className="text-2xl bg-muted">
+                <AvatarFallback className="text-xl md:text-2xl bg-muted">
                   {user?.name?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
@@ -78,26 +78,26 @@ export default function Profile() {
             </div>
 
             {/* Info e Estatísticas */}
-            <div className="flex-1 space-y-4">
+            <div className="flex-1 space-y-4 text-center md:text-left">
               <div>
-                <h1 className="text-2xl font-bold text-foreground mb-1">
+                <h1 className="text-xl md:text-2xl font-bold text-foreground mb-1">
                   {user?.name || "Nome do Usuário"}
                 </h1>
                 <p className="text-muted-foreground">@{user?.email?.split("@")[0] || "usuario"}</p>
               </div>
 
               {/* Estatísticas */}
-              <div className="flex gap-8">
+              <div className="flex justify-center md:justify-start gap-6 md:gap-8">
                 <div className="text-center">
-                  <div className="text-xl font-bold text-foreground">{stats.posts}</div>
+                  <div className="text-lg md:text-xl font-bold text-foreground">{stats.posts}</div>
                   <div className="text-sm text-muted-foreground">posts</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xl font-bold text-foreground">{stats.followers.toLocaleString()}</div>
+                  <div className="text-lg md:text-xl font-bold text-foreground">{stats.followers.toLocaleString()}</div>
                   <div className="text-sm text-muted-foreground">seguidores</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xl font-bold text-foreground">{stats.following.toLocaleString()}</div>
+                  <div className="text-lg md:text-xl font-bold text-foreground">{stats.following.toLocaleString()}</div>
                   <div className="text-sm text-muted-foreground">seguindo</div>
                 </div>
               </div>
@@ -114,7 +114,7 @@ export default function Profile() {
               </div>
 
               {/* Botões de Ação */}
-              <div className="flex gap-3">
+              <div className="flex flex-col md:flex-row gap-3">
                 <Button variant="outline" className="flex-1 md:flex-none">
                   <Edit className="h-4 w-4 mr-2" />
                   Editar
@@ -123,8 +123,9 @@ export default function Profile() {
                   <Share className="h-4 w-4 mr-2" />
                   Compartilhar perfil
                 </Button>
-                <Button variant="outline" size="sm" className="p-2">
-                  <Settings className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="w-full md:w-auto md:p-2">
+                  <Settings className="h-4 w-4 md:mr-0" />
+                  <span className="md:hidden ml-2">Configurações</span>
                 </Button>
               </div>
             </div>

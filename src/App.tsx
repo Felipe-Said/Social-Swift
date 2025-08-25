@@ -19,6 +19,7 @@ import { AppShell } from "@/components/layout/app-shell";
 // Social Pages
 import Feed from "./pages/social/Feed";
 import Profile from "./pages/social/Profile";
+import Snaps from "./pages/social/Snaps";
 
 // Business Pages
 import Dashboard from "./pages/Dashboard";
@@ -82,7 +83,7 @@ const App = () => (
               <Route index element={<Navigate to="/app/social/feed" replace />} />
               <Route path="feed" element={<Feed />} />
               <Route path="perfil" element={<Profile />} />
-              <Route path="stories" element={<div className="p-6 text-center text-text">Stories em breve...</div>} />
+              <Route path="snaps" element={<Snaps />} />
               <Route path="buscar" element={<div className="p-6 text-center text-text">Busca em breve...</div>} />
               <Route path="chats" element={<div className="p-6 text-center text-text">Chats em breve...</div>} />
               <Route path="amigos" element={<div className="p-6 text-center text-text">Amigos em breve...</div>} />
