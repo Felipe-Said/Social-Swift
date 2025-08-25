@@ -12,12 +12,14 @@ import {
   MessageCircle,
   Users,
   UserPlus,
-  User
+  User,
+  ChevronDown,
+  ChevronRight
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 const mainNavItems = [
-  { title: "Social", url: "/app/social", icon: Home },
   { title: "Dashboard", url: "/app/dashboard", icon: BarChart3 },
   { title: "Saques", url: "/app/saques", icon: ArrowDownToLine },
   { title: "Vendas", url: "/app/vendas", icon: CreditCard },
@@ -40,6 +42,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({ className }: SidebarProps) {
+  const [isSocialOpen, setIsSocialOpen] = useState(false);
+  
   return (
     <motion.aside 
       initial={{ x: -20, opacity: 0 }}
@@ -53,6 +57,8 @@ export function Sidebar({ className }: SidebarProps) {
             Principal
           </h3>
         </div>
+        
+        {/* Regular main nav items */}
         {mainNavItems.map((item) => (
           <NavLink
             key={item.url}
@@ -71,33 +77,55 @@ export function Sidebar({ className }: SidebarProps) {
             <span>{item.title}</span>
           </NavLink>
         ))}
-      </nav>
 
-      {/* Social Navigation */}
-      <nav className="space-y-2">
-        <div className="px-3 py-2">
-          <h3 className="text-sm font-semibold text-text-dim uppercase tracking-wider">
-            Social
-          </h3>
-        </div>
-        {socialNavItems.map((item) => (
-          <NavLink
-            key={item.url}
-            to={item.url}
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
-                "hover:bg-brand/10 hover:text-brand",
-                isActive 
-                  ? "bg-brand/20 text-brand shadow-sm" 
-                  : "text-text hover:text-brand"
-              )
-            }
-          >
-            <item.icon className="h-4 w-4" />
-            <span>{item.title}</span>
-          </NavLink>
-        ))}
+        {/* Social submenu trigger */}
+        <button
+          onClick={() => setIsSocialOpen(!isSocialOpen)}
+          className={cn(
+            "w-full flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
+            "hover:bg-brand/10 hover:text-brand text-text hover:text-brand"
+          )}
+        >
+          <Home className="h-4 w-4" />
+          <span className="flex-1 text-left">Social</span>
+          {isSocialOpen ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )}
+        </button>
+
+        {/* Social submenu items */}
+        <motion.div
+          initial={false}
+          animate={{
+            height: isSocialOpen ? "auto" : 0,
+            opacity: isSocialOpen ? 1 : 0
+          }}
+          transition={{ duration: 0.2 }}
+          className="overflow-hidden"
+        >
+          <div className="ml-4 space-y-1 border-l border-border/30 pl-3">
+            {socialNavItems.map((item) => (
+              <NavLink
+                key={item.url}
+                to={item.url}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
+                    "hover:bg-brand/10 hover:text-brand",
+                    isActive 
+                      ? "bg-brand/20 text-brand shadow-sm" 
+                      : "text-text hover:text-brand"
+                  )
+                }
+              >
+                <item.icon className="h-4 w-4" />
+                <span>{item.title}</span>
+              </NavLink>
+            ))}
+          </div>
+        </motion.div>
       </nav>
 
       {/* Quick Stats */}
