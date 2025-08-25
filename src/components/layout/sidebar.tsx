@@ -20,11 +20,15 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 
 const mainNavItems = [
+  { title: "Marketplace", url: "/app/marketplace", icon: Search },
+];
+
+const businessNavItems = [
   { title: "Dashboard", url: "/app/dashboard", icon: BarChart3 },
   { title: "Saques", url: "/app/saques", icon: ArrowDownToLine },
   { title: "Vendas", url: "/app/vendas", icon: CreditCard },
   { title: "Taxas", url: "/app/taxas", icon: Percent },
-  { title: "Meu Negócio", url: "/app/meu-negocio", icon: Building2 },
+  { title: "Projetos", url: "/app/projetos", icon: Building2 },
 ];
 
 const socialNavItems = [
@@ -43,6 +47,7 @@ interface SidebarProps {
 
 export function Sidebar({ className }: SidebarProps) {
   const [isSocialOpen, setIsSocialOpen] = useState(false);
+  const [isBusinessOpen, setIsBusinessOpen] = useState(false);
   
   return (
     <motion.aside 
@@ -58,26 +63,6 @@ export function Sidebar({ className }: SidebarProps) {
           </h3>
         </div>
         
-        {/* Regular main nav items */}
-        {mainNavItems.map((item) => (
-          <NavLink
-            key={item.url}
-            to={item.url}
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
-                "hover:bg-brand/10 hover:text-brand",
-                isActive 
-                  ? "bg-brand/20 text-brand shadow-sm" 
-                  : "text-text hover:text-brand"
-              )
-            }
-          >
-            <item.icon className="h-4 w-4" />
-            <span>{item.title}</span>
-          </NavLink>
-        ))}
-
         {/* Social submenu trigger */}
         <button
           onClick={() => setIsSocialOpen(!isSocialOpen)}
@@ -126,6 +111,75 @@ export function Sidebar({ className }: SidebarProps) {
             ))}
           </div>
         </motion.div>
+
+        {/* Business submenu trigger */}
+        <button
+          onClick={() => setIsBusinessOpen(!isBusinessOpen)}
+          className={cn(
+            "w-full flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
+            "hover:bg-brand/10 hover:text-brand text-text hover:text-brand"
+          )}
+        >
+          <Building2 className="h-4 w-4" />
+          <span className="flex-1 text-left">Meu Negócio</span>
+          {isBusinessOpen ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )}
+        </button>
+
+        {/* Business submenu items */}
+        <motion.div
+          initial={false}
+          animate={{
+            height: isBusinessOpen ? "auto" : 0,
+            opacity: isBusinessOpen ? 1 : 0
+          }}
+          transition={{ duration: 0.2 }}
+          className="overflow-hidden"
+        >
+          <div className="ml-4 space-y-1 border-l border-border/30 pl-3">
+            {businessNavItems.map((item) => (
+              <NavLink
+                key={item.url}
+                to={item.url}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
+                    "hover:bg-brand/10 hover:text-brand",
+                    isActive 
+                      ? "bg-brand/20 text-brand shadow-sm" 
+                      : "text-text hover:text-brand"
+                  )
+                }
+              >
+                <item.icon className="h-4 w-4" />
+                <span>{item.title}</span>
+              </NavLink>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Regular main nav items */}
+        {mainNavItems.map((item) => (
+          <NavLink
+            key={item.url}
+            to={item.url}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
+                "hover:bg-brand/10 hover:text-brand",
+                isActive 
+                  ? "bg-brand/20 text-brand shadow-sm" 
+                  : "text-text hover:text-brand"
+              )
+            }
+          >
+            <item.icon className="h-4 w-4" />
+            <span>{item.title}</span>
+          </NavLink>
+        ))}
       </nav>
 
       {/* Quick Stats */}

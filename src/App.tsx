@@ -22,6 +22,7 @@ import Profile from "./pages/social/Profile";
 
 // Business Pages
 import Dashboard from "./pages/Dashboard";
+import Marketplace from "./pages/Marketplace";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +96,8 @@ const App = () => (
             <Route path="saques" element={<div className="p-6 text-center text-text">Saques em breve...</div>} />
             <Route path="vendas" element={<div className="p-6 text-center text-text">Vendas em breve...</div>} />
             <Route path="taxas" element={<div className="p-6 text-center text-text">Taxas em breve...</div>} />
+            <Route path="projetos" element={<div className="p-6 text-center text-text">Projetos em breve...</div>} />
+            <Route path="marketplace" element={<Marketplace />} />
             <Route path="meu-negocio" element={<div className="p-6 text-center text-text">Meu Negócio em breve...</div>} />
             <Route path="carteira" element={<div className="p-6 text-center text-text">Carteira em breve...</div>} />
           </Route>
