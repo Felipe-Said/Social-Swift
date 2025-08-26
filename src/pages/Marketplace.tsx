@@ -4,6 +4,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SwiftCoinPrice } from "@/components/ui/swift-coin-price";
 import { 
   Search,
   Filter,
@@ -12,7 +13,8 @@ import {
   Eye,
   Facebook,
   Chrome,
-  Play
+  Play,
+  Coins
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -32,7 +34,7 @@ const marketplaceItems = [
     id: 1,
     title: "Conta Facebook Ads Verificada - Alto Limite",
     description: "Conta Facebook Ads com limite de $50,000 diários, verificada e ativa. Histórico limpo, sem violações.",
-    price: "R$ 2.500,00",
+    price: "4.290,50 SC",
     seller: {
       name: "Marketing Pro",
       avatar: "/placeholder.svg",
@@ -48,7 +50,7 @@ const marketplaceItems = [
     id: 2,
     title: "Setup Completo Google Ads - E-commerce",
     description: "Configuração profissional de campanhas Google Ads para e-commerce com otimização garantida.",
-    price: "R$ 899,00",
+    price: "1.544,20 SC",
     seller: {
       name: "AdsPro Digital",
       avatar: "/placeholder.svg",
@@ -64,7 +66,7 @@ const marketplaceItems = [
     id: 3,
     title: "Conta TikTok Ads Business - Global",
     description: "Conta TikTok Ads Business com acesso global, ideal para campanhas internacionais.",
-    price: "R$ 1.800,00",
+    price: "3.092,40 SC",
     seller: {
       name: "Social Media Expert",
       avatar: "/placeholder.svg",
@@ -102,7 +104,16 @@ export default function Marketplace() {
           <p className="text-text-dim max-w-2xl mx-auto">
             Encontre e venda serviços de marketing digital, contas de anúncios e muito mais
           </p>
+          <div className="flex items-center justify-center gap-2 text-sm text-text-dim">
+            <Coins className="h-4 w-4 text-brand" />
+            <span>Todos os produtos são comercializados em Swift Coin</span>
+          </div>
         </motion.div>
+
+        {/* Swift Coin Price */}
+        <div className="flex justify-center">
+          <SwiftCoinPrice className="w-full max-w-sm" />
+        </div>
 
         {/* Search and Filters */}
         <GlassCard className="p-4">
