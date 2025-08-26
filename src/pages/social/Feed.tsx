@@ -6,6 +6,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FeedCard } from "@/components/social/feed-card";
+import { WeatherBox } from "@/components/ui/weather-box";
 import { useFeed } from "@/stores/feed";
 import { useAuth } from "@/stores/auth";
 import { motion } from "framer-motion";
@@ -198,25 +199,7 @@ export default function Feed() {
 
           {/* Right Sidebar - Activity */}
           <div className="hidden lg:block lg:col-span-3 space-y-4">
-            <GlassCard className="p-4">
-              <h3 className="font-semibold text-text mb-3">Atividade Swift</h3>
-              <div className="space-y-3">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-brand">15.420,50</p>
-                  <p className="text-xs text-text-dim">Swift Coins</p>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-center">
-                  <div>
-                    <p className="text-sm font-semibold text-text">$8.950</p>
-                    <p className="text-xs text-text-dim">USD</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-text">R$ 47.851</p>
-                    <p className="text-xs text-text-dim">BRL</p>
-                  </div>
-                </div>
-              </div>
-            </GlassCard>
+            <WeatherBox />
 
             <GlassCard className="p-4">
               <h3 className="font-semibold text-text mb-3">Atividades</h3>
