@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Home, Search, Bell, User } from "lucide-react";
+import { Home, Search, Wallet, User } from "lucide-react";
 import { SwiftButton } from "@/components/ui/swift-button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
@@ -9,8 +9,8 @@ const tabItems = [
   { title: "Home", url: "/app/social/feed", icon: Home },
   { title: "Buscar", url: "/app/social/buscar", icon: Search },
   { title: "Swift", url: "#", icon: null, isSwift: true },
-  { title: "Notificações", url: "/app/social/notificacoes", icon: Bell, hasNotifications: true },
-  { title: "Perfil", url: "/app/social/perfil/1", icon: User },
+  { title: "Carteira", url: "/app/carteira", icon: Wallet },
+  { title: "Perfil", url: "/app/social/perfil", icon: User },
 ];
 
 export function BottomTab() {
@@ -44,11 +44,6 @@ export function BottomTab() {
               >
                 <div className="relative">
                   {item.icon && <item.icon className="h-5 w-5" />}
-                  {item.hasNotifications && (
-                    <Badge className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-status-like text-white text-xs flex items-center justify-center p-0">
-                      3
-                    </Badge>
-                  )}
                 </div>
                 <span className="text-xs font-medium">{item.title}</span>
               </NavLink>

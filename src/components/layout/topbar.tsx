@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, Bell, HelpCircle, User, Menu } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -116,11 +117,11 @@ export function Topbar({ onMenuClick }: TopbarProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              Meu Perfil
+            <DropdownMenuItem asChild>
+              <Link to="/app/social/perfil">Meu Perfil</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              Carteira
+            <DropdownMenuItem asChild>
+              <Link to="/app/carteira">Carteira</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
               Configurações
