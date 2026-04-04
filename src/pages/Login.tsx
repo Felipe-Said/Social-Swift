@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GlassCard } from "@/components/ui/glass-card";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Apple } from "@/components/ui/svgs/apple";
+import { AppleDark } from "@/components/ui/svgs/appleDark";
+import { Google } from "@/components/ui/svgs/google";
 import { useAuth } from "@/stores/auth";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
@@ -115,7 +118,10 @@ export default function Login() {
                 onClick={handleAppleLogin}
                 disabled={isLoading}
               >
-                <div className="w-5 h-5 mr-2 bg-black dark:bg-white rounded-sm"></div>
+                <span className="mr-2 flex size-5 items-center justify-center">
+                  <Apple className="size-4 fill-black dark:hidden" />
+                  <AppleDark className="hidden size-4 dark:block" />
+                </span>
                 Continuar com Apple
               </Button>
               
@@ -126,7 +132,9 @@ export default function Login() {
                 onClick={handleGoogleLogin}
                 disabled={isLoading}
               >
-                <div className="w-5 h-5 mr-2 bg-gradient-to-r from-blue-500 to-red-500 rounded-sm"></div>
+                <span className="mr-2 flex size-5 items-center justify-center">
+                  <Google className="size-4" />
+                </span>
                 Continuar com Google
               </Button>
             </div>
