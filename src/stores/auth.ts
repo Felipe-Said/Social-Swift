@@ -40,6 +40,25 @@ interface AuthStore {
   clearError: () => void;
 }
 
+const AUTH_BYPASS_ENABLED = true;
+
+const BYPASS_USER: User = {
+  id: 'bypass-user',
+  name: 'Felipe Said',
+  username: 'felipesaid_',
+  email: 'saidlabsglobal@gmail.com',
+  avatar: '',
+  banner: '',
+  bio: 'Acesso temporario sem login',
+  followers: 0,
+  following: 0,
+  posts: 0,
+  verified: true,
+  swiftBalance: 1000,
+  usdtBalance: 0,
+  realBalance: 0,
+};
+
 // Função para detectar se Supabase está configurado
 const isSupabaseConfigured = () => {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -58,12 +77,17 @@ const getAuthService = () => {
 export const useAuth = create<AuthStore>()(
   persist(
     (set, get) => ({
-      user: null,
-      isAuthenticated: false,
+      user: AUTH_BYPASS_ENABLED ? BYPASS_USER : null,
+      isAuthenticated: AUTH_BYPASS_ENABLED,
       isLoading: false,
       error: null,
 
       signUp: async (data: SignUpData) => {
+        if (AUTH_BYPASS_ENABLED) {
+          set({ user: BYPASS_USER, isAuthenticated: true, isLoading: false, error: null });
+          return { success: true };
+        }
+
         set({ isLoading: true, error: null });
         
         try {
@@ -98,6 +122,11 @@ export const useAuth = create<AuthStore>()(
       },
 
       signIn: async (data: SignInData) => {
+        if (AUTH_BYPASS_ENABLED) {
+          set({ user: BYPASS_USER, isAuthenticated: true, isLoading: false, error: null });
+          return { success: true };
+        }
+
         set({ isLoading: true, error: null });
         
         try {
@@ -132,6 +161,11 @@ export const useAuth = create<AuthStore>()(
       },
 
       signInWithGoogle: async () => {
+        if (AUTH_BYPASS_ENABLED) {
+          set({ user: BYPASS_USER, isAuthenticated: true, isLoading: false, error: null });
+          return { success: true };
+        }
+
         set({ isLoading: true, error: null });
         
         try {
@@ -152,6 +186,11 @@ export const useAuth = create<AuthStore>()(
       },
 
       signInWithApple: async () => {
+        if (AUTH_BYPASS_ENABLED) {
+          set({ user: BYPASS_USER, isAuthenticated: true, isLoading: false, error: null });
+          return { success: true };
+        }
+
         set({ isLoading: true, error: null });
         
         try {
@@ -172,6 +211,11 @@ export const useAuth = create<AuthStore>()(
       },
 
       signOut: async () => {
+        if (AUTH_BYPASS_ENABLED) {
+          set({ user: BYPASS_USER, isAuthenticated: true, isLoading: false, error: null });
+          return;
+        }
+
         set({ isLoading: true });
         
         try {
@@ -199,6 +243,23 @@ export const useAuth = create<AuthStore>()(
         const { user } = get();
         if (!user) {
           return { success: false, error: 'Usuário não autenticado' };
+        }
+
+        if (AUTH_BYPASS_ENABLED) {
+          set({
+            user: {
+              ...user,
+              name: data.name ?? user.name,
+              username: data.username ?? user.username,
+              bio: data.bio ?? user.bio,
+              avatar: data.avatar_url ?? user.avatar,
+            },
+            isAuthenticated: true,
+            isLoading: false,
+            error: null
+          });
+
+          return { success: true };
         }
 
         set({ isLoading: true, error: null });
@@ -234,6 +295,11 @@ export const useAuth = create<AuthStore>()(
       },
 
       updatePassword: async (newPassword: string) => {
+        if (AUTH_BYPASS_ENABLED) {
+          set({ isLoading: false, error: null });
+          return { success: true };
+        }
+
         set({ isLoading: true, error: null });
         
         try {
@@ -255,6 +321,11 @@ export const useAuth = create<AuthStore>()(
       },
 
       resetPassword: async (email: string) => {
+        if (AUTH_BYPASS_ENABLED) {
+          set({ isLoading: false, error: null });
+          return { success: true };
+        }
+
         set({ isLoading: true, error: null });
         
         try {
@@ -276,6 +347,18 @@ export const useAuth = create<AuthStore>()(
       },
 
       checkAuth: async () => {
+        if (AUTH_BYPASS_ENABLED) {
+          set({
+            user: BYPASS_USER,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null
+          });
+
+          logService.setUser(BYPASS_USER.id);
+          return;
+        }
+
         set({ isLoading: true });
         
         try {

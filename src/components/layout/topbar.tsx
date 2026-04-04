@@ -23,7 +23,7 @@ interface TopbarProps {
 }
 
 export function Topbar({ onMenuClick }: TopbarProps) {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -127,7 +127,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
               Configurações
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout} className="text-status-like">
+            <DropdownMenuItem onClick={signOut} className="text-status-like">
               Sair
             </DropdownMenuItem>
           </DropdownMenuContent>
