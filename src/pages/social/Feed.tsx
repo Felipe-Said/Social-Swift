@@ -6,6 +6,8 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FeedCard } from "@/components/social/feed-card";
+import { CreatePost } from "@/components/social/create-post";
+import { PostCard } from "@/components/social/post-card";
 import { WeatherBox } from "@/components/ui/weather-box";
 import { useFeed } from "@/stores/feed";
 import { useAuth } from "@/stores/auth";
@@ -21,6 +23,7 @@ export default function Feed() {
   const { user } = useAuth();
   const [postContent, setPostContent] = useState("");
   const [isPosting, setIsPosting] = useState(false);
+  const [userPosts, setUserPosts] = useState<any[]>([]);
 
   useEffect(() => {
     loadFeed();
@@ -35,6 +38,30 @@ export default function Feed() {
     addPost(postContent);
     setPostContent("");
     setIsPosting(false);
+  };
+
+  const handlePostCreated = (newPost: any) => {
+    setUserPosts(prev => [newPost, ...prev]);
+  };
+
+  const handleLikePost = (postId: string) => {
+    setUserPosts(prev => 
+      prev.map(post => 
+        post.id === postId 
+          ? { ...post, liked: !post.liked, likes: post.liked ? post.likes - 1 : post.likes + 1 }
+          : post
+      )
+    );
+  };
+
+  const handleCommentPost = (postId: string) => {
+    console.log('Comentar no post:', postId);
+    // Implementar modal de comentários
+  };
+
+  const handleSharePost = (postId: string) => {
+    console.log('Compartilhar post:', postId);
+    // Implementar funcionalidade de compartilhamento
   };
 
   return (
@@ -117,48 +144,23 @@ export default function Feed() {
             </div>
 
             {/* Post Composer */}
-            <GlassCard className="p-4">
-              <div className="flex gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={user?.avatar} alt={user?.name} />
-                  <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-3">
-                  <Textarea
-                    placeholder="O que está acontecendo?"
-                    value={postContent}
-                    onChange={(e) => setPostContent(e.target.value)}
-                    className="glass border-border/30 focus:border-brand focus:ring-1 focus:ring-brand resize-none"
-                    rows={3}
+            <CreatePost onPostCreated={handlePostCreated} />
+
+            {/* User Posts */}
+            {userPosts.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-text">Seus Posts</h3>
+                {userPosts.map((post) => (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    onLike={handleLikePost}
+                    onComment={handleCommentPost}
+                    onShare={handleSharePost}
                   />
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-text-dim hover:text-brand">
-                        <Image className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-text-dim hover:text-brand">
-                        <Video className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-text-dim hover:text-brand">
-                        <Hash className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-text-dim hover:text-brand">
-                        <Globe className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    
-                    <Button
-                      onClick={handlePost}
-                      disabled={!postContent.trim() || isPosting}
-                      className="gradient-brand text-white btn-pill px-6"
-                    >
-                      {isPosting ? "Publicando..." : "Postar"}
-                    </Button>
-                  </div>
-                </div>
+                ))}
               </div>
-            </GlassCard>
+            )}
 
             {/* Posts Feed */}
             <div className="space-y-4">

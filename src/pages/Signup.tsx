@@ -12,11 +12,12 @@ import { motion } from "framer-motion";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { loginWithGoogle, loginWithApple, isLoading } = useAuth();
+  const { signUp, signInWithGoogle, signInWithApple, isLoading, error, clearError } = useAuth();
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
     name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: ""
@@ -27,6 +28,7 @@ export default function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearError();
     
     if (formData.password !== formData.confirmPassword) {
       toast({
@@ -39,60 +41,75 @@ export default function Signup() {
 
     if (!acceptedTerms) {
       toast({
+        title: "Aceite os termos de uso",
+        description: "Para criar sua conta, você deve aceitar os Termos de Uso e Política de Privacidade.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast({
         title: "Erro",
-        description: "Você deve aceitar os termos de uso.",
+        description: "A senha deve ter pelo menos 6 caracteres.",
         variant: "destructive",
       });
       return;
     }
     
-    try {
-      // Mock signup - in real app would create account then login
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+    const result = await signUp({
+      name: formData.name,
+      username: formData.username,
+      email: formData.email,
+      password: formData.password
+    });
+    
+    if (result.success) {
       toast({
         title: "Conta criada com sucesso!",
         description: "Bem-vindo ao Social Swift",
       });
       navigate("/app/social/feed");
-    } catch (error) {
+    } else {
       toast({
-        title: "Erro no cadastro",
-        description: "Não foi possível criar sua conta. Tente novamente.",
+        title: "Erro ao criar conta",
+        description: result.error || "Tente novamente mais tarde.",
         variant: "destructive",
       });
     }
   };
 
   const handleGoogleSignup = async () => {
-    try {
-      await loginWithGoogle();
+    clearError();
+    const result = await signInWithGoogle();
+    
+    if (result.success) {
       toast({
-        title: "Conta criada com Google!",
-        description: "Bem-vindo ao Social Swift",
+        title: "Redirecionando para Google...",
+        description: "Complete o cadastro em uma nova janela",
       });
-      navigate("/app/social/feed");
-    } catch (error) {
+    } else {
       toast({
         title: "Erro no cadastro",
-        description: "Não foi possível criar conta com Google.",
+        description: result.error || "Não foi possível criar conta com Google.",
         variant: "destructive",
       });
     }
   };
 
   const handleAppleSignup = async () => {
-    try {
-      await loginWithApple();
+    clearError();
+    const result = await signInWithApple();
+    
+    if (result.success) {
       toast({
-        title: "Conta criada com Apple!",
-        description: "Bem-vindo ao Social Swift",
+        title: "Redirecionando para Apple...",
+        description: "Complete o cadastro em uma nova janela",
       });
-      navigate("/app/social/feed");
-    } catch (error) {
+    } else {
       toast({
         title: "Erro no cadastro",
-        description: "Não foi possível criar conta com Apple.",
+        description: result.error || "Não foi possível criar conta com Apple.",
         variant: "destructive",
       });
     }
@@ -177,6 +194,22 @@ export default function Signup() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="username">Nome de usuário</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="seu_username"
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  required
+                  className="glass border-border/30 focus:border-brand focus:ring-1 focus:ring-brand"
+                />
+                <p className="text-xs text-text-dim">
+                  Este será seu @ no Social Swift
+                </p>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -245,36 +278,64 @@ export default function Signup() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-2">
+              <div className="flex items-start gap-3">
                 <button
                   type="button"
                   onClick={() => setAcceptedTerms(!acceptedTerms)}
-                  className={`mt-1 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                  className={`mt-1 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
                     acceptedTerms 
-                      ? 'bg-brand border-brand' 
-                      : 'border-border/50 hover:border-brand'
+                      ? 'bg-brand border-brand shadow-sm' 
+                      : 'border-border/50 hover:border-brand hover:bg-muted/50'
                   }`}
                 >
                   {acceptedTerms && <Check className="h-3 w-3 text-white" />}
                 </button>
                 <div className="text-sm text-text-dim leading-relaxed">
-                  Eu aceito os{" "}
-                  <Link to="/politicas/termos" className="text-brand hover:underline">
-                    Termos de Uso
-                  </Link>{" "}
-                  e a{" "}
-                  <Link to="/politicas/privacidade" className="text-brand hover:underline">
-                    Política de Privacidade
-                  </Link>
+                  <span className="block">
+                    Eu aceito os{" "}
+                    <Link 
+                      to="/politicas/termos" 
+                      className="text-brand hover:underline font-medium"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Termos de Uso
+                    </Link>{" "}
+                    e a{" "}
+                    <Link 
+                      to="/politicas/privacidade" 
+                      className="text-brand hover:underline font-medium"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Política de Privacidade
+                    </Link>
+                  </span>
+                  <span className="text-xs text-text-dim/70 mt-1 block">
+                    Ao criar uma conta, você concorda com nossos termos e políticas.
+                  </span>
                 </div>
               </div>
 
               <Button
                 type="submit"
-                className="w-full gradient-brand text-white btn-pill"
-                disabled={isLoading}
+                className={`w-full btn-pill transition-all duration-200 ${
+                  !acceptedTerms 
+                    ? 'bg-muted text-muted-foreground cursor-not-allowed' 
+                    : 'gradient-brand text-white hover:shadow-lg'
+                }`}
+                disabled={isLoading || !acceptedTerms}
               >
-                {isLoading ? "Criando conta..." : "Criar conta"}
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Criando conta...
+                  </div>
+                ) : !acceptedTerms ? (
+                  "Aceite os termos para continuar"
+                ) : (
+                  "Criar conta"
+                )}
               </Button>
             </form>
 

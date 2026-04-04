@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { SwiftCoinPrice } from "@/components/ui/swift-coin-price";
 
 const mainNavItems = [
   { title: "Marketplace", url: "/app/marketplace", icon: Search },
@@ -68,7 +69,7 @@ export function Sidebar({ className }: SidebarProps) {
           onClick={() => setIsSocialOpen(!isSocialOpen)}
           className={cn(
             "w-full flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
-            "hover:bg-brand/10 hover:text-brand text-text hover:text-brand"
+            "hover:bg-brand/10 hover:text-brand text-text"
           )}
         >
           <Home className="h-4 w-4" />
@@ -117,7 +118,7 @@ export function Sidebar({ className }: SidebarProps) {
           onClick={() => setIsBusinessOpen(!isBusinessOpen)}
           className={cn(
             "w-full flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
-            "hover:bg-brand/10 hover:text-brand text-text hover:text-brand"
+            "hover:bg-brand/10 hover:text-brand text-text"
           )}
         >
           <Building2 className="h-4 w-4" />
@@ -182,20 +183,8 @@ export function Sidebar({ className }: SidebarProps) {
         ))}
       </nav>
 
-      {/* Quick Stats */}
-      <div className="glass p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-text">Swift Coin</h4>
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-text-dim">Saldo</span>
-            <span className="font-semibold text-brand">15.420,50 SC</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-text-dim">≈ USD</span>
-            <span className="text-text">$8.950,25</span>
-          </div>
-        </div>
-      </div>
+      {/* Swift Coin Price */}
+      <SwiftCoinPrice />
     </motion.aside>
   );
 }

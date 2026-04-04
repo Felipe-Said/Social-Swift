@@ -1,0 +1,6 @@
+# Supabase Configuration
+VITE_SUPABASE_URL=https://jecnmlyzdobrjwqtgiex.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplY25tbHl6ZG9icmp3cXRnaWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDUyMjUsImV4cCI6MjA3NTUyMTIyNX0.AL5gMFm-aObNXEJj5klWAnt-9XbSe2MKcQYuhLMgivg
+
+# Environment
+NODE_ENV=development

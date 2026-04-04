@@ -4,7 +4,6 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { SwiftCoinPrice } from "@/components/ui/swift-coin-price";
 import { 
   Search,
   Filter,
@@ -110,10 +109,6 @@ export default function Marketplace() {
           </div>
         </motion.div>
 
-        {/* Swift Coin Price */}
-        <div className="flex justify-center">
-          <SwiftCoinPrice className="w-full max-w-sm" />
-        </div>
 
         {/* Search and Filters */}
         <GlassCard className="p-4">

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { logService } from '@/services/logService';
 
 export interface Post {
   id: string;
@@ -172,8 +173,11 @@ export const useFeed = create<FeedStore>()((set, get) => ({
     });
   },
 
-  likePost: (postId: string) => {
+  likePost: async (postId: string) => {
     const { posts } = get();
+    const post = posts.find(p => p.id === postId);
+    const isLiked = post?.isLiked || false;
+    
     const updatedPosts = posts.map(post => 
       post.id === postId 
         ? { 
@@ -184,6 +188,9 @@ export const useFeed = create<FeedStore>()((set, get) => ({
         : post
     );
     set({ posts: updatedPosts });
+    
+    // Log post like action
+    await logService.logPostLike(postId, !isLiked);
   },
 
   savePost: (postId: string) => {
@@ -196,20 +203,28 @@ export const useFeed = create<FeedStore>()((set, get) => ({
     set({ posts: updatedPosts });
   },
 
-  markStoryViewed: (storyId: string) => {
+  markStoryViewed: async (storyId: string) => {
     const { stories } = get();
+    const story = stories.find(s => s.id === storyId);
+    
     const updatedStories = stories.map(story => 
       story.id === storyId 
         ? { ...story, isViewed: true }
         : story
     );
     set({ stories: updatedStories });
+    
+    // Log story view
+    if (story) {
+      await logService.logStoryView(storyId, story.author.id);
+    }
   },
 
-  addPost: (content: string, media?: { type: 'image' | 'video'; url: string }) => {
+  addPost: async (content: string, media?: { type: 'image' | 'video'; url: string }) => {
     const { posts } = get();
+    const postId = Date.now().toString();
     const newPost: Post = {
-      id: Date.now().toString(),
+      id: postId,
       author: {
         id: '1', // Current user
         name: 'Ana Carolina',
@@ -229,5 +244,8 @@ export const useFeed = create<FeedStore>()((set, get) => ({
     };
     
     set({ posts: [newPost, ...posts] });
+    
+    // Log post creation
+    await logService.logPostCreate(postId, !!media);
   }
 }));

@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, loginWithGoogle, loginWithApple, isLoading } = useAuth();
+  const { signIn, signInWithGoogle, signInWithApple, isLoading, error, clearError } = useAuth();
   const { toast } = useToast();
   
   const [email, setEmail] = useState("");
@@ -22,52 +22,56 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearError();
     
-    try {
-      await login(email, password);
+    const result = await signIn({ email, password });
+    
+    if (result.success) {
       toast({
         title: "Login realizado com sucesso!",
         description: "Bem-vindo ao Social Swift",
       });
       navigate("/app/social/feed");
-    } catch (error) {
+    } else {
       toast({
         title: "Erro no login",
-        description: "Verifique suas credenciais e tente novamente.",
+        description: result.error || "Verifique suas credenciais e tente novamente.",
         variant: "destructive",
       });
     }
   };
 
   const handleGoogleLogin = async () => {
-    try {
-      await loginWithGoogle();
+    clearError();
+    const result = await signInWithGoogle();
+    
+    if (result.success) {
       toast({
-        title: "Login com Google realizado!",
-        description: "Bem-vindo ao Social Swift",
+        title: "Redirecionando para Google...",
+        description: "Complete o login em uma nova janela",
       });
-      navigate("/app/social/feed");
-    } catch (error) {
+    } else {
       toast({
         title: "Erro no login",
-        description: "Não foi possível fazer login com Google.",
+        description: result.error || "Não foi possível fazer login com Google.",
         variant: "destructive",
       });
     }
   };
 
   const handleAppleLogin = async () => {
-    try {
-      await loginWithApple();
+    clearError();
+    const result = await signInWithApple();
+    
+    if (result.success) {
       toast({
-        title: "Login com Apple realizado!",
-        description: "Bem-vindo ao Social Swift",
+        title: "Redirecionando para Apple...",
+        description: "Complete o login em uma nova janela",
       });
-      navigate("/app/social/feed");
-    } catch (error) {
+    } else {
       toast({
         title: "Erro no login",
-        description: "Não foi possível fazer login com Apple.",
+        description: result.error || "Não foi possível fazer login com Apple.",
         variant: "destructive",
       });
     }
