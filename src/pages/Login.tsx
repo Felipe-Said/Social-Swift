@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,13 +15,19 @@ import { motion } from "framer-motion";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { signIn, signInWithGoogle, signInWithApple, isLoading, error, clearError } = useAuth();
+  const { signIn, signInWithGoogle, signInWithApple, isAuthenticated, isLoading, error, clearError } = useAuth();
   const { toast } = useToast();
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/app/social/perfil", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

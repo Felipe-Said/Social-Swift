@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { signUp, signInWithGoogle, signInWithApple, isLoading, error, clearError } = useAuth();
+  const { signUp, signInWithGoogle, signInWithApple, isAuthenticated, isLoading, error, clearError } = useAuth();
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
@@ -28,6 +28,12 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/app/social/perfil", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
