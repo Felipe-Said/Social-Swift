@@ -13,6 +13,7 @@ export function AppShell() {
   const location = useLocation();
 
   const isGroupsRoute = location.pathname.startsWith("/app/social/grupos");
+  const isBusinessDashboardRoute = location.pathname.startsWith("/app/dashboard");
 
   if (!isAuthenticated) {
     return <Outlet />;
@@ -40,7 +41,7 @@ export function AppShell() {
           <Outlet />
         </main>
 
-        {!isGroupsRoute && <RightRail />}
+        {!isGroupsRoute && !isBusinessDashboardRoute && <RightRail />}
         <BottomTab />
       </div>
 
