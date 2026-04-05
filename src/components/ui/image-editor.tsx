@@ -71,38 +71,65 @@ export function ImageEditor({
     const scaleY = image.naturalHeight / image.height;
     const pixelRatio = window.devicePixelRatio;
 
-    canvas.width = crop.width * pixelRatio * scale;
-    canvas.height = crop.height * pixelRatio * scale;
+    canvas.width = Math.floor(crop.width * pixelRatio);
+    canvas.height = Math.floor(crop.height * pixelRatio);
 
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     ctx.imageSmoothingQuality = 'high';
 
     const cropX = crop.x * scaleX;
     const cropY = crop.y * scaleY;
-
-    const rotateRads = rotate * (Math.PI / 180);
-    const centerX = image.naturalWidth / 2;
-    const centerY = image.naturalHeight / 2;
+    const cropWidth = crop.width * scaleX;
+    const cropHeight = crop.height * scaleY;
 
     ctx.save();
 
-    ctx.translate(-cropX, -cropY);
-    ctx.translate(centerX, centerY);
-    ctx.rotate(rotateRads);
-    ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1);
-    ctx.translate(-centerX, -centerY);
+    if (rotate !== 0 || flip.horizontal || flip.vertical || scale !== 1) {
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
 
-    ctx.drawImage(
-      image,
-      0,
-      0,
-      image.naturalWidth,
-      image.naturalHeight,
-      0,
-      0,
-      image.naturalWidth,
-      image.naturalHeight
-    );
+      if (!tempCtx) {
+        throw new Error('Temp canvas context not found');
+      }
+
+      tempCanvas.width = image.naturalWidth;
+      tempCanvas.height = image.naturalHeight;
+
+      tempCtx.save();
+      tempCtx.translate(image.naturalWidth / 2, image.naturalHeight / 2);
+      tempCtx.rotate((rotate * Math.PI) / 180);
+      tempCtx.scale(
+        flip.horizontal ? -scale : scale,
+        flip.vertical ? -scale : scale
+      );
+      tempCtx.translate(-image.naturalWidth / 2, -image.naturalHeight / 2);
+      tempCtx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight);
+      tempCtx.restore();
+
+      ctx.drawImage(
+        tempCanvas,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        crop.width,
+        crop.height
+      );
+    } else {
+      ctx.drawImage(
+        image,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        crop.width,
+        crop.height
+      );
+    }
 
     ctx.restore();
 
