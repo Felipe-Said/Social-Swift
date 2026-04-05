@@ -73,10 +73,39 @@ export default function Dashboard() {
         }
       };
 
+      const findSharedContainer = (labels: string[], maxWidth: number) => {
+        const matches = labels
+          .map((label) => findElementByText(label))
+          .filter((element): element is Element => Boolean(element));
+
+        if (matches.length < 2) return null;
+
+        let current = matches[0].parentElement;
+        while (current && current !== iframeDocument.body) {
+          const containsAll = matches.every((element) => current?.contains(element));
+          if (containsAll) {
+            const rect = current.getBoundingClientRect();
+            if (rect.width > 0 && rect.width <= maxWidth && rect.height >= 300) {
+              return current;
+            }
+          }
+
+          current = current.parentElement;
+        }
+
+        return null;
+      };
+
       iframeDocument.querySelectorAll("header, aside").forEach((element) => hideElement(element));
       hideClosestContainer(findElementByText("Dashboard"), 360);
       hideClosestContainer(findElementByText("Overview"), 420);
       hideClosestContainer(findElementByText("AI Assistant"), 420);
+      hideElement(
+        findSharedContainer(
+          ["Overview", "AI Assistant", "Admin Management", "Settings"],
+          420
+        )
+      );
 
       const mainElement = iframeDocument.querySelector("main");
       if (mainElement instanceof HTMLElement) {
