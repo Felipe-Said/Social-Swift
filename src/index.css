@@ -148,24 +148,24 @@
 
     :root[data-theme="dark"],
     .dark {
-      --bg: 0 0% 0%;
-      --bg-sub: 0 0% 4%;
+      --bg: 0 0% 7%;
+      --bg-sub: 0 0% 9%;
       --text: 0 0% 98%;
       --text-dim: 0 0% 66%;
-      --card: 0 0% 0%;
-      --popover: 0 0% 6%;
-      --secondary: 0 0% 10%;
-      --muted: 0 0% 10%;
+      --card: 0 0% 7%;
+      --popover: 0 0% 7%;
+      --secondary: 0 0% 9%;
+      --muted: 0 0% 9%;
       --accent: 0 0% 12%;
-      --border: 0 0% 18%;
-      --input: 0 0% 8%;
-      --surface: 0 0% 0%;
-      --surface-strong: 0 0% 0%;
-      --surface-solid: 0 0% 0%;
-      --surface-elevated: 0 0% 6%;
-      --hairline: 0 0% 18%;
-      --stroke-soft: 0 0% 18%;
-      --stroke-strong: 0 0% 22%;
+      --border: 0 0% 14%;
+      --input: 0 0% 9%;
+      --surface: 0 0% 7%;
+      --surface-strong: 0 0% 7%;
+      --surface-solid: 0 0% 7%;
+      --surface-elevated: 0 0% 7%;
+      --hairline: 0 0% 14%;
+      --stroke-soft: 0 0% 14%;
+      --stroke-strong: 0 0% 16%;
       --shadow: none;
       --shadow-elevated: none;
       --radius: 14px;

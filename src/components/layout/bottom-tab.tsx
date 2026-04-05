@@ -39,7 +39,7 @@ export function BottomTab() {
                   cn(
                     "flex min-w-[56px] flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all duration-200",
                     isActive
-                      ? "text-text"
+                      ? "bg-[#181818] text-text"
                       : "text-text-dim hover:text-text"
                   )
                 }
