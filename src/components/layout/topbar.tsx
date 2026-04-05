@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Search, Bell, MessageCircle, User, Menu, Grid3X3 } from "lucide-react";
+import { Search, Bell, MessageCircle, User, Menu, Home, PlaySquare, Store, Users, Grid3X3 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/stores/auth";
 import {
@@ -23,19 +22,25 @@ interface TopbarProps {
 export function Topbar({ onMenuClick }: TopbarProps) {
   const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const navItems = [
+    { to: "/app/social/feed", icon: Home },
+    { to: "/app/social/snaps", icon: PlaySquare },
+    { to: "/app/marketplace", icon: Store },
+    { to: "/app/social/amigos", icon: Users },
+  ];
 
   return (
     <motion.header
       initial={{ y: -16, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface-solid))] px-4 lg:h-16 lg:rounded-none lg:border-b lg:bg-[hsl(var(--surface-solid))] lg:px-6"
+      className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface-solid))] px-3 lg:h-14 lg:px-4"
     >
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         <Button variant="ghost" size="icon" onClick={onMenuClick} className="lg:hidden">
           <Menu className="h-5 w-5" />
         </Button>
 
-        <Link to="/app/social/feed" className="hidden items-center gap-2 lg:flex">
+        <Link to="/app/social/feed" className="flex items-center gap-2">
           <div className="gradient-brand flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold text-white">
             f
           </div>
@@ -47,26 +52,33 @@ export function Topbar({ onMenuClick }: TopbarProps) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Pesquisar no Social Swift"
-            className="w-[260px] pl-11"
+            className="w-[240px] pl-11"
           />
         </div>
       </div>
 
-      <div className="flex items-center gap-3 lg:hidden">
-        <p className="text-[20px] font-semibold text-text">Social Swift</p>
+      <div className="hidden flex-1 items-center justify-center px-10 lg:flex">
+        <div className="flex items-center gap-2">
+          {navItems.map((item) => (
+            <Button key={item.to} asChild variant="ghost" className="h-12 w-28 rounded-xl">
+              <Link to={item.to}>
+                <item.icon className="h-6 w-6" />
+              </Link>
+            </Button>
+          ))}
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="hidden lg:flex">
+        <Button variant="ghost" size="icon" className="hidden rounded-full bg-[hsl(var(--accent))] lg:flex">
           <Grid3X3 className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon" className="hidden lg:flex">
+        <Button variant="ghost" size="icon" className="hidden rounded-full bg-[hsl(var(--accent))] lg:flex">
           <MessageCircle className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon" className="hidden lg:flex">
+        <Button variant="ghost" size="icon" className="hidden rounded-full bg-[hsl(var(--accent))] lg:flex">
           <Bell className="h-5 w-5" />
         </Button>
-        <ThemeToggle />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -1,53 +1,33 @@
 import { useEffect, useState } from "react";
-import { Plus, Image, Video, Hash, Globe } from "lucide-react";
+import { Plus, Search, Video, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { GlassCard } from "@/components/ui/glass-card";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FeedCard } from "@/components/social/feed-card";
 import { CreatePost } from "@/components/social/create-post";
 import { PostCard } from "@/components/social/post-card";
-import { WeatherBox } from "@/components/ui/weather-box";
 import { useFeed } from "@/stores/feed";
 import { useAuth } from "@/stores/auth";
 import { motion } from "framer-motion";
-
-const cryptoData = [
-  { symbol: "BTC", price: "R$ 347.821,50", change: "+2.45%" },
-  { symbol: "USDT", price: "R$ 5,12", change: "-0.12%" },
-];
+import { cn } from "@/lib/utils";
 
 export default function Feed() {
-  const { posts, stories, isLoading, loadFeed, addPost } = useFeed();
+  const { posts, stories, isLoading, loadFeed } = useFeed();
   const { user } = useAuth();
-  const [postContent, setPostContent] = useState("");
-  const [isPosting, setIsPosting] = useState(false);
   const [userPosts, setUserPosts] = useState<any[]>([]);
 
   useEffect(() => {
     loadFeed();
   }, [loadFeed]);
 
-  const handlePost = async () => {
-    if (!postContent.trim()) return;
-    
-    setIsPosting(true);
-    await new Promise(resolve => setTimeout(resolve, 500)); // Mock delay
-    
-    addPost(postContent);
-    setPostContent("");
-    setIsPosting(false);
-  };
-
   const handlePostCreated = (newPost: any) => {
-    setUserPosts(prev => [newPost, ...prev]);
+    setUserPosts((prev) => [newPost, ...prev]);
   };
 
   const handleLikePost = (postId: string) => {
-    setUserPosts(prev => 
-      prev.map(post => 
-        post.id === postId 
+    setUserPosts((prev) =>
+      prev.map((post) =>
+        post.id === postId
           ? { ...post, liked: !post.liked, likes: post.liked ? post.likes - 1 : post.likes + 1 }
           : post
       )
@@ -55,174 +35,121 @@ export default function Feed() {
   };
 
   const handleCommentPost = (postId: string) => {
-    console.log('Comentar no post:', postId);
-    // Implementar modal de comentários
+    console.log("Comentar no post:", postId);
   };
 
   const handleSharePost = (postId: string) => {
-    console.log('Compartilhar post:', postId);
-    // Implementar funcionalidade de compartilhamento
+    console.log("Compartilhar post:", postId);
   };
 
   return (
-    <div className="min-h-screen bg-bg">
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Sidebar - Trending */}
-          <div className="hidden lg:block lg:col-span-3 space-y-4">
-            <GlassCard className="p-4">
-              <h3 className="font-semibold text-text mb-3">Cripto em alta</h3>
-              <div className="space-y-3">
-                {cryptoData.map((crypto) => (
-                  <div key={crypto.symbol} className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-text text-sm">{crypto.symbol}</p>
-                      <p className="text-xs text-text-dim">{crypto.price}</p>
-                    </div>
-                    <Badge 
-                      variant={crypto.change.startsWith('+') ? 'default' : 'destructive'}
-                      className="text-xs"
-                    >
-                      {crypto.change}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </GlassCard>
-
-            <GlassCard className="p-4">
-              <h3 className="font-semibold text-text mb-3">Sugestões</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop&crop=face" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-text truncate">João Developer</p>
-                    <p className="text-xs text-text-dim">@joaodev</p>
-                  </div>
-                  <Button size="sm" variant="outline" className="text-xs">
-                    Seguir
-                  </Button>
+    <div className="min-h-screen bg-bg px-2 py-4 lg:px-0 lg:py-6">
+      <div className="mx-auto w-full max-w-[680px] space-y-4">
+        <div className="hidden overflow-x-auto rounded-xl pb-1 lg:block">
+          <div className="flex gap-2">
+            <button className="relative h-[190px] w-[112px] shrink-0 overflow-hidden rounded-xl bg-[hsl(var(--surface))] shadow-[var(--shadow)]">
+              <img
+                src={user?.avatar}
+                alt={user?.name}
+                className="h-[140px] w-full object-cover"
+              />
+              <div className="absolute inset-x-0 bottom-0 flex h-[54px] flex-col items-center justify-center border-t border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))]">
+                <div className="absolute -top-5 flex h-10 w-10 items-center justify-center rounded-full border-4 border-[hsl(var(--surface))] bg-[hsl(var(--brand))] text-white">
+                  <Plus className="h-5 w-5" />
                 </div>
+                <span className="mt-3 text-center text-[13px] font-semibold text-text">Criar story</span>
               </div>
-            </GlassCard>
+            </button>
+
+            {stories.slice(0, 4).map((story) => (
+              <div
+                key={story.id}
+                className="relative h-[190px] w-[112px] shrink-0 overflow-hidden rounded-xl bg-[hsl(var(--surface))] shadow-[var(--shadow)]"
+              >
+                <img
+                  src={story.author.avatar}
+                  alt={story.author.name}
+                  className={cn("h-full w-full object-cover", story.isViewed && "opacity-70")}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
+                <Avatar className="absolute left-3 top-3 h-10 w-10 border-4 border-[hsl(var(--brand))]">
+                  <AvatarImage src={story.author.avatar} alt={story.author.name} />
+                  <AvatarFallback>{story.author.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <span className="absolute bottom-3 left-3 right-3 text-sm font-semibold text-white">
+                  {story.author.name.split(" ")[0]}
+                </span>
+              </div>
+            ))}
           </div>
+        </div>
 
-          {/* Main Feed */}
-          <div className="lg:col-span-6 space-y-6">
-            {/* Stories */}
-            <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
-              {/* Add Story */}
-              <div className="flex-shrink-0">
-                <Button
-                  variant="outline"
-                  className="w-16 h-16 rounded-full border-2 border-dashed border-brand/50 hover:border-brand"
-                >
-                  <Plus className="h-6 w-6 text-brand" />
-                </Button>
-                <p className="text-xs text-center mt-1 text-text-dim">Adicionar</p>
-              </div>
+        <CreatePost onPostCreated={handlePostCreated} />
 
-              {/* Stories */}
-              {stories.map((story) => (
-                <div key={story.id} className="flex-shrink-0">
-                  <div className={`story-ring p-0.5 ${story.isViewed ? 'opacity-50' : ''}`}>
-                    <div className="story-ring-inner">
-                      <Avatar className="w-14 h-14">
-                        <AvatarImage src={story.author.avatar} alt={story.author.name} />
-                        <AvatarFallback>{story.author.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                    </div>
-                  </div>
-                  <p className="text-xs text-center mt-1 text-text-dim truncate w-16">
-                    {story.author.name.split(' ')[0]}
-                  </p>
-                </div>
-              ))}
+        <GlassCard className="hidden p-3 lg:block">
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2">
+              <Button variant="ghost" className="rounded-lg text-brand">
+                <Video className="h-4 w-4" />
+                Reels
+              </Button>
+              <Button variant="ghost" className="rounded-lg">
+                <Search className="h-4 w-4" />
+                Explorar
+              </Button>
             </div>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </div>
+        </GlassCard>
 
-            {/* Post Composer */}
-            <CreatePost onPostCreated={handlePostCreated} />
+        {userPosts.length > 0 && (
+          <div className="space-y-4">
+            {userPosts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                onLike={handleLikePost}
+                onComment={handleCommentPost}
+                onShare={handleSharePost}
+              />
+            ))}
+          </div>
+        )}
 
-            {/* User Posts */}
-            {userPosts.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-text">Seus Posts</h3>
-                {userPosts.map((post) => (
-                  <PostCard
-                    key={post.id}
-                    post={post}
-                    onLike={handleLikePost}
-                    onComment={handleCommentPost}
-                    onShare={handleSharePost}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Posts Feed */}
-            <div className="space-y-4">
-              {isLoading ? (
-                // Loading skeletons
-                Array.from({ length: 3 }).map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <GlassCard className="p-4">
-                      <div className="animate-pulse space-y-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-muted rounded-full"></div>
-                          <div className="space-y-1">
-                            <div className="w-32 h-4 bg-muted rounded"></div>
-                            <div className="w-24 h-3 bg-muted rounded"></div>
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="w-full h-4 bg-muted rounded"></div>
-                          <div className="w-3/4 h-4 bg-muted rounded"></div>
-                        </div>
-                        <div className="w-full h-48 bg-muted rounded-brand"></div>
+        <div className="space-y-4">
+          {isLoading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <GlassCard className="p-4">
+                  <div className="animate-pulse space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-muted" />
+                      <div className="space-y-1">
+                        <div className="h-4 w-32 rounded bg-muted" />
+                        <div className="h-3 w-24 rounded bg-muted" />
                       </div>
-                    </GlassCard>
-                  </motion.div>
-                ))
-              ) : (
-                posts.map((post) => (
-                  <FeedCard key={post.id} post={post} />
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Right Sidebar - Activity */}
-          <div className="hidden lg:block lg:col-span-3 space-y-4">
-            <WeatherBox />
-
-            <GlassCard className="p-4">
-              <h3 className="font-semibold text-text mb-3">Atividades</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-brand rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm text-text">Swap realizado</p>
-                    <p className="text-xs text-text-dim">há 2h</p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-4 w-full rounded bg-muted" />
+                      <div className="h-4 w-3/4 rounded bg-muted" />
+                    </div>
+                    <div className="h-48 w-full rounded-xl bg-muted" />
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-status-success rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm text-text">Saque aprovado</p>
-                    <p className="text-xs text-text-dim">há 4h</p>
-                  </div>
-                </div>
-              </div>
-            </GlassCard>
-          </div>
+                </GlassCard>
+              </motion.div>
+            ))
+          ) : (
+            posts.map((post) => (
+              <FeedCard key={post.id} post={post} />
+            ))
+          )}
         </div>
       </div>
     </div>

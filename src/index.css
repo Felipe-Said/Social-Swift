@@ -7,10 +7,10 @@
 @layer base {
   :root,
   :root[data-theme="light"] {
-    --bg: 210 17% 98%;
-    --bg-sub: 220 14% 96%;
-    --text: 220 15% 15%;
-    --text-dim: 220 7% 40%;
+    --bg: 214 32% 91%;
+    --bg-sub: 210 17% 98%;
+    --text: 214 10% 15%;
+    --text-dim: 214 8% 46%;
     --brand: 214 89% 52%;
     --brand-glow: 214 89% 58%;
     --like: 347 89% 61%;
@@ -18,86 +18,86 @@
     --warn: 38 92% 52%;
     --success: 142 71% 45%;
 
-    --background: 210 17% 98%;
-    --foreground: 220 15% 15%;
+    --background: 214 32% 91%;
+    --foreground: 214 10% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card-foreground: 214 10% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover-foreground: 214 10% 15%;
     --primary: 214 89% 52%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 15% 15%;
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 7% 40%;
-    --accent: 220 14% 94%;
-    --accent-foreground: 220 15% 15%;
+    --secondary: 214 31% 96%;
+    --secondary-foreground: 214 10% 15%;
+    --muted: 214 31% 96%;
+    --muted-foreground: 214 8% 46%;
+    --accent: 214 31% 94%;
+    --accent-foreground: 214 10% 15%;
     --destructive: 347 89% 61%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 14% 89%;
-    --input: 0 0% 100%;
+    --border: 214 16% 85%;
+    --input: 214 31% 95%;
     --ring: 214 89% 52%;
 
     --surface: 0 0% 100%;
     --surface-strong: 0 0% 100%;
     --surface-solid: 0 0% 100%;
     --surface-elevated: 0 0% 100%;
-    --hairline: 220 14% 89%;
-    --stroke-soft: 220 14% 89%;
-    --stroke-strong: 220 12% 82%;
-    --shadow-color: 220 20% 20%;
-    --shadow: 0 1px 2px hsl(var(--shadow-color) / 0.08), 0 8px 24px hsl(var(--shadow-color) / 0.08);
-    --shadow-elevated: 0 2px 6px hsl(var(--shadow-color) / 0.08), 0 18px 40px hsl(var(--shadow-color) / 0.12);
+    --hairline: 214 16% 85%;
+    --stroke-soft: 214 16% 85%;
+    --stroke-strong: 214 12% 79%;
+    --shadow-color: 220 18% 18%;
+    --shadow: 0 1px 2px hsl(var(--shadow-color) / 0.06), 0 2px 12px hsl(var(--shadow-color) / 0.04);
+    --shadow-elevated: 0 8px 24px hsl(var(--shadow-color) / 0.08);
     --blur: 0px;
-    --radius: 18px;
+    --radius: 12px;
     --radius-pill: 999px;
   }
 
   :root[data-theme="dark"],
   .dark {
-    --bg: 220 13% 10%;
-    --bg-sub: 220 13% 12%;
-    --text: 210 17% 96%;
-    --text-dim: 220 9% 70%;
-    --brand: 214 89% 60%;
-    --brand-glow: 214 89% 66%;
+    --bg: 220 13% 12%;
+    --bg-sub: 220 13% 14%;
+    --text: 0 0% 95%;
+    --text-dim: 220 8% 71%;
+    --brand: 214 89% 58%;
+    --brand-glow: 214 89% 63%;
     --like: 347 89% 61%;
-    --info: 214 89% 60%;
+    --info: 214 89% 58%;
     --warn: 38 92% 58%;
     --success: 142 71% 45%;
 
-    --background: 220 13% 10%;
-    --foreground: 210 17% 96%;
-    --card: 220 13% 14%;
-    --card-foreground: 210 17% 96%;
-    --popover: 220 13% 14%;
-    --popover-foreground: 210 17% 96%;
-    --primary: 214 89% 60%;
+    --background: 220 13% 12%;
+    --foreground: 0 0% 95%;
+    --card: 220 13% 18%;
+    --card-foreground: 0 0% 95%;
+    --popover: 220 13% 18%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 214 89% 58%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 13% 18%;
-    --secondary-foreground: 210 17% 96%;
-    --muted: 220 13% 18%;
-    --muted-foreground: 220 9% 70%;
-    --accent: 220 13% 20%;
-    --accent-foreground: 210 17% 96%;
+    --secondary: 220 13% 24%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 220 13% 24%;
+    --muted-foreground: 220 8% 71%;
+    --accent: 220 13% 23%;
+    --accent-foreground: 0 0% 95%;
     --destructive: 347 89% 61%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 11% 22%;
-    --input: 220 13% 16%;
-    --ring: 214 89% 60%;
+    --border: 220 10% 23%;
+    --input: 220 13% 24%;
+    --ring: 214 89% 58%;
 
-    --surface: 220 13% 14%;
-    --surface-strong: 220 13% 14%;
-    --surface-solid: 220 13% 14%;
-    --surface-elevated: 220 13% 16%;
-    --hairline: 220 11% 22%;
-    --stroke-soft: 220 11% 22%;
-    --stroke-strong: 220 10% 26%;
-    --shadow-color: 220 50% 2%;
-    --shadow: 0 1px 2px hsl(var(--shadow-color) / 0.24), 0 10px 28px hsl(var(--shadow-color) / 0.24);
-    --shadow-elevated: 0 2px 8px hsl(var(--shadow-color) / 0.28), 0 22px 48px hsl(var(--shadow-color) / 0.34);
+    --surface: 220 13% 18%;
+    --surface-strong: 220 13% 18%;
+    --surface-solid: 220 13% 18%;
+    --surface-elevated: 220 13% 20%;
+    --hairline: 220 10% 23%;
+    --stroke-soft: 220 10% 23%;
+    --stroke-strong: 220 10% 28%;
+    --shadow-color: 220 40% 3%;
+    --shadow: 0 1px 2px hsl(var(--shadow-color) / 0.2), 0 6px 20px hsl(var(--shadow-color) / 0.18);
+    --shadow-elevated: 0 12px 36px hsl(var(--shadow-color) / 0.24);
     --blur: 0px;
-    --radius: 18px;
+    --radius: 12px;
     --radius-pill: 999px;
   }
 
@@ -114,7 +114,7 @@
 
   body {
     min-height: 100vh;
-    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     background: hsl(var(--bg));
     color: hsl(var(--text));
     font-feature-settings: "tnum" 1;
@@ -125,15 +125,15 @@
     :root[data-theme="light"] {
       --bg: 0 0% 100%;
       --bg-sub: 0 0% 98%;
-      --text: 0 0% 6%;
-      --text-dim: 0 0% 38%;
+      --text: 0 0% 8%;
+      --text-dim: 0 0% 40%;
       --card: 0 0% 100%;
       --popover: 0 0% 100%;
       --secondary: 0 0% 96%;
       --muted: 0 0% 96%;
       --accent: 0 0% 94%;
       --border: 0 0% 88%;
-      --input: 0 0% 98%;
+      --input: 0 0% 96%;
       --surface: 0 0% 100%;
       --surface-strong: 0 0% 100%;
       --surface-solid: 0 0% 100%;
@@ -143,7 +143,7 @@
       --stroke-strong: 0 0% 84%;
       --shadow: none;
       --shadow-elevated: none;
-      --radius: 16px;
+      --radius: 14px;
     }
 
     :root[data-theme="dark"],
@@ -168,7 +168,7 @@
       --stroke-strong: 0 0% 22%;
       --shadow: none;
       --shadow-elevated: none;
-      --radius: 16px;
+      --radius: 14px;
     }
   }
 }
@@ -188,8 +188,7 @@
 
   .chip {
     border-radius: var(--radius-pill);
-    border: 1px solid hsl(var(--stroke-soft));
-    background: hsl(var(--surface-solid));
+    background: hsl(var(--accent));
     padding: 0.42rem 0.85rem;
     font-size: 0.78rem;
     font-weight: 700;
@@ -215,10 +214,6 @@
     box-shadow: var(--shadow-elevated);
   }
 
-  .hover-glow:hover {
-    box-shadow: 0 0 0 1px hsl(var(--brand) / 0.1), var(--shadow-elevated);
-  }
-
   .gradient-brand {
     background: linear-gradient(135deg, hsl(var(--brand-glow)) 0%, hsl(var(--brand)) 100%);
   }
@@ -235,15 +230,8 @@
     color: hsl(var(--text-dim));
   }
 
-  .ios-caption {
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    color: hsl(var(--text-dim));
-  }
-
-  .ios-title {
-    letter-spacing: -0.02em;
+  .fb-shell {
+    min-height: calc(100vh - 56px);
   }
 
   .hide-scrollbar {
@@ -274,5 +262,9 @@
     border: 1px solid hsl(var(--stroke-soft));
     border-radius: calc(var(--radius) + 2px);
     box-shadow: var(--shadow-elevated);
+  }
+
+  .fb-card {
+    @apply rounded-xl border border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))] shadow-[var(--shadow)];
   }
 }

@@ -9,7 +9,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-2xl border border-[hsl(var(--stroke-soft))] bg-card text-card-foreground shadow-[var(--shadow)] lg:rounded-lg",
+      "rounded-xl border border-[hsl(var(--stroke-soft))] bg-card text-card-foreground shadow-[var(--shadow)]",
       className
     )}
     {...props}
@@ -27,7 +27,7 @@ const CardHeader = React.forwardRef<
     {...props}
   />
 ))
-CardHeader.displayName = "CardHeader"
+Card.displayName = "CardHeader"
 
 const CardTitle = React.forwardRef<
   HTMLParagraphElement,
@@ -36,7 +36,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "ios-title text-2xl font-semibold leading-none tracking-tight lg:text-xl",
+      "text-2xl font-semibold leading-none tracking-tight lg:text-xl",
       className
     )}
     {...props}
