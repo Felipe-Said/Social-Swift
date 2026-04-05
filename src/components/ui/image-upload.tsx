@@ -12,10 +12,11 @@ interface ImageUploadProps {
   circular?: boolean;
   minWidth?: number;
   minHeight?: number;
-  maxSize?: number; // in MB
+  maxSize?: number;
   acceptedTypes?: string[];
   className?: string;
   children?: React.ReactNode;
+  triggerOnly?: boolean;
 }
 
 export function ImageUpload({
@@ -28,7 +29,8 @@ export function ImageUpload({
   maxSize = 5,
   acceptedTypes = ['image/jpeg', 'image/png', 'image/webp'],
   className = '',
-  children
+  children,
+  triggerOnly = false,
 }: ImageUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [showEditor, setShowEditor] = useState(false);
@@ -38,15 +40,13 @@ export function ImageUpload({
     const file = acceptedFiles[0];
     if (!file) return;
 
-    // Validate file size
     if (file.size > maxSize * 1024 * 1024) {
-      setError(`Arquivo muito grande. Máximo: ${maxSize}MB`);
+      setError(`Arquivo muito grande. Maximo: ${maxSize}MB`);
       return;
     }
 
-    // Validate file type
     if (!acceptedTypes.includes(file.type)) {
-      setError(`Tipo de arquivo não suportado. Use: ${acceptedTypes.join(', ')}`);
+      setError(`Tipo de arquivo nao suportado. Use: ${acceptedTypes.join(', ')}`);
       return;
     }
 
@@ -86,16 +86,21 @@ export function ImageUpload({
   return (
     <>
       <div className={`space-y-2 ${className}`}>
-        {currentImage ? (
-          <div className="relative group">
+        {triggerOnly && children ? (
+          <div {...getRootProps()} className="cursor-pointer">
+            <input {...getInputProps()} />
+            {children}
+          </div>
+        ) : currentImage ? (
+          <div className="group relative">
             <div className={`overflow-hidden rounded-lg ${circular ? 'rounded-full' : ''}`}>
               <img
                 src={currentImage}
                 alt="Preview"
-                className={`w-full h-full object-cover ${circular ? 'aspect-square' : ''}`}
+                className={`h-full w-full object-cover ${circular ? 'aspect-square' : ''}`}
               />
             </div>
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
               <div className="flex gap-2">
                 <Button
                   size="sm"
@@ -105,7 +110,7 @@ export function ImageUpload({
                     setShowEditor(true);
                   }}
                 >
-                  <ImageIcon className="h-4 w-4 mr-1" />
+                  <ImageIcon className="mr-1 h-4 w-4" />
                   Editar
                 </Button>
                 <Button
@@ -113,7 +118,7 @@ export function ImageUpload({
                   variant="destructive"
                   onClick={handleRemoveImage}
                 >
-                  <X className="h-4 w-4 mr-1" />
+                  <X className="mr-1 h-4 w-4" />
                   Remover
                 </Button>
               </div>
@@ -123,9 +128,9 @@ export function ImageUpload({
           <div
             {...getRootProps()}
             className={`
-              border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
-              ${isDragActive 
-                ? 'border-brand bg-brand/5' 
+              cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-colors
+              ${isDragActive
+                ? 'border-brand bg-brand/5'
                 : 'border-border/50 hover:border-brand hover:bg-brand/5'
               }
               ${circular ? 'aspect-square rounded-full' : ''}
@@ -139,11 +144,11 @@ export function ImageUpload({
                   {isDragActive ? 'Solte a imagem aqui' : 'Clique ou arraste uma imagem'}
                 </p>
                 <p className="text-xs text-text-dim">
-                  {acceptedTypes.join(', ')} • Máx. {maxSize}MB
+                  {acceptedTypes.join(', ')} • Max. {maxSize}MB
                 </p>
                 {circular && (
                   <p className="text-xs text-text-dim">
-                    Imagem será cortada em formato circular
+                    Imagem sera cortada em formato circular
                   </p>
                 )}
               </div>
@@ -155,16 +160,15 @@ export function ImageUpload({
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-sm text-red-500 bg-red-500/10 p-2 rounded"
+            className="rounded bg-red-500/10 p-2 text-sm text-red-500"
           >
             {error}
           </motion.div>
         )}
 
-        {children}
+        {!triggerOnly && children}
       </div>
 
-      {/* Image Editor Modal */}
       <AnimatePresence>
         {showEditor && preview && (
           <ImageEditor

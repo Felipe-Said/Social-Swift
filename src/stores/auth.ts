@@ -12,6 +12,9 @@ export interface User {
   avatar: string;
   banner?: string;
   bio?: string;
+  work?: string;
+  profileLink?: string;
+  isPrivate?: boolean;
   followers: number;
   following: number;
   posts: number;
@@ -49,7 +52,10 @@ const BYPASS_USER: User = {
   email: 'saidlabsglobal@gmail.com',
   avatar: '',
   banner: '',
-  bio: 'Acesso temporario sem login',
+  bio: 'Construindo o ecossistema Social Swift.',
+  work: 'Said LAB Global',
+  profileLink: 'abre.ai/playlistbusiness',
+  isPrivate: false,
   followers: 0,
   following: 0,
   posts: 0,
@@ -252,7 +258,11 @@ export const useAuth = create<AuthStore>()(
               name: data.name ?? user.name,
               username: data.username ?? user.username,
               bio: data.bio ?? user.bio,
+              work: data.work ?? user.work,
+              profileLink: data.profile_link ?? user.profileLink,
+              isPrivate: data.is_private ?? user.isPrivate,
               avatar: data.avatar_url ?? user.avatar,
+              banner: data.banner_url ?? user.banner,
             },
             isAuthenticated: true,
             isLoading: false,

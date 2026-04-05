@@ -37,6 +37,10 @@ export interface UpdateProfileData {
   username?: string;
   bio?: string;
   avatar_url?: string;
+  banner_url?: string;
+  work?: string;
+  profile_link?: string;
+  is_private?: boolean;
 }
 
 class AuthService {

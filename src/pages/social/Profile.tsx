@@ -1,8 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/stores/auth";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Camera,
   Grid3X3,
@@ -12,6 +24,8 @@ import {
   Settings,
   Briefcase,
   Link2,
+  Lock,
+  Globe,
 } from "lucide-react";
 
 export default function Profile() {
@@ -20,17 +34,35 @@ export default function Profile() {
   const [bannerImage, setBannerImage] = useState(user?.banner || "");
   const [avatarImage, setAvatarImage] = useState(user?.avatar || "");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [profileName, setProfileName] = useState(user?.name || "");
+  const [profileUsername, setProfileUsername] = useState(user?.username || "");
+  const [profileWork, setProfileWork] = useState(user?.work || "");
+  const [profileBio, setProfileBio] = useState(user?.bio || "");
+  const [profileLink, setProfileLink] = useState(user?.profileLink || "");
+  const [profilePrivate, setProfilePrivate] = useState(Boolean(user?.isPrivate));
+
+  useEffect(() => {
+    setBannerImage(user?.banner || "");
+    setAvatarImage(user?.avatar || "");
+    setProfileName(user?.name || "");
+    setProfileUsername(user?.username || "");
+    setProfileWork(user?.work || "");
+    setProfileBio(user?.bio || "");
+    setProfileLink(user?.profileLink || "");
+    setProfilePrivate(Boolean(user?.isPrivate));
+  }, [user]);
 
   const stats = {
-    posts: 0,
-    followers: 1757,
-    following: 1274,
+    posts: user?.posts ?? 0,
+    followers: user?.followers ?? 1757,
+    following: user?.following ?? 1274,
   };
 
   const handleBannerUpload = async (image: string) => {
     setIsUpdating(true);
     try {
-      await updateProfile({ banner: image });
+      await updateProfile({ banner_url: image });
       setBannerImage(image);
     } catch (error) {
       console.error("Erro ao atualizar banner:", error);
@@ -42,10 +74,31 @@ export default function Profile() {
   const handleAvatarUpload = async (image: string) => {
     setIsUpdating(true);
     try {
-      await updateProfile({ avatar: image });
+      await updateProfile({ avatar_url: image });
       setAvatarImage(image);
     } catch (error) {
       console.error("Erro ao atualizar avatar:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    setIsUpdating(true);
+    try {
+      await updateProfile({
+        name: profileName,
+        username: profileUsername,
+        bio: profileBio,
+        work: profileWork,
+        profile_link: profileLink,
+        is_private: profilePrivate,
+        avatar_url: avatarImage,
+        banner_url: bannerImage,
+      });
+      setIsEditOpen(false);
+    } catch (error) {
+      console.error("Erro ao salvar perfil:", error);
     } finally {
       setIsUpdating(false);
     }
@@ -60,7 +113,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-background">
       <div className="relative">
-        <div className="group relative h-36 md:h-48">
+        <div className="relative h-36 md:h-48">
           {bannerImage ? (
             <div className="relative h-full w-full">
               <img
@@ -68,37 +121,11 @@ export default function Profile() {
                 alt="Banner"
                 className="h-full w-full object-cover"
               />
-              <div className="absolute inset-0 hidden items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 md:flex">
-                <ImageUpload
-                  onImageSelect={handleBannerUpload}
-                  currentImage={bannerImage}
-                  aspectRatio={16 / 9}
-                  circular={false}
-                  minWidth={400}
-                  minHeight={225}
-                  className="absolute inset-0"
-                >
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="flex items-center gap-2"
-                    disabled={isUpdating}
-                  >
-                    <Camera className="h-4 w-4" />
-                    {isUpdating ? "Atualizando..." : "Editar Banner"}
-                  </Button>
-                </ImageUpload>
-              </div>
             </div>
           ) : (
-            <ImageUpload
-              onImageSelect={handleBannerUpload}
-              aspectRatio={16 / 9}
-              circular={false}
-              minWidth={400}
-              minHeight={225}
-              className="h-full w-full bg-gradient-to-r from-muted to-muted-foreground/20"
-            />
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-muted to-muted-foreground/20 text-sm text-muted-foreground">
+              Adicione um banner ao perfil
+            </div>
           )}
         </div>
 
@@ -111,15 +138,20 @@ export default function Profile() {
               circular={true}
               minWidth={100}
               minHeight={100}
-              className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-background bg-gradient-to-br from-blue-100 to-blue-200 shadow-xl ring-2 ring-blue-200/50 transition-colors group-hover:bg-blue-300 md:h-24 md:w-24"
+              triggerOnly
+              className="w-fit"
             >
-              {!avatarImage && (
-                <span className="z-10 text-base font-semibold text-blue-700">
-                  {user?.name?.charAt(0) || "U"}
-                </span>
-              )}
-              <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60 opacity-0 transition-all duration-200 hover:opacity-100">
-                <Camera className="h-4 w-4 text-white" />
+              <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-background bg-gradient-to-br from-blue-100 to-blue-200 shadow-xl ring-2 ring-blue-200/50 md:h-24 md:w-24">
+                {avatarImage ? (
+                  <img src={avatarImage} alt={user?.name} className="h-full w-full object-cover" />
+                ) : (
+                  <span className="z-10 text-base font-semibold text-blue-700">
+                    {user?.name?.charAt(0) || "U"}
+                  </span>
+                )}
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/35 opacity-100 md:opacity-0 md:transition-all md:duration-200 md:hover:opacity-100">
+                  <Camera className="h-4 w-4 text-white" />
+                </div>
               </div>
             </ImageUpload>
           </div>
@@ -132,12 +164,17 @@ export default function Profile() {
                     {user?.name || "Felipe Said"}
                   </h1>
                   <p className="text-sm text-muted-foreground">
-                    @{user?.email?.split("@")[0] || "saidlabsglobal"}
+                    @{user?.username || "saidlabsglobal"}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Button variant="outline" size="sm" className="bg-gray-200 text-gray-800 hover:bg-gray-300">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-gray-200 text-gray-800 hover:bg-gray-300"
+                    onClick={() => setIsEditOpen(true)}
+                  >
                     Editar perfil
                   </Button>
                   <Button variant="outline" size="sm" className="bg-gray-200 text-gray-800 hover:bg-gray-300">
@@ -149,7 +186,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="mb-4 flex gap-8">
+              <div className="mb-4 flex gap-10">
                 <div className="text-center">
                   <div className="text-base font-bold text-foreground">{stats.posts}</div>
                   <div className="text-sm text-muted-foreground">publicacoes</div>
@@ -173,15 +210,16 @@ export default function Profile() {
               <div className="mb-4 space-y-1">
                 <p className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Briefcase className="h-4 w-4" />
-                  TikTok Ads & Ecom
+                  {user?.work || "Said LAB Global"}
                 </p>
                 <a
                   href="#"
                   className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-blue-500"
                 >
                   <Link2 className="h-4 w-4" />
-                  abre.ai/playlistbusiness
+                  {user?.profileLink || "abre.ai/playlistbusiness"}
                 </a>
+                <p className="text-sm text-muted-foreground">{user?.bio}</p>
               </div>
             </div>
 
@@ -191,20 +229,20 @@ export default function Profile() {
                   {user?.name || "Felipe Said"}
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  @{user?.email?.split("@")[0] || "saidlabsglobal"}
+                  @{user?.username || "saidlabsglobal"}
                 </p>
               </div>
 
-              <div className="flex justify-start gap-8">
-                <div className="min-w-[54px] text-center">
+              <div className="flex justify-start gap-12">
+                <div className="min-w-[58px] text-center">
                   <div className="text-[1.35rem] font-bold leading-none text-foreground">{stats.posts}</div>
                   <div className="mt-1 text-sm leading-none text-muted-foreground">posts</div>
                 </div>
-                <div className="min-w-[54px] text-center">
+                <div className="min-w-[72px] text-center">
                   <div className="text-[1.35rem] font-bold leading-none text-foreground">{stats.followers.toLocaleString()}</div>
                   <div className="mt-1 text-sm leading-none text-muted-foreground">seguidores</div>
                 </div>
-                <div className="min-w-[54px] text-center">
+                <div className="min-w-[72px] text-center">
                   <div className="text-[1.35rem] font-bold leading-none text-foreground">{stats.following.toLocaleString()}</div>
                   <div className="mt-1 text-sm leading-none text-muted-foreground">seguindo</div>
                 </div>
@@ -213,19 +251,29 @@ export default function Profile() {
               <div className="space-y-2">
                 <p className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Briefcase className="h-4 w-4" />
-                  TikTok Ads & Ecom
+                  {user?.work || "Said LAB Global"}
                 </p>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  {user?.isPrivate ? <Lock className="h-4 w-4" /> : <Globe className="h-4 w-4" />}
+                  {user?.isPrivate ? "Perfil privado" : "Perfil publico"}
+                </div>
                 <a
                   href="#"
                   className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-blue-500"
                 >
                   <Link2 className="h-4 w-4" />
-                  abre.ai/playlistbusiness
+                  {user?.profileLink || "abre.ai/playlistbusiness"}
                 </a>
+                <p className="text-sm text-muted-foreground">{user?.bio}</p>
               </div>
 
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="h-10 flex-1 bg-gray-800 text-white hover:bg-gray-700">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-10 flex-1 bg-gray-800 text-white hover:bg-gray-700"
+                  onClick={() => setIsEditOpen(true)}
+                >
                   Editar
                 </Button>
                 <Button variant="outline" size="sm" className="h-10 flex-1 bg-gray-800 text-white hover:bg-gray-700">
@@ -283,6 +331,89 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[620px]">
+          <DialogHeader>
+            <DialogTitle>Editar perfil</DialogTitle>
+            <DialogDescription>
+              Atualize trabalho, privacidade, foto, banner, link e bio do seu perfil.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5">
+            <div className="space-y-2">
+              <Label>Banner do perfil</Label>
+              <ImageUpload
+                onImageSelect={(image) => setBannerImage(image)}
+                currentImage={bannerImage}
+                aspectRatio={16 / 9}
+                circular={false}
+                minWidth={400}
+                minHeight={225}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Foto do perfil</Label>
+              <ImageUpload
+                onImageSelect={(image) => setAvatarImage(image)}
+                currentImage={avatarImage}
+                aspectRatio={1}
+                circular
+                minWidth={100}
+                minHeight={100}
+                className="max-w-[140px]"
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="profile-name">Nome</Label>
+                <Input id="profile-name" value={profileName} onChange={(e) => setProfileName(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="profile-username">Usuario</Label>
+                <Input id="profile-username" value={profileUsername} onChange={(e) => setProfileUsername(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="profile-work">Trabalho</Label>
+              <Input id="profile-work" value={profileWork} onChange={(e) => setProfileWork(e.target.value)} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="profile-link">Link do perfil</Label>
+              <Input id="profile-link" value={profileLink} onChange={(e) => setProfileLink(e.target.value)} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="profile-bio">Bio</Label>
+              <Textarea id="profile-bio" value={profileBio} onChange={(e) => setProfileBio(e.target.value)} className="min-h-[120px]" />
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl border border-[hsl(var(--stroke-soft))] p-4">
+              <div className="space-y-1">
+                <p className="font-medium text-foreground">Privacidade do perfil</p>
+                <p className="text-sm text-muted-foreground">
+                  Ative para deixar seu perfil privado.
+                </p>
+              </div>
+              <Switch checked={profilePrivate} onCheckedChange={setProfilePrivate} />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveProfile} disabled={isUpdating}>
+              {isUpdating ? "Salvando..." : "Salvar alteracoes"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
