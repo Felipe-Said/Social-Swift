@@ -19,7 +19,7 @@ const contacts = [
 
 export function RightRail() {
   return (
-    <aside className="sticky top-[72px] hidden h-[calc(100vh-88px)] w-[320px] shrink-0 overflow-y-auto pr-2 xl:block">
+    <aside className="sticky top-[72px] hidden w-[320px] shrink-0 self-start pr-2 xl:block">
       <div className="space-y-4 pb-6">
         <div className="fb-card p-4">
           <h3 className="mb-3 text-[17px] font-semibold text-text">Seus atalhos</h3>
