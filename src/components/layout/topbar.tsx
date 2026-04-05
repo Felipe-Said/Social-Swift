@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Bell, MessageCircle, User, Menu, Home, PlaySquare, Store, Users, Grid3X3 } from "lucide-react";
+import { Search, Bell, MessageCircle, User, Menu, Home, PlaySquare, Store, Users } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,8 +82,10 @@ export function Topbar({ onMenuClick }: TopbarProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="hidden rounded-full bg-[hsl(var(--accent))] lg:flex">
-          <Grid3X3 className="h-5 w-5" />
+        <Button asChild variant="ghost" size="icon" className="hidden rounded-full bg-[hsl(var(--accent))] lg:flex">
+          <Link to="/app/social/grupos">
+            <Users className="h-5 w-5" />
+          </Link>
         </Button>
         <Button variant="ghost" size="icon" className="hidden rounded-full bg-[hsl(var(--accent))] lg:flex">
           <MessageCircle className="h-5 w-5" />

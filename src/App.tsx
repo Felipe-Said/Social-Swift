@@ -29,6 +29,7 @@ import SearchPage from "./pages/social/SearchPage";
 import MessagesPage from "./pages/social/MessagesPage";
 import FriendsPage from "./pages/social/FriendsPage";
 import RequestsPage from "./pages/social/RequestsPage";
+import GroupsPage from "./pages/social/GroupsPage";
 
 // Business Pages
 import Dashboard from "./pages/Dashboard";
@@ -116,6 +117,7 @@ const App = () => {
                 <Route path="chats" element={<MessagesPage />} />
                 <Route path="amigos" element={<FriendsPage />} />
                 <Route path="solicitacoes" element={<RequestsPage />} />
+                <Route path="grupos" element={<GroupsPage />} />
                 <Route path="perfil/:id" element={<div className="p-6 text-center text-text">Perfil em breve...</div>} />
                 <Route path="servicos" element={<div className="p-6 text-center text-text">Serviços em breve...</div>} />
               </Route>
