@@ -31,11 +31,7 @@ export function FeedCard({ post }: FeedCardProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
       <GlassCard className="overflow-hidden p-0">
         <div className="flex items-center justify-between p-4 pb-2">
           <div className="flex items-center gap-3">
@@ -45,14 +41,8 @@ export function FeedCard({ post }: FeedCardProps) {
             </Avatar>
             <div>
               <div className="flex items-center gap-1">
-                <span className="text-[15px] font-semibold text-text">
-                  {post.author.name}
-                </span>
-                {post.author.verified && (
-                  <Badge className="h-4 w-4 rounded-full bg-brand p-0 text-white">
-                    ✓
-                  </Badge>
-                )}
+                <span className="text-[15px] font-semibold text-text">{post.author.name}</span>
+                {post.author.verified && <Badge className="h-4 w-4 rounded-full bg-brand p-0 text-white">✓</Badge>}
               </div>
               <div className="flex items-center gap-2 text-xs text-text-dim">
                 <span>@{post.author.username}</span>
@@ -69,9 +59,7 @@ export function FeedCard({ post }: FeedCardProps) {
 
         <div className="px-4 pb-3">
           <p className="text-[15px] leading-relaxed text-text">
-            {showFullContent || post.content.length <= 150
-              ? post.content
-              : `${post.content.slice(0, 150)}...`}
+            {showFullContent || post.content.length <= 150 ? post.content : `${post.content.slice(0, 150)}...`}
             {post.content.length > 150 && (
               <button
                 onClick={() => setShowFullContent(!showFullContent)}
@@ -94,16 +82,9 @@ export function FeedCard({ post }: FeedCardProps) {
         </div>
 
         {post.media && (
-          <div
-            className="group relative cursor-pointer"
-            onDoubleClick={handleDoubleClick}
-          >
+          <div className="group relative cursor-pointer" onDoubleClick={handleDoubleClick}>
             {post.media.type === "image" ? (
-              <img
-                src={post.media.url}
-                alt="Post media"
-                className="max-h-96 w-full object-cover"
-              />
+              <img src={post.media.url} alt="Post media" className="max-h-96 w-full object-cover" />
             ) : (
               <div className="relative">
                 <img
@@ -136,28 +117,25 @@ export function FeedCard({ post }: FeedCardProps) {
         )}
 
         <div className="space-y-3 p-4">
-          <div className="flex items-center justify-between border-b border-[hsl(var(--stroke-soft))] pb-3 text-sm text-text-dim">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[hsl(var(--stroke-soft))] pb-3 text-sm text-text-dim">
             <span>{post.likes} curtidas</span>
-            <span>{post.comments} comentarios · {post.shares} compartilhamentos</span>
+            <span>
+              {post.comments} comentarios • {post.shares} compartilhamentos
+            </span>
           </div>
 
-          <div className="grid grid-cols-4 gap-1">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleLike}
               className={cn(
-                "h-10 items-center justify-center gap-2 rounded-lg px-2 py-1 whitespace-nowrap",
+                "h-10 items-center justify-start gap-2 rounded-lg px-3 py-1 whitespace-nowrap sm:justify-center",
                 post.isLiked && "text-status-like"
               )}
             >
               <motion.div whileTap={{ scale: 0.8 }} transition={{ duration: 0.1 }}>
-                <Heart
-                  className={cn(
-                    "h-5 w-5",
-                    post.isLiked && "fill-current"
-                  )}
-                />
+                <Heart className={cn("h-5 w-5", post.isLiked && "fill-current")} />
               </motion.div>
               <span className="text-sm font-medium">Curtir</span>
             </Button>
@@ -165,7 +143,7 @@ export function FeedCard({ post }: FeedCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="h-10 items-center justify-center gap-2 rounded-lg px-2 py-1 text-text-dim hover:text-text whitespace-nowrap"
+              className="h-10 items-center justify-start gap-2 rounded-lg px-3 py-1 text-text-dim hover:text-text whitespace-nowrap sm:justify-center"
             >
               <MessageCircle className="h-5 w-5" />
               <span className="text-sm font-medium">Comentar</span>
@@ -174,7 +152,7 @@ export function FeedCard({ post }: FeedCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="h-10 items-center justify-center gap-2 rounded-lg px-2 py-1 text-text-dim hover:text-text whitespace-nowrap"
+              className="h-10 items-center justify-start gap-2 rounded-lg px-3 py-1 text-text-dim hover:text-text whitespace-nowrap sm:justify-center"
             >
               <Share className="h-5 w-5" />
               <span className="text-sm font-medium">Compartilhar</span>
@@ -185,16 +163,11 @@ export function FeedCard({ post }: FeedCardProps) {
               size="sm"
               onClick={handleSave}
               className={cn(
-                "h-10 items-center justify-center gap-2 rounded-lg px-2 py-1 whitespace-nowrap",
+                "h-10 items-center justify-start gap-2 rounded-lg px-3 py-1 whitespace-nowrap sm:justify-center",
                 post.isSaved && "text-brand"
               )}
             >
-              <Bookmark
-                className={cn(
-                  "h-4 w-4",
-                  post.isSaved && "fill-current"
-                )}
-              />
+              <Bookmark className={cn("h-4 w-4", post.isSaved && "fill-current")} />
               <span className="text-sm font-medium">Salvar</span>
             </Button>
           </div>
