@@ -1,356 +1,331 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
   ArrowUpRight,
-  BadgeDollarSign,
-  CalendarRange,
+  CalendarDays,
+  CheckCircle2,
   ChevronRight,
-  Download,
-  LayoutGrid,
+  Clock3,
+  FolderKanban,
   MoreHorizontal,
-  Sparkles,
-  TrendingDown,
+  Plus,
+  Target,
   TrendingUp,
-  Users,
 } from "lucide-react";
 import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
+  PolarAngleAxis,
+  PolarGrid,
+  Radar,
+  RadarChart,
   ResponsiveContainer,
   XAxis,
   YAxis,
 } from "recharts";
 
-const summaryCards = [
-  {
-    title: "Receita total",
-    value: "R$ 184.250",
-    delta: "+12.4%",
-    helper: "Comparado ao ultimo mes",
-    icon: BadgeDollarSign,
-  },
-  {
-    title: "Novos clientes",
-    value: "1.248",
-    delta: "+8.1%",
-    helper: "Crescimento semanal",
-    icon: Users,
-  },
-  {
-    title: "Pedidos ativos",
-    value: "326",
-    delta: "-2.3%",
-    helper: "Desde ontem",
-    icon: LayoutGrid,
-  },
-  {
-    title: "Conversao",
-    value: "8.42%",
-    delta: "+1.7%",
-    helper: "Ultimos 30 dias",
-    icon: Sparkles,
-  },
+const quickTasks = [
+  { title: "Review metrics", done: true },
+  { title: "Update roadmap", done: true },
+  { title: "Schedule standup", done: false },
+  { title: "Check payouts", done: false },
 ];
 
-const audienceCards = [
-  { label: "Visitantes", value: "24.8k", percent: 84 },
-  { label: "Leads", value: "6.3k", percent: 61 },
-  { label: "Compradores", value: "1.9k", percent: 47 },
+const projects = [
+  { name: "Social Swift App", detail: "12 tasks pending", progress: 72 },
+  { name: "Said LAB Store", detail: "8 tasks pending", progress: 58 },
+  { name: "Marketplace Revamp", detail: "4 tasks pending", progress: 91 },
 ];
 
-const conversionBars = [
-  { month: "Jan", value: 82 },
-  { month: "Fev", value: 87 },
-  { month: "Mar", value: 73 },
-  { month: "Abr", value: 91 },
-  { month: "Mai", value: 84 },
+const analyticsBars = [
+  { month: "Jan%", value: 84 },
+  { month: "Feb%", value: 89 },
+  { month: "Mar%", value: 78 },
+  { month: "Apr%", value: 92 },
+  { month: "May%", value: 85 },
 ];
 
-const performanceData = [
-  { metric: "Engagement", value: 82 },
-  { metric: "Conversao", value: 74 },
-  { metric: "Satisfacao", value: 88 },
-  { metric: "Conteudo", value: 79 },
-  { metric: "Performance", value: 67 },
+const metricsRadar = [
+  { metric: "Engagement", value: 84 },
+  { metric: "Conversion Rate", value: 74 },
+  { metric: "User Satisfaction", value: 88 },
+  { metric: "Content Quality", value: 82 },
+  { metric: "Performance", value: 69 },
 ];
 
-const activityList = [
-  {
-    title: "Campanha Social Swift Pro",
-    subtitle: "Atualizada ha 12 min",
-    value: "R$ 18.420",
-    trend: "up",
-  },
-  {
-    title: "Checkout do Marketplace",
-    subtitle: "Melhoria no funil de compra",
-    value: "R$ 9.310",
-    trend: "up",
-  },
-  {
-    title: "Projeto Said LAB Store",
-    subtitle: "Oscilacao de conversao hoje",
-    value: "R$ 4.180",
-    trend: "down",
-  },
+const insights = [
+  { label: "Total Revenue", value: "$128,420", helper: "+12.5% from last month" },
+  { label: "Task Completion", value: "86%", helper: "14 tasks completed today" },
 ];
 
-const tasks = [
-  { title: "Atualizar criativos da campanha", progress: 74 },
-  { title: "Revisar fluxo de saque", progress: 58 },
-  { title: "Finalizar integracao de analytics", progress: 91 },
+const activityMapDots = [
+  { x: "18%", y: "30%", size: "h-2 w-2" },
+  { x: "28%", y: "52%", size: "h-3 w-3" },
+  { x: "46%", y: "36%", size: "h-2.5 w-2.5" },
+  { x: "61%", y: "46%", size: "h-2 w-2" },
+  { x: "74%", y: "29%", size: "h-3 w-3" },
+  { x: "83%", y: "59%", size: "h-2.5 w-2.5" },
 ];
+
+const calendarDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+const calendarNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+
+function SurfaceCard({
+  title,
+  description,
+  action,
+  children,
+  className = "",
+}: {
+  title: string;
+  description?: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <Card className={`rounded-[24px] border-white/5 bg-[#161718] text-white shadow-none ${className}`}>
+      <CardHeader className="flex flex-row items-start justify-between gap-4 pb-3">
+        <div>
+          <CardTitle className="text-base font-semibold text-white">{title}</CardTitle>
+          {description ? <CardDescription className="mt-1 text-sm text-white/45">{description}</CardDescription> : null}
+        </div>
+        {action}
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
+  );
+}
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-[#0f0f10] px-3 py-4 md:px-6 lg:px-0 lg:py-6">
+    <div className="min-h-screen bg-[#101112] px-3 py-4 md:px-6 lg:px-0 lg:py-6">
       <div className="mx-auto w-full max-w-[1320px] space-y-4">
-        <section className="rounded-[28px] border border-white/5 bg-[linear-gradient(135deg,rgba(31,41,55,0.92)_0%,rgba(17,24,39,0.98)_60%,rgba(9,9,11,1)_100%)] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.28)] md:p-6">
-          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-            <div className="max-w-[720px]">
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/70">
-                <CalendarRange className="h-3.5 w-3.5" />
-                Visao executiva do negocio
-              </div>
-              <h1 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">
-                Admin Dashboard
-              </h1>
-              <p className="mt-2 max-w-[640px] text-sm leading-6 text-white/60 md:text-base">
-                Monitore receita, conversao, performance e atividade operacional do seu negocio em uma unica visao.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Button variant="outline" className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
-                <Download className="mr-2 h-4 w-4" />
-                Exportar
-              </Button>
-              <Button className="rounded-full bg-white text-black hover:bg-white/90">
-                Abrir relatorio
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
+        <div className="flex items-center justify-between px-1">
+          <div>
+            <p className="text-sm text-white/40">Overview</p>
+            <h1 className="mt-1 text-[2rem] font-semibold tracking-tight text-white">Dashboard</h1>
           </div>
+          <Button variant="outline" className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
+            <Plus className="mr-2 h-4 w-4" />
+            Add widget
+          </Button>
+        </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {summaryCards.map((item) => {
-              const Icon = item.icon;
-              const isNegative = item.delta.startsWith("-");
-
-              return (
-                <Card key={item.title} className="rounded-[24px] border-white/5 bg-white/[0.04] text-white shadow-none">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardDescription className="text-sm text-white/55">{item.title}</CardDescription>
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/8">
-                        <Icon className="h-5 w-5 text-white/80" />
+        <div className="grid gap-4 xl:grid-cols-[1.4fr_0.82fr]">
+          <Card className="rounded-[28px] border-white/5 bg-[linear-gradient(135deg,#17191b_0%,#1f2937_55%,#111827_100%)] text-white shadow-none">
+            <CardContent className="p-6">
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                <div className="max-w-[560px]">
+                  <p className="text-sm text-white/45">Overview</p>
+                  <h2 className="mt-2 text-3xl font-semibold leading-tight text-white md:text-4xl">
+                    Evening greetings, Demo
+                  </h2>
+                  <p className="mt-3 text-sm leading-6 text-white/60">
+                    Here is your business snapshot for today. Keep momentum with priorities, analytics and upcoming work.
+                  </p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {insights.map((item) => (
+                    <div key={item.label} className="rounded-[22px] border border-white/8 bg-white/[0.05] p-4">
+                      <p className="text-sm text-white/45">{item.label}</p>
+                      <div className="mt-2 text-2xl font-semibold text-white">{item.value}</div>
+                      <div className="mt-2 flex items-center gap-1 text-xs text-emerald-300">
+                        <TrendingUp className="h-3.5 w-3.5" />
+                        {item.helper}
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-[1.85rem] font-semibold tracking-tight text-white">{item.value}</div>
-                    <div className="mt-3 flex items-center gap-2 text-xs">
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-medium ${
-                          isNegative ? "bg-orange-500/15 text-orange-300" : "bg-emerald-500/15 text-emerald-300"
-                        }`}
-                      >
-                        {isNegative ? <TrendingDown className="h-3.5 w-3.5" /> : <TrendingUp className="h-3.5 w-3.5" />}
-                        {item.delta}
-                      </span>
-                      <span className="text-white/45">{item.helper}</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </section>
-
-        <div className="grid gap-4 xl:grid-cols-[1.45fr_1fr]">
-          <Card className="rounded-[28px] border-white/5 bg-[#151617] text-white shadow-none">
-            <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
-              <div>
-                <CardTitle className="text-lg text-white">Funil de conversao</CardTitle>
-                <CardDescription className="mt-1 text-white/50">
-                  Meta mensal comparada ao desempenho recente
-                </CardDescription>
+                  ))}
+                </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <SurfaceCard
+            title="Quick Tasks"
+            description="Focus items for the next hours"
+            action={
               <Button variant="ghost" size="icon" className="rounded-full bg-white/5 text-white hover:bg-white/10">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-                <div className="rounded-[24px] border border-white/5 bg-black/20 p-4">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-white/50">Meta atingida</p>
-                      <p className="mt-1 text-3xl font-semibold text-white">88.0%</p>
+            }
+          >
+            <div className="space-y-3">
+              {quickTasks.map((task) => (
+                <div key={task.title} className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`flex h-9 w-9 items-center justify-center rounded-full ${task.done ? "bg-emerald-500/15 text-emerald-300" : "bg-white/6 text-white/60"}`}>
+                      {task.done ? <CheckCircle2 className="h-4 w-4" /> : <Clock3 className="h-4 w-4" />}
                     </div>
-                    <div className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/65">Best month: Abr</div>
-                  </div>
-                  <div className="h-[280px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={conversionBars} margin={{ top: 10, right: 0, left: -16, bottom: 0 }}>
-                        <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.08)" />
-                        <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 12 }} />
-                        <YAxis axisLine={false} tickLine={false} tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 12 }} />
-                        <Bar dataKey="value" radius={[18, 18, 18, 18]} barSize={30}>
-                          {conversionBars.map((entry) => (
-                            <Cell
-                              key={entry.month}
-                              fill={entry.month === "Abr" ? "rgba(255,255,255,0.95)" : "rgba(180,192,205,0.72)"}
-                            />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="mt-2 grid grid-cols-3 gap-3">
-                    <div className="rounded-2xl bg-white/[0.03] p-3 text-center">
-                      <div className="text-base font-semibold text-white">88.0%</div>
-                      <div className="text-xs text-white/45">Avg Completion</div>
-                    </div>
-                    <div className="rounded-2xl bg-white/[0.03] p-3 text-center">
-                      <div className="text-base font-semibold text-white">4/5</div>
-                      <div className="text-xs text-white/45">Above Target</div>
-                    </div>
-                    <div className="rounded-2xl bg-white/[0.03] p-3 text-center">
-                      <div className="text-base font-semibold text-white">Abr</div>
-                      <div className="text-xs text-white/45">Best Month</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-[24px] border border-white/5 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_35%),#101112] p-4">
-                  <div className="mb-4">
-                    <h3 className="text-lg font-semibold text-white">Performance Analytics</h3>
-                    <p className="mt-1 text-sm text-white/50">Visao combinada de indicadores chave</p>
-                  </div>
-                  <div className="h-[320px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart data={performanceData} outerRadius="72%">
-                        <PolarGrid stroke="rgba(255,255,255,0.08)" />
-                        <PolarAngleAxis dataKey="metric" tick={{ fill: "rgba(255,255,255,0.55)", fontSize: 12 }} />
-                        <Radar
-                          dataKey="value"
-                          stroke="rgba(255,255,255,0.88)"
-                          fill="rgba(255,255,255,0.24)"
-                          strokeWidth={2.5}
-                        />
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-sm leading-6 text-white/55">
-                    Tip: melhore a performance otimizando conteudo, velocidade de checkout e experiencia de navegacao.
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid gap-4">
-            <Card className="rounded-[28px] border-white/5 bg-[#151617] text-white shadow-none">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-white">Audience Overview</CardTitle>
-                <CardDescription className="text-white/50">Acompanhe os principais pontos do funil</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                {audienceCards.map((item) => (
-                  <div key={item.label} className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-white/55">{item.label}</span>
-                      <span className="font-medium text-white">{item.value}</span>
-                    </div>
-                    <Progress value={item.percent} className="h-2.5 bg-white/10 [&>div]:bg-white" />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-[28px] border-white/5 bg-[#151617] text-white shadow-none">
-              <CardHeader className="flex flex-row items-start justify-between gap-4 pb-3">
-                <div>
-                  <CardTitle className="text-lg text-white">Atividade recente</CardTitle>
-                  <CardDescription className="text-white/50">Fluxos e projetos em destaque</CardDescription>
-                </div>
-                <Button variant="ghost" size="icon" className="rounded-full bg-white/5 text-white hover:bg-white/10">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {activityList.map((item) => (
-                  <div key={item.title} className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] p-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-white">{item.title}</p>
-                      <p className="mt-1 text-xs text-white/45">{item.subtitle}</p>
-                    </div>
-                    <div className="ml-3 flex items-center gap-2">
-                      <span className="text-sm font-semibold text-white">{item.value}</span>
-                      {item.trend === "up" ? (
-                        <ArrowUpRight className="h-4 w-4 text-emerald-300" />
-                      ) : (
-                        <TrendingDown className="h-4 w-4 text-orange-300" />
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        <div className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
-          <Card className="rounded-[28px] border-white/5 bg-[#151617] text-white shadow-none">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-white">Roadmap operacional</CardTitle>
-              <CardDescription className="text-white/50">Itens acompanhados pela equipe de negocio</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {tasks.map((task) => (
-                <div key={task.title} className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-                  <div className="mb-3 flex items-center justify-between">
                     <span className="text-sm font-medium text-white">{task.title}</span>
-                    <span className="text-sm text-white/55">{task.progress}%</span>
                   </div>
-                  <Progress value={task.progress} className="h-2.5 bg-white/10 [&>div]:bg-white" />
+                  <span className="text-xs text-white/40">{task.done ? "Done" : "Pending"}</span>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </SurfaceCard>
+        </div>
 
-          <Card className="rounded-[28px] border-white/5 bg-[#151617] text-white shadow-none">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg text-white">Resumo rapido</CardTitle>
-              <CardDescription className="text-white/50">Leitura objetiva do momento atual</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-                <p className="text-sm text-white/50">Ticket medio</p>
-                <p className="mt-2 text-2xl font-semibold text-white">R$ 147</p>
+        <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr_0.95fr]">
+          <SurfaceCard title="Calendar" description="This week schedule">
+            <div className="rounded-[22px] border border-white/5 bg-white/[0.03] p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="text-sm font-medium text-white">April 2026</div>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-white/5 text-white hover:bg-white/10">
+                  <CalendarDays className="h-4 w-4" />
+                </Button>
               </div>
-              <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-                <p className="text-sm text-white/50">Retencao</p>
-                <p className="mt-2 text-2xl font-semibold text-white">73%</p>
+              <div className="mb-3 grid grid-cols-7 gap-2 text-center text-xs text-white/40">
+                {calendarDays.map((day) => (
+                  <span key={day}>{day}</span>
+                ))}
               </div>
-              <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-                <p className="text-sm text-white/50">ROI campanhas</p>
-                <p className="mt-2 text-2xl font-semibold text-white">4.8x</p>
+              <div className="grid grid-cols-7 gap-2 text-center text-sm">
+                {calendarNumbers.map((day) => (
+                  <div
+                    key={day}
+                    className={`flex h-9 items-center justify-center rounded-xl ${
+                      day === 14 ? "bg-white text-black" : "bg-white/[0.03] text-white/75"
+                    }`}
+                  >
+                    {day}
+                  </div>
+                ))}
               </div>
-              <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-                <p className="text-sm text-white/50">NPS interno</p>
-                <p className="mt-2 text-2xl font-semibold text-white">64</p>
+            </div>
+          </SurfaceCard>
+
+          <SurfaceCard
+            title="Recent Projects"
+            description="Overview of active development projects"
+            action={
+              <Button variant="ghost" size="icon" className="rounded-full bg-white/5 text-white hover:bg-white/10">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            }
+          >
+            <div className="space-y-3">
+              {projects.map((project) => (
+                <div key={project.name} className="rounded-[22px] border border-white/5 bg-white/[0.03] p-4">
+                  <div className="mb-3 flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/6 text-white/75">
+                        <FolderKanban className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">{project.name}</p>
+                        <p className="text-xs text-white/45">{project.detail}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-white/30" />
+                  </div>
+                  <Progress value={project.progress} className="h-2 bg-white/10 [&>div]:bg-white" />
+                </div>
+              ))}
+            </div>
+          </SurfaceCard>
+
+          <SurfaceCard title="User Activity Map" description="Dashboard Analytics">
+            <div className="relative h-[285px] overflow-hidden rounded-[22px] border border-white/5 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_35%),#111213]">
+              <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,0.8)_1px,transparent_1px)] [background-size:20px_20px]" />
+              <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.03)_100%)]" />
+              {activityMapDots.map((dot, index) => (
+                <span
+                  key={index}
+                  className={`absolute ${dot.size} rounded-full bg-white shadow-[0_0_0_6px_rgba(255,255,255,0.08)]`}
+                  style={{ left: dot.x, top: dot.y }}
+                />
+              ))}
+              <div className="absolute bottom-4 left-4 rounded-2xl border border-white/5 bg-black/25 px-4 py-3">
+                <p className="text-xs text-white/45">Insights</p>
+                <p className="mt-1 text-lg font-semibold text-white">+18.6%</p>
+                <p className="text-xs text-white/45">Weekly active movement</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </SurfaceCard>
+        </div>
+
+        <div className="grid gap-4 xl:grid-cols-[1.18fr_0.82fr]">
+          <SurfaceCard
+            title="Revenue Analytics"
+            description="Total Revenue"
+            action={
+              <Button variant="ghost" size="icon" className="rounded-full bg-white/5 text-white hover:bg-white/10">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            }
+          >
+            <div className="rounded-[22px] border border-white/5 bg-white/[0.03] p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-white/45">Task Completion</p>
+                  <p className="mt-1 text-3xl font-semibold text-white">88.0%</p>
+                </div>
+                <div className="rounded-full bg-white/6 px-3 py-1 text-xs text-white/55">Target 85%</div>
+              </div>
+
+              <div className="h-[290px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={analyticsBars} margin={{ top: 4, right: 0, left: -18, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical />
+                    <XAxis dataKey="month" tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 12 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 12 }} axisLine={false} tickLine={false} />
+                    <Bar dataKey="value" radius={[20, 20, 20, 20]} barSize={31}>
+                      {analyticsBars.map((entry) => (
+                        <Cell key={entry.month} fill="rgba(180,192,205,0.86)" />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="mt-2 grid grid-cols-3 gap-2 sm:gap-4">
+                <div className="text-center">
+                  <div className="text-sm font-medium text-white sm:text-base">88.0%</div>
+                  <div className="text-xs text-white/45">Avg Completion</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-medium text-white sm:text-base">4/5</div>
+                  <div className="text-xs text-white/45">Above Target</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-medium text-white sm:text-base">Apr</div>
+                  <div className="text-xs text-white/45">Best Month</div>
+                </div>
+              </div>
+            </div>
+          </SurfaceCard>
+
+          <SurfaceCard title="Performance Metrics" description="Performance Analytics">
+            <div className="relative overflow-hidden rounded-[22px] border border-white/5 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_35%),#121314] p-4">
+              <div className="pointer-events-none absolute -inset-40 rotate-12 opacity-20 [background-image:radial-gradient(circle,rgba(255,255,255,0.8)_1px,transparent_1px)] [background-size:12px_12px]" />
+              <div className="relative z-10">
+                <div className="mb-4">
+                  <h3 className="text-base font-semibold text-white">Performance Analytics</h3>
+                  <p className="text-sm text-white/45">Key performance indicators and metrics overview</p>
+                </div>
+
+                <div className="h-[330px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart data={metricsRadar} outerRadius="72%">
+                      <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                      <PolarAngleAxis dataKey="metric" tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 12 }} />
+                      <Radar dataKey="value" stroke="rgba(255,255,255,0.92)" fill="rgba(255,255,255,0.24)" strokeWidth={2.5} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="mt-4 rounded-md border border-white/8 p-3">
+                  <p className="text-sm leading-relaxed text-white/50">
+                    Tip: Improve performance by optimizing content delivery, enhancing user experience, and gathering regular feedback.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </SurfaceCard>
         </div>
       </div>
     </div>
