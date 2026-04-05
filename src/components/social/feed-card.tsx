@@ -124,51 +124,51 @@ export function FeedCard({ post }: FeedCardProps) {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="flex items-center justify-between gap-2">
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={handleLike}
               className={cn(
-                "h-10 items-center justify-start gap-2 rounded-lg px-3 py-1 whitespace-nowrap sm:justify-center",
+                "h-10 w-10 rounded-full",
                 post.isLiked && "text-status-like"
               )}
+              aria-label="Curtir"
             >
               <motion.div whileTap={{ scale: 0.8 }} transition={{ duration: 0.1 }}>
                 <Heart className={cn("h-5 w-5", post.isLiked && "fill-current")} />
               </motion.div>
-              <span className="text-sm font-medium">Curtir</span>
             </Button>
 
             <Button
               variant="ghost"
-              size="sm"
-              className="h-10 items-center justify-start gap-2 rounded-lg px-3 py-1 text-text-dim hover:text-text whitespace-nowrap sm:justify-center"
+              size="icon"
+              className="h-10 w-10 rounded-full text-text-dim hover:text-text"
+              aria-label="Comentar"
             >
               <MessageCircle className="h-5 w-5" />
-              <span className="text-sm font-medium">Comentar</span>
             </Button>
 
             <Button
               variant="ghost"
-              size="sm"
-              className="h-10 items-center justify-start gap-2 rounded-lg px-3 py-1 text-text-dim hover:text-text whitespace-nowrap sm:justify-center"
+              size="icon"
+              className="h-10 w-10 rounded-full text-text-dim hover:text-text"
+              aria-label="Compartilhar"
             >
               <Share className="h-5 w-5" />
-              <span className="text-sm font-medium">Compartilhar</span>
             </Button>
 
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={handleSave}
               className={cn(
-                "h-10 items-center justify-start gap-2 rounded-lg px-3 py-1 whitespace-nowrap sm:justify-center",
+                "h-10 w-10 rounded-full",
                 post.isSaved && "text-brand"
               )}
+              aria-label="Salvar"
             >
               <Bookmark className={cn("h-4 w-4", post.isSaved && "fill-current")} />
-              <span className="text-sm font-medium">Salvar</span>
             </Button>
           </div>
         </div>
