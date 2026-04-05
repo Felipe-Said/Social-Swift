@@ -25,10 +25,18 @@ import { AppShell } from "@/components/layout/app-shell";
 import Feed from "./pages/social/Feed";
 import Profile from "./pages/social/Profile";
 import Snaps from "./pages/social/Snaps";
+import SearchPage from "./pages/social/SearchPage";
+import MessagesPage from "./pages/social/MessagesPage";
+import FriendsPage from "./pages/social/FriendsPage";
+import RequestsPage from "./pages/social/RequestsPage";
 
 // Business Pages
 import Dashboard from "./pages/Dashboard";
 import Marketplace from "./pages/Marketplace";
+import WithdrawalsPage from "./pages/business/WithdrawalsPage";
+import SalesPage from "./pages/business/SalesPage";
+import FeesPage from "./pages/business/FeesPage";
+import ProjectsPage from "./pages/business/ProjectsPage";
 
 const queryClient = new QueryClient();
 
@@ -104,20 +112,20 @@ const App = () => {
                 <Route path="feed" element={<Feed />} /> {/* Feed page */}
                 <Route path="perfil" element={<Profile />} /> {/* Profile page */}
                 <Route path="snaps" element={<Snaps />} />
-                <Route path="buscar" element={<div className="p-6 text-center text-text">Busca em breve...</div>} />
-                <Route path="chats" element={<div className="p-6 text-center text-text">Chats em breve...</div>} />
-                <Route path="amigos" element={<div className="p-6 text-center text-text">Amigos em breve...</div>} />
-                <Route path="solicitacoes" element={<div className="p-6 text-center text-text">Solicitações em breve...</div>} />
+                <Route path="buscar" element={<SearchPage />} />
+                <Route path="chats" element={<MessagesPage />} />
+                <Route path="amigos" element={<FriendsPage />} />
+                <Route path="solicitacoes" element={<RequestsPage />} />
                 <Route path="perfil/:id" element={<div className="p-6 text-center text-text">Perfil em breve...</div>} />
                 <Route path="servicos" element={<div className="p-6 text-center text-text">Serviços em breve...</div>} />
               </Route>
 
               {/* Business Routes */}
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="saques" element={<div className="p-6 text-center text-text">Saques em breve...</div>} />
-              <Route path="vendas" element={<div className="p-6 text-center text-text">Vendas em breve...</div>} />
-              <Route path="taxas" element={<div className="p-6 text-center text-text">Taxas em breve...</div>} />
-              <Route path="projetos" element={<div className="p-6 text-center text-text">Projetos em breve...</div>} />
+              <Route path="saques" element={<WithdrawalsPage />} />
+              <Route path="vendas" element={<SalesPage />} />
+              <Route path="taxas" element={<FeesPage />} />
+              <Route path="projetos" element={<ProjectsPage />} />
               <Route path="marketplace" element={<Marketplace />} /> {/* Marketplace page */}
               <Route path="meu-negocio" element={<div className="p-6 text-center text-text">Meu Negócio em breve...</div>} />
               <Route path="carteira" element={<div className="p-6 text-center text-text">Carteira em breve...</div>} />
