@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Topbar } from "./topbar";
 import { Sidebar } from "./sidebar";
 import { BottomTab } from "./bottom-tab";
@@ -10,6 +10,9 @@ import { RightRail } from "./right-rail";
 export function AppShell() {
   const { isAuthenticated } = useAuth();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  const isGroupsRoute = location.pathname.startsWith("/app/social/grupos");
 
   if (!isAuthenticated) {
     return <Outlet />;
@@ -34,7 +37,7 @@ export function AppShell() {
           <Outlet />
         </main>
 
-        <RightRail />
+        {!isGroupsRoute && <RightRail />}
         <BottomTab />
       </div>
 
