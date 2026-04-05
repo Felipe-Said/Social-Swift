@@ -66,11 +66,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 // Theme Initializer Component
 function ThemeInitializer() {
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
 
   useEffect(() => {
-    // Apply theme to document
-    if (theme === 'dark') {
+    document.documentElement.setAttribute("data-theme", theme);
+
+    if (theme === "dark") {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');

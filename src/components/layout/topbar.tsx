@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface TopbarProps {
   onMenuClick?: () => void;
@@ -82,6 +83,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
       </div>
 
       <div className="flex items-center gap-2">
+        <ThemeToggle />
         <Button asChild variant="ghost" size="icon" className="hidden rounded-full bg-[hsl(var(--accent))] lg:flex">
           <Link to="/app/social/grupos">
             <Users className="h-5 w-5" />
