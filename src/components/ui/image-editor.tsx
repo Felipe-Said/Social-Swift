@@ -191,13 +191,13 @@ export function ImageEditor({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 backdrop-blur-sm sm:p-4"
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-2 backdrop-blur-sm sm:p-4"
       >
         <motion.div
           initial={{ scale: 0.96, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.96, opacity: 0 }}
-          className="flex h-[calc(100vh-16px)] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-background shadow-2xl sm:h-auto sm:max-h-[92vh]"
+          className="flex h-[calc(100vh-16px)] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-[hsl(var(--surface-solid))] shadow-2xl sm:h-auto sm:max-h-[92vh]"
         >
           <div className="flex items-center justify-between border-b border-border/50 p-4">
             <h2 className="text-lg font-semibold text-text">
@@ -215,7 +215,7 @@ export function ImageEditor({
 
           <div className="flex-1 overflow-y-auto p-4">
             <div className="space-y-4">
-              <div className="relative flex max-h-[42vh] min-h-[260px] items-center justify-center overflow-auto rounded-lg bg-muted/20 sm:max-h-[50vh]">
+              <div className="relative flex max-h-[42vh] min-h-[260px] items-center justify-center overflow-auto rounded-lg bg-black sm:max-h-[50vh]">
                 <ReactCrop
                   crop={crop}
                   onChange={(_, percentCrop) => setCrop(percentCrop)}
@@ -224,7 +224,7 @@ export function ImageEditor({
                   minWidth={minWidth}
                   minHeight={minHeight}
                   circularCrop={circular}
-                  className="max-h-[42vh] sm:max-h-[50vh]"
+                  className="max-h-[42vh] bg-black sm:max-h-[50vh]"
                 >
                   <img
                     ref={imgRef}
