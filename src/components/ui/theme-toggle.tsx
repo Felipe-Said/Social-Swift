@@ -11,7 +11,7 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="relative h-9 w-9 rounded-full hover:bg-opacity-20"
+      className="relative h-10 w-10 rounded-full bg-[hsl(var(--surface-solid)/0.42)] shadow-[inset_0_1px_0_hsl(var(--hairline))]"
       aria-label="Alternar tema"
     >
       <motion.div

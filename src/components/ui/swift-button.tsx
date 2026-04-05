@@ -34,8 +34,8 @@ export function SwiftButton({ mode = "buy", size = "default", className, onClick
           onClick={handleClick}
           size={size}
           className={cn(
-            "gradient-brand btn-pill text-white font-semibold shadow-glow",
-            "hover:shadow-glow-lg transition-all duration-300",
+            "gradient-brand btn-pill border border-white/20 text-white font-semibold",
+            "shadow-[0_18px_38px_hsl(var(--brand)/0.34)] transition-all duration-300 hover:shadow-[0_24px_48px_hsl(var(--brand)/0.42)]",
             "flex items-center gap-2",
             size === "sm" && "text-sm px-3 py-1.5",
             size === "lg" && "text-lg px-6 py-3",

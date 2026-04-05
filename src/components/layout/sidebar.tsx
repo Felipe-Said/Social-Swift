@@ -47,19 +47,19 @@ interface SidebarProps {
 }
 
 export function Sidebar({ className }: SidebarProps) {
-  const [isSocialOpen, setIsSocialOpen] = useState(false);
-  const [isBusinessOpen, setIsBusinessOpen] = useState(false);
+  const [isSocialOpen, setIsSocialOpen] = useState(true);
+  const [isBusinessOpen, setIsBusinessOpen] = useState(true);
   
   return (
     <motion.aside 
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className={cn("glass-strong border-r border-border/50 w-64 min-h-screen p-4 space-y-6 fixed top-0 left-0 z-10", className)}
+      className={cn("glass-strong flex min-h-full w-full flex-col gap-6 rounded-[34px] px-4 py-5 text-text", className)}
     >
       {/* Main Navigation */}
-      <nav className="space-y-2">
-        <div className="px-3 py-2">
-          <h3 className="text-sm font-semibold text-text-dim uppercase tracking-wider">
+      <nav className="flex flex-1 flex-col gap-3">
+        <div className="px-3 py-1">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-text-dim">
             Principal
           </h3>
         </div>
@@ -68,8 +68,8 @@ export function Sidebar({ className }: SidebarProps) {
         <button
           onClick={() => setIsSocialOpen(!isSocialOpen)}
           className={cn(
-            "w-full flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
-            "hover:bg-brand/10 hover:text-brand text-text"
+            "flex w-full items-center gap-3 rounded-[22px] px-3 py-3 text-[15px] font-semibold tracking-[-0.02em] transition-all duration-200",
+            "bg-[hsl(var(--surface-solid)/0.34)] text-text hover:bg-[hsl(var(--surface-solid)/0.56)] hover:text-text"
           )}
         >
           <Home className="h-4 w-4" />
@@ -91,18 +91,18 @@ export function Sidebar({ className }: SidebarProps) {
           transition={{ duration: 0.2 }}
           className="overflow-hidden"
         >
-          <div className="ml-4 space-y-1 border-l border-border/30 pl-3">
+          <div className="ml-3 flex flex-col gap-1.5 border-l border-[hsl(var(--stroke-soft))] pl-3">
             {socialNavItems.map((item) => (
               <NavLink
                 key={item.url}
                 to={item.url}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
-                    "hover:bg-brand/10 hover:text-brand",
+                    "flex items-center gap-3 rounded-[20px] px-3 py-3 text-[15px] font-semibold tracking-[-0.02em] transition-all duration-200",
+                    "hover:bg-[hsl(var(--surface-solid)/0.48)] hover:text-text",
                     isActive 
-                      ? "bg-brand/20 text-brand shadow-sm" 
-                      : "text-text hover:text-brand"
+                      ? "gradient-brand text-white shadow-[0_16px_34px_hsl(var(--brand)/0.3)]" 
+                      : "text-text"
                   )
                 }
               >
@@ -117,8 +117,8 @@ export function Sidebar({ className }: SidebarProps) {
         <button
           onClick={() => setIsBusinessOpen(!isBusinessOpen)}
           className={cn(
-            "w-full flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
-            "hover:bg-brand/10 hover:text-brand text-text"
+            "flex w-full items-center gap-3 rounded-[22px] px-3 py-3 text-[15px] font-semibold tracking-[-0.02em] transition-all duration-200",
+            "bg-[hsl(var(--surface-solid)/0.34)] text-text hover:bg-[hsl(var(--surface-solid)/0.56)] hover:text-text"
           )}
         >
           <Building2 className="h-4 w-4" />
@@ -140,18 +140,18 @@ export function Sidebar({ className }: SidebarProps) {
           transition={{ duration: 0.2 }}
           className="overflow-hidden"
         >
-          <div className="ml-4 space-y-1 border-l border-border/30 pl-3">
+          <div className="ml-3 flex flex-col gap-1.5 border-l border-[hsl(var(--stroke-soft))] pl-3">
             {businessNavItems.map((item) => (
               <NavLink
                 key={item.url}
                 to={item.url}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
-                    "hover:bg-brand/10 hover:text-brand",
+                    "flex items-center gap-3 rounded-[20px] px-3 py-3 text-[15px] font-semibold tracking-[-0.02em] transition-all duration-200",
+                    "hover:bg-[hsl(var(--surface-solid)/0.48)] hover:text-text",
                     isActive 
-                      ? "bg-brand/20 text-brand shadow-sm" 
-                      : "text-text hover:text-brand"
+                      ? "gradient-brand text-white shadow-[0_16px_34px_hsl(var(--brand)/0.3)]" 
+                      : "text-text"
                   )
                 }
               >
@@ -169,11 +169,11 @@ export function Sidebar({ className }: SidebarProps) {
             to={item.url}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 px-3 py-2 rounded-brand text-sm font-medium transition-all duration-200",
-                "hover:bg-brand/10 hover:text-brand",
+                "flex items-center gap-3 rounded-[22px] px-3 py-3 text-[15px] font-semibold tracking-[-0.02em] transition-all duration-200",
+                "hover:bg-[hsl(var(--surface-solid)/0.48)] hover:text-text",
                 isActive 
-                  ? "bg-brand/20 text-brand shadow-sm" 
-                  : "text-text hover:text-brand"
+                  ? "gradient-brand text-white shadow-[0_16px_34px_hsl(var(--brand)/0.3)]" 
+                  : "text-text"
               )
             }
           >
@@ -184,7 +184,7 @@ export function Sidebar({ className }: SidebarProps) {
       </nav>
 
       {/* Swift Coin Price */}
-      <SwiftCoinPrice />
+      <SwiftCoinPrice className="mt-auto" />
     </motion.aside>
   );
 }

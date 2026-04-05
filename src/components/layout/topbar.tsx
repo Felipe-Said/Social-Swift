@@ -8,7 +8,7 @@ import { SwiftButton } from "@/components/ui/swift-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/stores/auth";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -27,79 +27,58 @@ export function Topbar({ onMenuClick }: TopbarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="glass-strong border-b border-border/50 px-4 lg:px-6 h-14 flex items-center justify-between sticky top-0 z-50"
+      className="glass-strong sticky top-0 z-50 flex h-16 items-center justify-between rounded-[30px] px-4 lg:px-6"
     >
-      {/* Left Section */}
       <div className="flex items-center gap-4">
-        {/* Mobile Menu Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onMenuClick}
-          className="lg:hidden"
-        >
+        <Button variant="ghost" size="icon" onClick={onMenuClick} className="lg:hidden">
           <Menu className="h-5 w-5" />
         </Button>
 
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 gradient-brand rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">S</span>
+        <div className="flex items-center gap-3">
+          <div className="gradient-brand flex h-10 w-10 items-center justify-center rounded-[16px] shadow-[0_16px_32px_hsl(var(--brand)/0.28)]">
+            <span className="text-sm font-bold text-white">S</span>
           </div>
-          <span className="hidden sm:block font-bold text-lg text-text">Social Swift</span>
+          <div className="hidden sm:block">
+            <p className="ios-caption uppercase tracking-[0.18em]">Apple Style UI</p>
+            <p className="ios-title text-lg font-semibold text-text">Social Swift</p>
+          </div>
         </div>
       </div>
 
-      {/* Center Section - Search */}
-      <div className="flex-1 max-w-md mx-4 hidden md:block">
+      <div className="mx-4 hidden max-w-md flex-1 md:block">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-text-dim" />
+          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-dim" />
           <Input
-            placeholder="Buscar usuários, posts, produtos..."
+            placeholder="Buscar usuarios, posts e produtos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 glass border-border/30 focus:border-brand focus:ring-1 focus:ring-brand"
+            className="pl-11"
           />
         </div>
       </div>
 
-      {/* Right Section */}
       <div className="flex items-center gap-2">
-        {/* Buy Swift Button */}
         <SwiftButton size="sm" className="hidden sm:flex" />
-
-        {/* Theme Toggle */}
         <ThemeToggle />
 
-        {/* Notifications */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative"
-        >
+        <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-4 w-4" />
-          <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-status-like text-white text-xs flex items-center justify-center p-0">
+          <Badge className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-status-like p-0 text-[10px] text-white">
             3
           </Badge>
         </Button>
 
-        {/* Help */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="hidden sm:flex"
-        >
+        <Button variant="ghost" size="icon" className="hidden sm:flex">
           <HelpCircle className="h-4 w-4" />
         </Button>
 
-        {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-              <Avatar className="h-8 w-8">
+            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+              <Avatar className="h-9 w-9 ring-1 ring-[hsl(var(--stroke-soft))]">
                 <AvatarImage src={user?.avatar} alt={user?.name} />
                 <AvatarFallback>
                   {user?.name?.charAt(0) || <User className="h-4 w-4" />}
@@ -107,13 +86,11 @@ export function Topbar({ onMenuClick }: TopbarProps) {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 glass-strong border-border" align="end" forceMount>
+          <DropdownMenuContent className="glass-strong w-56 border-[hsl(var(--stroke-soft))]" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col gap-1">
                 <p className="text-sm font-medium leading-none">{user?.name}</p>
-                <p className="text-xs leading-none text-text-dim">
-                  @{user?.username}
-                </p>
+                <p className="text-xs leading-none text-text-dim">@{user?.username}</p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -123,9 +100,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
             <DropdownMenuItem asChild>
               <Link to="/app/carteira">Carteira</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              Configurações
-            </DropdownMenuItem>
+            <DropdownMenuItem>Configuracoes</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={signOut} className="text-status-like">
               Sair

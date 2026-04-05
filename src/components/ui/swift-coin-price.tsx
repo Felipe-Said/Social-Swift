@@ -29,12 +29,15 @@ export function SwiftCoinPrice({ className }: SwiftCoinPriceProps) {
 
   return (
     <GlassCard className={className}>
-      <div className="p-4 space-y-3">
+      <div className="space-y-4 p-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-text">Swift Coin</h3>
-          <div className={`flex items-center gap-1 text-xs ${
+          <div>
+            <p className="ios-caption uppercase tracking-[0.18em]">Asset</p>
+            <h3 className="text-sm font-semibold text-text">Swift Coin</h3>
+          </div>
+          <div className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs ${
             isPositive ? 'text-green-500' : 'text-red-500'
-          }`}>
+          } ${isPositive ? 'bg-green-500/12' : 'bg-red-500/12'}`}>
             {isPositive ? (
               <TrendingUp className="h-3 w-3" />
             ) : (
@@ -45,7 +48,7 @@ export function SwiftCoinPrice({ className }: SwiftCoinPriceProps) {
         </div>
         
         <div className="space-y-1">
-          <div className="text-lg font-bold text-text">
+          <div className="ios-title text-[1.35rem] font-semibold text-text">
             {price.toFixed(4)} USDT
           </div>
           <div className="text-xs text-text-dim">

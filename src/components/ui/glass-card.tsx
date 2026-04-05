@@ -12,7 +12,7 @@ export function GlassCard({ children, className, strong = false, hover = false }
   return (
     <div 
       className={cn(
-        "glass",
+        "glass overflow-hidden",
         strong && "glass-strong",
         hover && "hover-lift",
         className
