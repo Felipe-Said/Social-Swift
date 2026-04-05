@@ -8,10 +8,92 @@ export default function Dashboard() {
     const iframe = iframeRef.current;
     if (!iframe) return;
 
+    const hideChrome = (iframeDocument: Document) => {
+      const injectedStyle = iframeDocument.createElement("style");
+      injectedStyle.setAttribute("data-social-swift-dashboard-cleanup", "true");
+      injectedStyle.textContent = `
+        header,
+        aside,
+        nav[aria-label*="breadcrumb" i],
+        [aria-label*="breadcrumb" i] {
+          display: none !important;
+        }
+
+        html,
+        body {
+          overflow-x: hidden !important;
+        }
+
+        body > div,
+        body > section,
+        body > main,
+        main {
+          max-width: none !important;
+        }
+
+        main {
+          width: 100% !important;
+          margin: 0 !important;
+          padding-top: 0 !important;
+        }
+      `;
+
+      iframeDocument.head.appendChild(injectedStyle);
+
+      const hideElement = (element: Element | null) => {
+        if (!(element instanceof HTMLElement)) return;
+        element.style.setProperty("display", "none", "important");
+      };
+
+      const normalizeText = (value: string) => value.replace(/\s+/g, " ").trim().toLowerCase();
+
+      const findElementByText = (text: string) => {
+        const target = normalizeText(text);
+
+        return Array.from(iframeDocument.querySelectorAll("body *")).find((element) => {
+          const currentText = normalizeText(element.textContent ?? "");
+          if (currentText !== target) return false;
+
+          const rect = element.getBoundingClientRect();
+          return rect.top < 360 && rect.width < 320 && rect.height < 120;
+        });
+      };
+
+      const hideClosestContainer = (element: Element | undefined, maxWidth: number) => {
+        let current = element;
+
+        while (current && current !== iframeDocument.body) {
+          const rect = current.getBoundingClientRect();
+          if (rect.width > 0 && rect.width <= maxWidth && rect.height <= 220) {
+            hideElement(current);
+            return;
+          }
+
+          current = current.parentElement ?? undefined;
+        }
+      };
+
+      iframeDocument.querySelectorAll("header, aside").forEach((element) => hideElement(element));
+      hideClosestContainer(findElementByText("Dashboard"), 360);
+      hideClosestContainer(findElementByText("Overview"), 420);
+      hideClosestContainer(findElementByText("AI Assistant"), 420);
+
+      const mainElement = iframeDocument.querySelector("main");
+      if (mainElement instanceof HTMLElement) {
+        mainElement.style.setProperty("width", "100%", "important");
+        mainElement.style.setProperty("max-width", "none", "important");
+        mainElement.style.setProperty("margin", "0", "important");
+      }
+    };
+
     const updateHeight = () => {
       try {
         const iframeDocument = iframe.contentDocument || iframe.contentWindow?.document;
         if (!iframeDocument) return;
+
+        if (!iframeDocument.querySelector("[data-social-swift-dashboard-cleanup]")) {
+          hideChrome(iframeDocument);
+        }
 
         const nextHeight = Math.max(
           iframeDocument.documentElement.scrollHeight,
