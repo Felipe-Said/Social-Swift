@@ -45,6 +45,8 @@
     --hairline: 214 16% 85%;
     --stroke-soft: 214 16% 85%;
     --stroke-strong: 214 12% 79%;
+    --sidebar-bg: 0 0% 100%;
+    --sidebar-active: 214 31% 94%;
     --shadow-color: 220 18% 18%;
     --shadow: 0 1px 2px hsl(var(--shadow-color) / 0.06), 0 2px 12px hsl(var(--shadow-color) / 0.04);
     --shadow-elevated: 0 8px 24px hsl(var(--shadow-color) / 0.08);
@@ -93,6 +95,8 @@
     --hairline: 220 10% 23%;
     --stroke-soft: 220 10% 23%;
     --stroke-strong: 220 10% 28%;
+    --sidebar-bg: 0 0% 7%;
+    --sidebar-active: 0 0% 9%;
     --shadow-color: 220 40% 3%;
     --shadow: 0 1px 2px hsl(var(--shadow-color) / 0.2), 0 6px 20px hsl(var(--shadow-color) / 0.18);
     --shadow-elevated: 0 12px 36px hsl(var(--shadow-color) / 0.24);
@@ -141,6 +145,8 @@
       --hairline: 0 0% 88%;
       --stroke-soft: 0 0% 88%;
       --stroke-strong: 0 0% 84%;
+      --sidebar-bg: 0 0% 100%;
+      --sidebar-active: 0 0% 94%;
       --shadow: none;
       --shadow-elevated: none;
       --radius: 14px;
@@ -166,6 +172,8 @@
       --hairline: 0 0% 14%;
       --stroke-soft: 0 0% 14%;
       --stroke-strong: 0 0% 16%;
+      --sidebar-bg: 0 0% 7%;
+      --sidebar-active: 0 0% 9%;
       --shadow: none;
       --shadow-elevated: none;
       --radius: 14px;

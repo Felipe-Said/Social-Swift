@@ -57,7 +57,7 @@ export function Sidebar({ className }: SidebarProps) {
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       className={cn(
-        "flex min-h-full w-full flex-col gap-2 bg-[#111111] px-2 py-4 shadow-none lg:sticky lg:top-[72px] lg:min-h-[calc(100vh-88px)] lg:rounded-none lg:border-none lg:bg-[#111111]",
+        "flex min-h-full w-full flex-col gap-2 bg-[hsl(var(--sidebar-bg))] px-2 py-4 shadow-none lg:sticky lg:top-[72px] lg:min-h-[calc(100vh-88px)] lg:rounded-none lg:border-none lg:bg-[hsl(var(--sidebar-bg))]",
         className
       )}
     >
@@ -67,7 +67,7 @@ export function Sidebar({ className }: SidebarProps) {
           className={({ isActive }) =>
             cn(
               "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-[hsl(var(--accent))]",
-              isActive && "bg-[#181818]"
+              isActive && "bg-[hsl(var(--sidebar-active))]"
             )
           }
         >
@@ -103,7 +103,9 @@ export function Sidebar({ className }: SidebarProps) {
                 className={({ isActive }) =>
                   cn(
                     "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors",
-                    isActive ? "bg-[#181818] text-text" : "text-text hover:bg-[hsl(var(--accent))]"
+                    isActive
+                      ? "bg-[hsl(var(--sidebar-active))] text-text"
+                      : "text-text hover:bg-[hsl(var(--accent))]"
                   )
                 }
               >
@@ -139,7 +141,9 @@ export function Sidebar({ className }: SidebarProps) {
                 className={({ isActive }) =>
                   cn(
                     "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors",
-                    isActive ? "bg-[#181818] text-text" : "text-text hover:bg-[hsl(var(--accent))]"
+                    isActive
+                      ? "bg-[hsl(var(--sidebar-active))] text-text"
+                      : "text-text hover:bg-[hsl(var(--accent))]"
                   )
                 }
               >
@@ -158,7 +162,9 @@ export function Sidebar({ className }: SidebarProps) {
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors",
-                  isActive ? "bg-[#181818] text-text" : "text-text hover:bg-[hsl(var(--accent))]"
+                  isActive
+                    ? "bg-[hsl(var(--sidebar-active))] text-text"
+                    : "text-text hover:bg-[hsl(var(--accent))]"
                 )
               }
             >
