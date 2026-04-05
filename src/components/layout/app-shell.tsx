@@ -20,13 +20,13 @@ export function AppShell() {
       <Topbar onMenuClick={() => setIsMobileSidebarOpen(true)} />
 
       <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
-        <SheetContent side="left" className="w-[308px] border-none bg-[hsl(var(--surface-solid))] p-0 shadow-none">
+        <SheetContent side="left" className="w-[308px] border-none bg-[#111111] p-0 shadow-none">
           <Sidebar />
         </SheetContent>
       </Sheet>
 
       <div className="fb-shell mx-auto flex w-full max-w-[1920px] gap-0 px-0 lg:px-4">
-        <div className="hidden lg:block lg:w-[360px] lg:shrink-0 lg:pr-4">
+        <div className="hidden bg-[#111111] lg:block lg:w-[360px] lg:shrink-0 lg:pr-4">
           <Sidebar />
         </div>
 

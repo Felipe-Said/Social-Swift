@@ -68,9 +68,9 @@
 
     --background: 0 0% 9%;
     --foreground: 0 0% 95%;
-    --card: 220 13% 18%;
+    --card: 0 0% 7%;
     --card-foreground: 0 0% 95%;
-    --popover: 220 13% 18%;
+    --popover: 0 0% 7%;
     --popover-foreground: 0 0% 95%;
     --primary: 214 89% 58%;
     --primary-foreground: 0 0% 100%;
@@ -86,10 +86,10 @@
     --input: 220 13% 24%;
     --ring: 214 89% 58%;
 
-    --surface: 220 13% 18%;
-    --surface-strong: 220 13% 18%;
-    --surface-solid: 220 13% 18%;
-    --surface-elevated: 220 13% 20%;
+    --surface: 0 0% 7%;
+    --surface-strong: 0 0% 7%;
+    --surface-solid: 0 0% 7%;
+    --surface-elevated: 0 0% 7%;
     --hairline: 220 10% 23%;
     --stroke-soft: 220 10% 23%;
     --stroke-strong: 220 10% 28%;
