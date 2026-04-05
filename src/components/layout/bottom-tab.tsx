@@ -18,14 +18,14 @@ export function BottomTab() {
     <motion.div 
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed bottom-4 left-4 right-4 z-50 lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface-solid))] lg:hidden"
     >
-      <div className="glass-strong rounded-[30px] px-4 py-2.5">
+      <div className="px-2 py-2">
         <div className="flex items-center justify-around">
           {tabItems.map((item) => {
             if (item.isSwift) {
               return (
-                <div key="swift" className="relative -top-4">
+                <div key="swift" className="relative">
                   <SwiftButton size="sm" />
                 </div>
               );
@@ -37,10 +37,10 @@ export function BottomTab() {
                 to={item.url}
                 className={({ isActive }) =>
                   cn(
-                    "flex min-w-[56px] flex-col items-center gap-1 rounded-[18px] px-3 py-2 transition-all duration-200",
+                    "flex min-w-[56px] flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all duration-200",
                     isActive
-                      ? "bg-[hsl(var(--surface-solid)/0.58)] text-brand shadow-[inset_0_1px_0_hsl(var(--hairline))]"
-                      : "text-text-dim hover:bg-[hsl(var(--surface-solid)/0.4)] hover:text-text"
+                      ? "text-text"
+                      : "text-text-dim hover:text-text"
                   )
                 }
               >
