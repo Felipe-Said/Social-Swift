@@ -147,7 +147,7 @@ export function FeedCard({ post }: FeedCardProps) {
               size="sm"
               onClick={handleLike}
               className={cn(
-                "h-9 justify-center rounded-lg px-2 py-1",
+                "h-10 items-center justify-center gap-2 rounded-lg px-2 py-1 whitespace-nowrap",
                 post.isLiked && "text-status-like"
               )}
             >
@@ -165,7 +165,7 @@ export function FeedCard({ post }: FeedCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="h-9 justify-center rounded-lg px-2 py-1 text-text-dim hover:text-text"
+              className="h-10 items-center justify-center gap-2 rounded-lg px-2 py-1 text-text-dim hover:text-text whitespace-nowrap"
             >
               <MessageCircle className="h-5 w-5" />
               <span className="text-sm font-medium">Comentar</span>
@@ -174,7 +174,7 @@ export function FeedCard({ post }: FeedCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="h-9 justify-center rounded-lg px-2 py-1 text-text-dim hover:text-text"
+              className="h-10 items-center justify-center gap-2 rounded-lg px-2 py-1 text-text-dim hover:text-text whitespace-nowrap"
             >
               <Share className="h-5 w-5" />
               <span className="text-sm font-medium">Compartilhar</span>
@@ -185,7 +185,7 @@ export function FeedCard({ post }: FeedCardProps) {
               size="sm"
               onClick={handleSave}
               className={cn(
-                "h-9 justify-center rounded-lg px-2 py-1",
+                "h-10 items-center justify-center gap-2 rounded-lg px-2 py-1 whitespace-nowrap",
                 post.isSaved && "text-brand"
               )}
             >
