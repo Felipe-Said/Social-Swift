@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/stores/auth";
+import { useFeed } from "@/stores/feed";
+import { FeedCard } from "@/components/social/feed-card";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
@@ -20,6 +22,7 @@ import {
   Grid3X3,
   Play,
   User,
+  Bookmark,
   ImageIcon,
   Settings,
   Briefcase,
@@ -30,6 +33,7 @@ import {
 
 export default function Profile() {
   const { user, updateProfile } = useAuth();
+  const { posts, loadFeed, isLoading } = useFeed();
   const [activeTab, setActiveTab] = useState("posts");
   const [bannerImage, setBannerImage] = useState(user?.banner || "");
   const [avatarImage, setAvatarImage] = useState(user?.avatar || "");
@@ -52,6 +56,10 @@ export default function Profile() {
     setProfileLink(user?.profileLink || "");
     setProfilePrivate(Boolean(user?.isPrivate));
   }, [user]);
+
+  useEffect(() => {
+    loadFeed();
+  }, [loadFeed]);
 
   const stats = {
     posts: user?.posts ?? 0,
@@ -107,8 +115,11 @@ export default function Profile() {
   const tabs = [
     { id: "posts", label: "Posts", icon: Grid3X3 },
     { id: "videos", label: "Videos", icon: Play },
+    { id: "saved", label: "Salvos", icon: Bookmark },
     { id: "tagged", label: "Marcacoes", icon: User },
   ];
+
+  const savedPosts = posts.filter((post) => post.isSaved);
 
   return (
     <div className="min-h-screen bg-background">
@@ -313,20 +324,42 @@ export default function Profile() {
             </div>
 
             <div className="mt-6 min-h-96">
-              <div className="flex flex-col items-center justify-center py-20">
-                <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
-                  <ImageIcon className="h-12 w-12 text-gray-400" />
+              {activeTab === "saved" ? (
+                savedPosts.length > 0 ? (
+                  <div className="space-y-4">
+                    {savedPosts.map((post) => (
+                      <FeedCard key={post.id} post={post} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-20">
+                    <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
+                      <Bookmark className="h-12 w-12 text-gray-400" />
+                    </div>
+                    <h3 className="mb-2 text-center text-xl font-semibold text-white">
+                      Nenhum post salvo ainda
+                    </h3>
+                    <p className="max-w-md text-center text-gray-400">
+                      Os posts que voce salvar aparecerao aqui no seu perfil.
+                    </p>
+                  </div>
+                )
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
+                    <ImageIcon className="h-12 w-12 text-gray-400" />
+                  </div>
+                  <h3 className="mb-2 text-center text-xl font-semibold text-white">
+                    {activeTab === "videos" ? "Ainda nao ha nenhum video" : "Ainda nao ha nenhum post"}
+                  </h3>
+                  <p className="max-w-md text-center text-gray-400">
+                    Quando voce compartilhar fotos e videos, eles aparecerao no seu perfil.
+                  </p>
+                  <Button className="mt-6 bg-blue-600 text-white hover:bg-blue-700">
+                    Compartilhar sua primeira foto
+                  </Button>
                 </div>
-                <h3 className="mb-2 text-center text-xl font-semibold text-white">
-                  Ainda nao ha nenhum post
-                </h3>
-                <p className="max-w-md text-center text-gray-400">
-                  Quando voce compartilhar fotos e videos, eles aparecerao no seu perfil.
-                </p>
-                <Button className="mt-6 bg-blue-600 text-white hover:bg-blue-700">
-                  Compartilhar sua primeira foto
-                </Button>
-              </div>
+              )}
             </div>
           </div>
         </div>

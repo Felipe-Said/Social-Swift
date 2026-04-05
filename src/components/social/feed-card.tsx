@@ -7,13 +7,14 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { useFeed, type Post } from "@/stores/feed";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { toast } from "@/components/ui/use-toast";
 
 interface FeedCardProps {
   post: Post;
 }
 
 export function FeedCard({ post }: FeedCardProps) {
-  const { likePost, savePost } = useFeed();
+  const { likePost, savePost, commentPost, sharePost } = useFeed();
   const [showFullContent, setShowFullContent] = useState(false);
 
   const handleLike = () => {
@@ -22,6 +23,26 @@ export function FeedCard({ post }: FeedCardProps) {
 
   const handleSave = () => {
     savePost(post.id);
+    toast({
+      title: post.isSaved ? "Post removido dos salvos" : "Post salvo",
+      description: post.isSaved ? "O post saiu da sua lista de salvos." : "O post foi adicionado aos seus salvos.",
+    });
+  };
+
+  const handleComment = () => {
+    commentPost(post.id);
+    toast({
+      title: "Comentario iniciado",
+      description: "Adicionamos uma interacao de comentario neste post.",
+    });
+  };
+
+  const handleShare = () => {
+    sharePost(post.id);
+    toast({
+      title: "Post compartilhado",
+      description: "O contador de compartilhamentos foi atualizado.",
+    });
   };
 
   const handleDoubleClick = () => {
@@ -144,6 +165,7 @@ export function FeedCard({ post }: FeedCardProps) {
               variant="ghost"
               size="icon"
               className="h-10 w-10 rounded-full text-text-dim hover:text-text"
+              onClick={handleComment}
               aria-label="Comentar"
             >
               <MessageCircle className="h-5 w-5" />
@@ -153,6 +175,7 @@ export function FeedCard({ post }: FeedCardProps) {
               variant="ghost"
               size="icon"
               className="h-10 w-10 rounded-full text-text-dim hover:text-text"
+              onClick={handleShare}
               aria-label="Compartilhar"
             >
               <Share className="h-5 w-5" />

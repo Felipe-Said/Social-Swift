@@ -51,6 +51,8 @@ interface FeedStore {
   loadFeed: () => Promise<void>;
   likePost: (postId: string) => void;
   savePost: (postId: string) => void;
+  commentPost: (postId: string) => void;
+  sharePost: (postId: string) => void;
   markStoryViewed: (storyId: string) => void;
   addPost: (content: string, media?: { type: 'image' | 'video'; url: string }) => void;
 }
@@ -198,6 +200,26 @@ export const useFeed = create<FeedStore>()((set, get) => ({
     const updatedPosts = posts.map(post => 
       post.id === postId 
         ? { ...post, isSaved: !post.isSaved }
+        : post
+    );
+    set({ posts: updatedPosts });
+  },
+
+  commentPost: (postId: string) => {
+    const { posts } = get();
+    const updatedPosts = posts.map(post =>
+      post.id === postId
+        ? { ...post, comments: post.comments + 1 }
+        : post
+    );
+    set({ posts: updatedPosts });
+  },
+
+  sharePost: (postId: string) => {
+    const { posts } = get();
+    const updatedPosts = posts.map(post =>
+      post.id === postId
+        ? { ...post, shares: post.shares + 1 }
         : post
     );
     set({ posts: updatedPosts });
