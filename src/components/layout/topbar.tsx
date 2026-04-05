@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Search, Bell, MessageCircle, User, Menu, Home, PlaySquare, Store, Users, Grid3X3 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -23,10 +23,10 @@ export function Topbar({ onMenuClick }: TopbarProps) {
   const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const navItems = [
-    { to: "/app/social/feed", icon: Home },
-    { to: "/app/social/snaps", icon: PlaySquare },
-    { to: "/app/marketplace", icon: Store },
-    { to: "/app/social/amigos", icon: Users },
+    { to: "/app/social/feed", icon: Home, label: "Feed" },
+    { to: "/app/social/snaps", icon: PlaySquare, label: "Snaps" },
+    { to: "/app/marketplace", icon: Store, label: "Marketplace" },
+    { to: "/app/social/amigos", icon: Users, label: "Amigos" },
   ];
 
   return (
@@ -58,13 +58,25 @@ export function Topbar({ onMenuClick }: TopbarProps) {
       </div>
 
       <div className="hidden flex-1 items-center justify-center px-10 lg:flex">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {navItems.map((item) => (
-            <Button key={item.to} asChild variant="ghost" className="h-12 w-28 rounded-xl">
-              <Link to={item.to}>
-                <item.icon className="h-6 w-6" />
-              </Link>
-            </Button>
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                [
+                  "group flex min-w-[92px] flex-col items-center justify-center rounded-2xl px-5 py-2 transition-all duration-200",
+                  isActive
+                    ? "bg-[#181818] text-white shadow-[inset_0_-3px_0_0_hsl(var(--brand))]"
+                    : "text-white/75 hover:bg-[#181818] hover:text-white",
+                ].join(" ")
+              }
+            >
+              <item.icon className="h-5 w-5 stroke-[2.2]" />
+              <span className="mt-1 text-[11px] font-medium tracking-[0.01em]">
+                {item.label}
+              </span>
+            </NavLink>
           ))}
         </div>
       </div>
