@@ -20,7 +20,7 @@ export function AppShell() {
       <Topbar onMenuClick={() => setIsMobileSidebarOpen(true)} />
 
       <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
-        <SheetContent side="left" className="w-[308px] border-none bg-transparent p-0 shadow-none">
+        <SheetContent side="left" className="w-[308px] border-none bg-[hsl(var(--surface-solid))] p-0 shadow-none">
           <Sidebar />
         </SheetContent>
       </Sheet>
