@@ -341,7 +341,7 @@ export default function Profile() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-5">
+          <div className="space-y-6">
             <div className="space-y-2">
               <Label>Banner do perfil</Label>
               <ImageUpload
@@ -356,15 +356,17 @@ export default function Profile() {
 
             <div className="space-y-2">
               <Label>Foto do perfil</Label>
-              <ImageUpload
-                onImageSelect={(image) => setAvatarImage(image)}
-                currentImage={avatarImage}
-                aspectRatio={1}
-                circular
-                minWidth={100}
-                minHeight={100}
-                className="max-w-[140px]"
-              />
+              <div className="flex justify-start">
+                <ImageUpload
+                  onImageSelect={(image) => setAvatarImage(image)}
+                  currentImage={avatarImage}
+                  aspectRatio={1}
+                  circular
+                  minWidth={100}
+                  minHeight={100}
+                  className="w-[168px]"
+                />
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -404,11 +406,11 @@ export default function Profile() {
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+          <DialogFooter className="mt-2 gap-3 sm:gap-2">
+            <Button variant="outline" className="w-full sm:w-auto" onClick={() => setIsEditOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleSaveProfile} disabled={isUpdating}>
+            <Button className="w-full sm:w-auto" onClick={handleSaveProfile} disabled={isUpdating}>
               {isUpdating ? "Salvando..." : "Salvar alteracoes"}
             </Button>
           </DialogFooter>
