@@ -33,7 +33,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
     <motion.header
       initial={{ y: -16, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface-solid))] px-3 lg:h-14 lg:px-4"
+      className="sticky top-0 z-50 flex h-14 items-center justify-between bg-[hsl(var(--surface-solid))] px-3 lg:h-14 lg:px-4"
     >
       <div className="flex min-w-0 items-center gap-3">
         <Button variant="ghost" size="icon" onClick={onMenuClick} className="lg:hidden">
