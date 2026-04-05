@@ -68,21 +68,21 @@ export default function GroupsPage() {
 
         <div className="min-w-0 flex-1 space-y-4">
           <GlassCard className="p-5">
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-center">
+            <div className="flex flex-col gap-4 2xl:grid 2xl:grid-cols-[minmax(0,1fr)_360px] 2xl:items-center">
               <div className="min-w-0">
-                <h2 className="max-w-[560px] text-2xl font-bold leading-tight text-text sm:text-[2rem]">
+                <h2 className="max-w-[720px] text-2xl font-bold leading-tight text-text sm:text-[2rem]">
                   Descubra e participe de grupos
                 </h2>
-                <p className="mt-1 text-sm text-text-dim">
+                <p className="mt-1 max-w-[720px] text-sm leading-6 text-text-dim">
                   Crie sua comunidade ou entre em um grupo existente com codigo, link ou nome.
                 </p>
               </div>
-              <div className="flex w-full flex-col gap-3 sm:flex-row xl:justify-end">
+              <div className="flex w-full flex-col gap-3 sm:flex-row 2xl:justify-end">
                 <Input
                   value={groupCode}
                   onChange={(e) => setGroupCode(e.target.value)}
                   placeholder="Codigo ou nome do grupo"
-                  className="w-full sm:flex-1 xl:max-w-[360px]"
+                  className="w-full sm:flex-1 2xl:max-w-[360px]"
                 />
                 <Button variant="outline" className="sm:min-w-[132px]">
                   <Search className="mr-2 h-4 w-4" />
