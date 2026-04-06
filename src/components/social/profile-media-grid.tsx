@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import type { Post } from "@/stores/feed";
 import type { Snap } from "@/stores/snaps";
 
-type MediaGridItem =
+export type MediaGridItem =
   | {
       id: string;
       kind: "post";
@@ -47,15 +47,18 @@ export function buildSnapGridItems(snaps: Snap[]): MediaGridItem[] {
 
 interface ProfileMediaGridProps {
   items: MediaGridItem[];
+  onSelect?: (item: MediaGridItem) => void;
 }
 
-export function ProfileMediaGrid({ items }: ProfileMediaGridProps) {
+export function ProfileMediaGrid({ items, onSelect }: ProfileMediaGridProps) {
   return (
     <div className="grid grid-cols-3 gap-1 md:gap-1.5">
       {items.map((item) => (
-        <div
+        <button
+          type="button"
           key={`${item.kind}-${item.id}`}
-          className="group relative aspect-square overflow-hidden bg-[#111111]"
+          onClick={() => onSelect?.(item)}
+          className="group relative aspect-square overflow-hidden bg-[#111111] text-left"
         >
           <img
             src={item.imageUrl}
@@ -79,7 +82,7 @@ export function ProfileMediaGrid({ items }: ProfileMediaGridProps) {
               {item.count.toLocaleString("pt-BR")}
             </div>
           )}
-        </div>
+        </button>
       ))}
     </div>
   );

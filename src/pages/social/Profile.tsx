@@ -6,6 +6,7 @@ import { FeedCard } from "@/components/social/feed-card";
 import {
   buildPostGridItems,
   buildSnapGridItems,
+  type MediaGridItem,
   ProfileMediaGrid,
 } from "@/components/social/profile-media-grid";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,7 @@ export default function Profile() {
   const [profileBio, setProfileBio] = useState(user?.bio || "");
   const [profileLink, setProfileLink] = useState(user?.profileLink || "");
   const [profilePrivate, setProfilePrivate] = useState(Boolean(user?.isPrivate));
+  const [selectedMediaItem, setSelectedMediaItem] = useState<MediaGridItem | null>(null);
 
   useEffect(() => {
     setBannerImage(user?.banner || "");
@@ -370,7 +372,7 @@ export default function Profile() {
             <div className="mt-6 min-h-96">
               {activeTab === "posts" ? (
                 imageGridItems.length > 0 ? (
-                  <ProfileMediaGrid items={imageGridItems} />
+                  <ProfileMediaGrid items={imageGridItems} onSelect={setSelectedMediaItem} />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20">
                     <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
@@ -389,7 +391,7 @@ export default function Profile() {
                 )
               ) : activeTab === "videos" ? (
                 videoGridItems.length > 0 ? (
-                  <ProfileMediaGrid items={videoGridItems} />
+                  <ProfileMediaGrid items={videoGridItems} onSelect={setSelectedMediaItem} />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20">
                     <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
@@ -523,6 +525,35 @@ export default function Profile() {
               {isUpdating ? "Salvando..." : "Salvar alteracoes"}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(selectedMediaItem)} onOpenChange={(open) => !open && setSelectedMediaItem(null)}>
+        <DialogContent className="max-w-[min(96vw,760px)] overflow-hidden border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))] p-0">
+          {selectedMediaItem && (
+            <div className="bg-black">
+              <div className="max-h-[78vh] overflow-hidden bg-black">
+                {selectedMediaItem.mediaType === "video" ? (
+                  <video
+                    src={selectedMediaItem.imageUrl}
+                    className="max-h-[78vh] w-full object-contain"
+                    controls
+                    autoPlay
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={selectedMediaItem.imageUrl}
+                    alt={selectedMediaItem.label}
+                    className="max-h-[78vh] w-full object-contain"
+                  />
+                )}
+              </div>
+              <div className="border-t border-white/10 bg-[hsl(var(--surface))] px-4 py-3">
+                <p className="text-sm text-text">{selectedMediaItem.label}</p>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

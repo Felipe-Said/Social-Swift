@@ -19,10 +19,12 @@ import { Button } from "@/components/ui/button";
 import {
   buildPostGridItems,
   buildSnapGridItems,
+  type MediaGridItem,
   ProfileMediaGrid,
 } from "@/components/social/profile-media-grid";
 import Profile from "./Profile";
 import { motion } from "framer-motion";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const tabs = [
   { id: "posts", label: "Posts", icon: Grid3X3 },
@@ -36,6 +38,7 @@ export default function SocialProfilePage() {
   const { posts, stories } = useFeed();
   const { snaps } = useSnaps();
   const [activeTab, setActiveTab] = useState("posts");
+  const [selectedMediaItem, setSelectedMediaItem] = useState<MediaGridItem | null>(null);
 
   const normalizedUsername = username?.toLowerCase();
   const isCurrentUser = !normalizedUsername || normalizedUsername === user?.username?.toLowerCase();
@@ -268,7 +271,7 @@ export default function SocialProfilePage() {
             <div className="mt-6 min-h-96">
               {activeTab === "posts" ? (
                 imageGridItems.length > 0 ? (
-                  <ProfileMediaGrid items={imageGridItems} />
+                  <ProfileMediaGrid items={imageGridItems} onSelect={setSelectedMediaItem} />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20">
                     <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
@@ -282,7 +285,7 @@ export default function SocialProfilePage() {
                 )
               ) : activeTab === "videos" ? (
                 videoGridItems.length > 0 ? (
-                  <ProfileMediaGrid items={videoGridItems} />
+                  <ProfileMediaGrid items={videoGridItems} onSelect={setSelectedMediaItem} />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20">
                     <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
@@ -313,6 +316,35 @@ export default function SocialProfilePage() {
           </div>
         </div>
       </div>
+
+      <Dialog open={Boolean(selectedMediaItem)} onOpenChange={(open) => !open && setSelectedMediaItem(null)}>
+        <DialogContent className="max-w-[min(96vw,760px)] overflow-hidden border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))] p-0">
+          {selectedMediaItem && (
+            <div className="bg-black">
+              <div className="max-h-[78vh] overflow-hidden bg-black">
+                {selectedMediaItem.mediaType === "video" ? (
+                  <video
+                    src={selectedMediaItem.imageUrl}
+                    className="max-h-[78vh] w-full object-contain"
+                    controls
+                    autoPlay
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={selectedMediaItem.imageUrl}
+                    alt={selectedMediaItem.label}
+                    className="max-h-[78vh] w-full object-contain"
+                  />
+                )}
+              </div>
+              <div className="border-t border-white/10 bg-[hsl(var(--surface))] px-4 py-3">
+                <p className="text-sm text-text">{selectedMediaItem.label}</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
