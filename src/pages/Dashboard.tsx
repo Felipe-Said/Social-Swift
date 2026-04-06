@@ -35,39 +35,9 @@ export default function Dashboard() {
         year: "numeric",
       }).format(new Date());
 
-    const ensureHeroCardMarkup = (heroCard: HTMLElement) => {
-      if (heroCard.querySelector("[data-social-swift-hero]")) return;
-
-      heroCard.innerHTML = `
-        <div data-social-swift-hero class="relative z-10 flex h-full flex-col justify-between gap-8 p-6 sm:p-8">
-          <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-            <div class="min-w-0">
-              <h2 data-role="hero-title" class="text-2xl font-bold text-[var(--text)] sm:text-3xl"></h2>
-              <p data-role="hero-subtitle" class="mt-2 text-sm text-[var(--text-muted)]"></p>
-            </div>
-            <div class="text-left sm:text-right">
-              <div data-role="hero-city" class="text-3xl font-bold text-[var(--text)] sm:text-4xl"></div>
-              <div data-role="hero-label" class="mt-2 text-sm text-[var(--text-muted)]"></div>
-              <div data-role="hero-timezone" class="mt-4 text-base font-medium text-[var(--text)]"></div>
-              <div data-role="hero-date" class="mt-1 text-sm text-[var(--text-muted)]"></div>
-            </div>
-          </div>
-          <div class="flex items-end gap-3">
-            <div data-role="hero-time" class="text-4xl font-bold tracking-tight text-[var(--text)] sm:text-6xl"></div>
-            <div class="pb-1 text-lg font-semibold uppercase text-[var(--text-muted)] sm:text-2xl">hrs</div>
-          </div>
-        </div>
-      `;
-    };
-
     const updateHeroCard = (iframeDocument: Document) => {
-      const dashboardContent = iframeDocument.getElementById("dashboard-content");
-      if (!(dashboardContent instanceof HTMLElement)) return;
-
-      const heroCard = dashboardContent.querySelector("div > div");
+      const heroCard = iframeDocument.querySelector("[data-social-swift-hero-card]");
       if (!(heroCard instanceof HTMLElement)) return;
-
-      ensureHeroCardMarkup(heroCard);
 
       const heading = heroCard.querySelector('[data-role="hero-title"]');
       const subtitle = heroCard.querySelector('[data-role="hero-subtitle"]');
