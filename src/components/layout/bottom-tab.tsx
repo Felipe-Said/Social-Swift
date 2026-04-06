@@ -39,7 +39,7 @@ export function BottomTab() {
                   key="create-snap"
                   type="button"
                   onClick={() => window.dispatchEvent(new CustomEvent("open-create-snap"))}
-                  className="flex min-w-[110px] flex-col items-center gap-1 rounded-full bg-white px-4 py-2 text-black transition-all duration-200 hover:bg-white/90"
+                  className="flex min-w-[56px] flex-col items-center gap-1 rounded-xl px-3 py-2 text-text transition-all duration-200 hover:text-text"
                 >
                   <div className="relative">
                     <Plus className="h-5 w-5" />
