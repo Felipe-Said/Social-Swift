@@ -1,20 +1,10 @@
-import { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { 
-  Heart, 
-  MessageCircle, 
-  Share, 
-  MoreHorizontal,
-  Play,
-  Pause,
-  Volume2,
-  VolumeX,
-  ChevronUp,
-  ChevronDown
-} from "lucide-react";
-import { useAuth } from "@/stores/auth";
+import { Heart, MessageCircle, Share, MoreHorizontal, Play, Volume2, Disc3 } from "lucide-react";
+import { getSocialProfilePath } from "@/lib/profile";
 
 interface Snap {
   id: string;
@@ -23,8 +13,7 @@ interface Snap {
     username: string;
     avatar: string;
   };
-  video?: string;
-  image?: string;
+  image: string;
   description: string;
   likes: number;
   comments: number;
@@ -36,15 +25,15 @@ interface Snap {
   };
 }
 
-const mockSnaps: Snap[] = [
+const initialSnaps: Snap[] = [
   {
     id: "1",
     user: {
       name: "Maria Silva",
       username: "mariasilva",
-      avatar: "/placeholder.svg"
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=160&h=160&fit=crop&crop=face",
     },
-    image: "https://images.unsplash.com/photo-1494790108755-2616c96ce29d?w=400&h=700&fit=crop",
+    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=900&h=1400&fit=crop",
     description: "Aproveitando o dia! ☀️ #vibes #social",
     likes: 1234,
     comments: 89,
@@ -52,283 +41,160 @@ const mockSnaps: Snap[] = [
     isLiked: false,
     music: {
       title: "Good Vibes",
-      artist: "Artist Name"
-    }
+      artist: "Artist Name",
+    },
   },
   {
     id: "2",
     user: {
-      name: "João Santos",
+      name: "Joao Santos",
       username: "joaosantos",
-      avatar: "/placeholder.svg"
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&h=160&fit=crop&crop=face",
     },
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=700&fit=crop",
-    description: "Trabalhando duro! 💪 #hustle #swift",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&h=1400&fit=crop",
+    description: "Trabalhando duro no projeto de hoje. #swift #creator",
     likes: 892,
     comments: 45,
     shares: 8,
     isLiked: true,
     music: {
       title: "Energy Boost",
-      artist: "Motivational Music"
-    }
+      artist: "Motivation",
+    },
   },
   {
     id: "3",
     user: {
       name: "Ana Costa",
       username: "anacosta",
-      avatar: "/placeholder.svg"
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=160&h=160&fit=crop&crop=face",
     },
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=700&fit=crop",
-    description: "Nova receita testada! 🍰 #culinaria #delicia",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&h=1400&fit=crop",
+    description: "Nova receita testada e aprovada. #culinaria #delicia",
     likes: 567,
     comments: 23,
     shares: 5,
-    isLiked: false
-  }
+    isLiked: false,
+    music: {
+      title: "Late Night Mood",
+      artist: "DJ Swift",
+    },
+  },
 ];
 
 export default function Snaps() {
-  const { user } = useAuth();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [snaps, setSnaps] = useState(mockSnaps);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const currentSnap = snaps[currentIndex];
+  const [snaps, setSnaps] = useState(initialSnaps);
 
   const handleLike = (snapId: string) => {
-    setSnaps(snaps.map(snap => 
-      snap.id === snapId 
-        ? { 
-            ...snap, 
-            isLiked: !snap.isLiked,
-            likes: snap.isLiked ? snap.likes - 1 : snap.likes + 1
-          }
-        : snap
-    ));
-  };
-
-  const goToNext = () => {
-    if (currentIndex < snaps.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
-  };
-
-  const goToPrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-
-  const togglePlayPause = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
-
-  const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
+    setSnaps((current) =>
+      current.map((snap) =>
+        snap.id === snapId
+          ? {
+              ...snap,
+              isLiked: !snap.isLiked,
+              likes: snap.isLiked ? snap.likes - 1 : snap.likes + 1,
+            }
+          : snap,
+      ),
+    );
   };
 
   return (
-    <div className="fixed inset-0 bg-black flex items-center justify-center">
-      {/* Mobile-first full screen layout */}
-      <div className="relative w-full h-full max-w-md mx-auto bg-black overflow-hidden">
-        
-        {/* Progress bars */}
-        <div className="absolute top-4 left-4 right-4 z-20 flex gap-1">
-          {snaps.map((_, index) => (
-            <div
-              key={index}
-              className="flex-1 h-0.5 bg-white/30 rounded-full overflow-hidden"
-            >
-              <div
-                className={`h-full bg-white transition-all duration-300 ${
-                  index === currentIndex ? 'w-full' : index < currentIndex ? 'w-full' : 'w-0'
-                }`}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Navigation buttons */}
-        <div className="absolute top-1/2 left-4 z-20 transform -translate-y-1/2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={goToPrevious}
-            disabled={currentIndex === 0}
-            className="h-12 w-12 rounded-full bg-black/20 hover:bg-black/40 text-white disabled:opacity-30"
+    <div className="bg-black px-0 pb-24 pt-0 lg:px-0 lg:pb-0">
+      <div className="mx-auto max-w-md snap-y snap-mandatory space-y-0 overflow-y-auto lg:max-w-[420px]">
+        {snaps.map((snap) => (
+          <section
+            key={snap.id}
+            className="relative h-[calc(100vh-56px)] snap-start overflow-hidden border-b border-white/10 bg-black lg:h-[calc(100vh-88px)]"
           >
-            <ChevronUp className="h-6 w-6" />
-          </Button>
-        </div>
+            <img src={snap.image} alt={snap.description} className="h-full w-full object-cover" />
 
-        <div className="absolute bottom-1/2 left-4 z-20 transform translate-y-1/2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={goToNext}
-            disabled={currentIndex === snaps.length - 1}
-            className="h-12 w-12 rounded-full bg-black/20 hover:bg-black/40 text-white disabled:opacity-30"
-          >
-            <ChevronDown className="h-6 w-6" />
-          </Button>
-        </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/20" />
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSnap.id}
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="relative w-full h-full"
-          >
-            {/* Content */}
-            {currentSnap.video ? (
-              <video
-                ref={videoRef}
-                src={currentSnap.video}
-                className="w-full h-full object-cover"
-                autoPlay
-                loop
-                muted={isMuted}
-                playsInline
-              />
-            ) : (
-              <img
-                src={currentSnap.image}
-                alt={currentSnap.description}
-                className="w-full h-full object-cover"
-              />
-            )}
-
-            {/* Overlay gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-
-            {/* User info */}
-            <div className="absolute top-16 left-4 right-16 z-10 flex items-center gap-3">
-              <Avatar className="h-10 w-10 border-2 border-white">
-                <AvatarImage src={currentSnap.user.avatar} />
-                <AvatarFallback className="bg-muted text-foreground">
-                  {currentSnap.user.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <p className="text-white font-semibold text-sm">
-                  {currentSnap.user.name}
-                </p>
-                <p className="text-white/80 text-xs">
-                  @{currentSnap.user.username}
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-white hover:bg-white/20"
+            <div className="absolute left-0 right-0 top-0 flex items-center justify-between px-4 py-4">
+              <Link
+                to={getSocialProfilePath(snap.user.username)}
+                className="flex min-w-0 items-center gap-3"
               >
-                <MoreHorizontal className="h-4 w-4" />
+                <Avatar className="h-11 w-11 border-2 border-white">
+                  <AvatarImage src={snap.user.avatar} alt={snap.user.name} />
+                  <AvatarFallback>{snap.user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-white">{snap.user.name}</p>
+                  <p className="truncate text-xs text-white/70">@{snap.user.username}</p>
+                </div>
+              </Link>
+
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-black/20 text-white hover:bg-black/30">
+                <MoreHorizontal className="h-5 w-5" />
               </Button>
             </div>
 
-            {/* Description and music */}
-            <div className="absolute bottom-20 left-4 right-20 z-10">
-              <p className="text-white text-sm mb-2 leading-relaxed">
-                {currentSnap.description}
-              </p>
-              
-              {currentSnap.music && (
-                <div className="flex items-center gap-2 text-white/80 text-xs">
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
-                    <span>♪ {currentSnap.music.title} - {currentSnap.music.artist}</span>
+            <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-4 px-4 pb-6">
+              <div className="min-w-0 flex-1 pr-2">
+                <Link
+                  to={getSocialProfilePath(snap.user.username)}
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:underline"
+                >
+                  <Play className="h-3.5 w-3.5 fill-current" />
+                  {snap.user.name}
+                </Link>
+                <p className="mt-3 text-sm leading-relaxed text-white">{snap.description}</p>
+
+                {snap.music && (
+                  <div className="mt-4 flex max-w-[240px] items-center gap-2 rounded-full bg-black/25 px-3 py-2 text-xs text-white/90 backdrop-blur-sm">
+                    <Disc3 className="h-4 w-4 shrink-0 animate-spin [animation-duration:4s]" />
+                    <span className="truncate">
+                      {snap.music.title} · {snap.music.artist}
+                    </span>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+
+              <div className="flex flex-col items-center gap-4">
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => handleLike(snap.id)}
+                  className="flex flex-col items-center gap-1 text-white"
+                >
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
+                    <Heart className={`h-6 w-6 ${snap.isLiked ? "fill-red-500 text-red-500" : ""}`} />
+                  </span>
+                  <span className="text-xs font-semibold">{snap.likes.toLocaleString("pt-BR")}</span>
+                </motion.button>
+
+                <button className="flex flex-col items-center gap-1 text-white">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
+                    <MessageCircle className="h-6 w-6" />
+                  </span>
+                  <span className="text-xs font-semibold">{snap.comments.toLocaleString("pt-BR")}</span>
+                </button>
+
+                <button className="flex flex-col items-center gap-1 text-white">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
+                    <Share className="h-6 w-6" />
+                  </span>
+                  <span className="text-xs font-semibold">{snap.shares.toLocaleString("pt-BR")}</span>
+                </button>
+
+                <button className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 text-white backdrop-blur-sm">
+                  <Volume2 className="h-5 w-5" />
+                </button>
+
+                <Link
+                  to={getSocialProfilePath(snap.user.username)}
+                  className="overflow-hidden rounded-full border-2 border-white bg-white"
+                >
+                  <Avatar className="h-11 w-11">
+                    <AvatarImage src={snap.user.avatar} alt={snap.user.name} />
+                    <AvatarFallback>{snap.user.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                </Link>
+              </div>
             </div>
-
-            {/* Action buttons */}
-            <div className="absolute bottom-20 right-4 z-10 flex flex-col gap-4">
-              <div className="flex flex-col items-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleLike(currentSnap.id)}
-                  className="h-12 w-12 rounded-full hover:bg-white/20 text-white"
-                >
-                  <Heart 
-                    className={`h-6 w-6 ${
-                      currentSnap.isLiked ? 'fill-red-500 text-red-500' : ''
-                    }`} 
-                  />
-                </Button>
-                <span className="text-white text-xs font-medium">
-                  {currentSnap.likes.toLocaleString()}
-                </span>
-              </div>
-
-              <div className="flex flex-col items-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-12 w-12 rounded-full hover:bg-white/20 text-white"
-                >
-                  <MessageCircle className="h-6 w-6" />
-                </Button>
-                <span className="text-white text-xs font-medium">
-                  {currentSnap.comments}
-                </span>
-              </div>
-
-              <div className="flex flex-col items-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-12 w-12 rounded-full hover:bg-white/20 text-white"
-                >
-                  <Share className="h-6 w-6" />
-                </Button>
-                <span className="text-white text-xs font-medium">
-                  {currentSnap.shares}
-                </span>
-              </div>
-
-              {currentSnap.video && (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={togglePlayPause}
-                    className="h-12 w-12 rounded-full hover:bg-white/20 text-white"
-                  >
-                    {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={toggleMute}
-                    className="h-12 w-12 rounded-full hover:bg-white/20 text-white"
-                  >
-                    {isMuted ? <VolumeX className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}
-                  </Button>
-                </>
-              )}
-            </div>
-          </motion.div>
-        </AnimatePresence>
+          </section>
+        ))}
       </div>
     </div>
   );

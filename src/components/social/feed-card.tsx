@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
+import { getSocialProfilePath } from "@/lib/profile";
 
 interface FeedCardProps {
   post: Post;
@@ -75,13 +77,17 @@ export function FeedCard({ post }: FeedCardProps) {
       <GlassCard className="overflow-hidden p-0">
         <div className="flex items-center justify-between p-4 pb-2">
           <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
-              <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
-            </Avatar>
+            <Link to={getSocialProfilePath(latestPost.author.username)}>
+              <Avatar className="h-10 w-10 cursor-pointer">
+                <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
+                <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+            </Link>
             <div>
               <div className="flex items-center gap-1">
-                <span className="text-[15px] font-semibold text-text">{latestPost.author.name}</span>
+                <Link to={getSocialProfilePath(latestPost.author.username)} className="text-[15px] font-semibold text-text hover:underline">
+                  {latestPost.author.name}
+                </Link>
                 {latestPost.author.verified && <Badge className="h-4 w-4 rounded-full bg-brand p-0 text-white">âœ“</Badge>}
               </div>
               <div className="flex items-center gap-2 text-xs text-text-dim">
@@ -235,12 +241,20 @@ export function FeedCard({ post }: FeedCardProps) {
 
             <div className="flex min-h-[75vh] flex-col bg-[hsl(var(--surface))]">
               <div className="flex items-center gap-3 border-b border-[hsl(var(--stroke-soft))] px-4 py-3">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
-                  <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+                <Link to={getSocialProfilePath(latestPost.author.username)} onClick={() => setIsCommentsOpen(false)}>
+                  <Avatar className="h-9 w-9 cursor-pointer">
+                    <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
+                    <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                </Link>
                 <div>
-                  <p className="text-sm font-semibold text-text">{latestPost.author.name}</p>
+                  <Link
+                    to={getSocialProfilePath(latestPost.author.username)}
+                    onClick={() => setIsCommentsOpen(false)}
+                    className="text-sm font-semibold text-text hover:underline"
+                  >
+                    {latestPost.author.name}
+                  </Link>
                   <p className="text-xs text-text-dim">@{latestPost.author.username}</p>
                 </div>
               </div>
@@ -248,12 +262,20 @@ export function FeedCard({ post }: FeedCardProps) {
               <div className="flex-1 overflow-y-auto px-4 py-4">
                 <div className="space-y-4">
                   <div className="flex gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
-                      <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
+                    <Link to={getSocialProfilePath(latestPost.author.username)} onClick={() => setIsCommentsOpen(false)}>
+                      <Avatar className="h-8 w-8 cursor-pointer">
+                        <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
+                        <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                    </Link>
                     <div className="min-w-0 text-sm leading-relaxed text-text">
-                      <span className="mr-2 font-semibold">{latestPost.author.username}</span>
+                      <Link
+                        to={getSocialProfilePath(latestPost.author.username)}
+                        onClick={() => setIsCommentsOpen(false)}
+                        className="mr-2 font-semibold hover:underline"
+                      >
+                        {latestPost.author.username}
+                      </Link>
                       {latestPost.content}
                       <div className="mt-1 text-xs text-text-dim">{latestPost.timestamp}</div>
                     </div>
@@ -261,12 +283,20 @@ export function FeedCard({ post }: FeedCardProps) {
 
                   {latestPost.commentList.map((comment) => (
                     <div key={comment.id} className="flex gap-3">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
-                        <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
+                      <Link to={getSocialProfilePath(comment.author.username)} onClick={() => setIsCommentsOpen(false)}>
+                        <Avatar className="h-8 w-8 cursor-pointer">
+                          <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
+                          <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                      </Link>
                       <div className="min-w-0 text-sm leading-relaxed text-text">
-                        <span className="mr-2 font-semibold">{comment.author.username}</span>
+                        <Link
+                          to={getSocialProfilePath(comment.author.username)}
+                          onClick={() => setIsCommentsOpen(false)}
+                          className="mr-2 font-semibold hover:underline"
+                        >
+                          {comment.author.username}
+                        </Link>
                         {comment.content}
                         <div className="mt-1 text-xs text-text-dim">{comment.timestamp}</div>
                       </div>

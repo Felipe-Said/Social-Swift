@@ -10,6 +10,8 @@ import { useFeed } from "@/stores/feed";
 import { useAuth } from "@/stores/auth";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+import { getSocialProfilePath } from "@/lib/profile";
 
 export default function Feed() {
   const { posts, stories, isLoading, loadFeed } = useFeed();
@@ -71,8 +73,9 @@ export default function Feed() {
             </button>
 
             {stories.slice(0, 4).map((story) => (
-              <div
+              <Link
                 key={story.id}
+                to={getSocialProfilePath(story.author.username)}
                 className="relative h-[190px] w-[112px] shrink-0 overflow-hidden rounded-xl bg-[hsl(var(--surface))] shadow-[var(--shadow)]"
               >
                 <img
@@ -88,7 +91,7 @@ export default function Feed() {
                 <span className="absolute bottom-3 left-3 right-3 text-sm font-semibold text-white">
                   {story.author.name.split(" ")[0]}
                 </span>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
