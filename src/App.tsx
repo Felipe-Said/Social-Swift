@@ -40,6 +40,7 @@ import WithdrawalsPage from "./pages/business/WithdrawalsPage";
 import SalesPage from "./pages/business/SalesPage";
 import FeesPage from "./pages/business/FeesPage";
 import ProjectsPage from "./pages/business/ProjectsPage";
+import WalletPage from "./pages/business/WalletPage";
 
 const queryClient = new QueryClient();
 
@@ -134,7 +135,7 @@ const App = () => {
               <Route path="projetos" element={<ProjectsPage />} />
               <Route path="marketplace" element={<Marketplace />} /> {/* Marketplace page */}
               <Route path="meu-negocio" element={<div className="p-6 text-center text-text">Meu Negócio em breve...</div>} />
-              <Route path="carteira" element={<div className="p-6 text-center text-text">Carteira em breve...</div>} />
+              <Route path="carteira" element={<WalletPage />} />
             </Route>
 
             {/* Admin Routes */}
