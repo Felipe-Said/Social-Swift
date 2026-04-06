@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+const DASHBOARD_CROP_TOP = 88;
+const DASHBOARD_CROP_LEFT = 290;
+
 export default function Dashboard() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [frameHeight, setFrameHeight] = useState(1600);
@@ -130,7 +133,7 @@ export default function Dashboard() {
           1200
         );
 
-        setFrameHeight(nextHeight);
+        setFrameHeight(nextHeight - DASHBOARD_CROP_TOP);
       } catch {
         setFrameHeight(1600);
       }
@@ -146,13 +149,18 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-transparent px-0 py-0">
+    <div className="min-h-screen overflow-hidden bg-transparent px-0 py-0">
       <iframe
         ref={iframeRef}
         src="/admin-dashboard-reference.html"
         title="Admin Dashboard Reference"
         className="block w-full rounded-none border-0 bg-transparent"
-        style={{ height: `${frameHeight}px` }}
+        style={{
+          height: `${frameHeight + DASHBOARD_CROP_TOP}px`,
+          width: `calc(100% + ${DASHBOARD_CROP_LEFT}px)`,
+          marginTop: `-${DASHBOARD_CROP_TOP}px`,
+          marginLeft: `-${DASHBOARD_CROP_LEFT}px`,
+        }}
       />
     </div>
   );
