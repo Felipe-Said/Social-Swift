@@ -11,6 +11,86 @@ export default function Dashboard() {
     const iframe = iframeRef.current;
     if (!iframe) return;
 
+    let iframeWindow: Window | null = null;
+    let wheelHandler: ((event: WheelEvent) => void) | null = null;
+
+    const getLocationLabel = () => {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const city = timezone?.split("/").pop()?.replace(/_/g, " ") || "sua regiao";
+      return { city, timezone };
+    };
+
+    const formatClock = () =>
+      new Intl.DateTimeFormat("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }).format(new Date());
+
+    const formatDate = () =>
+      new Intl.DateTimeFormat("pt-BR", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }).format(new Date());
+
+    const updateHeroCard = (iframeDocument: Document) => {
+      const dashboardContent = iframeDocument.getElementById("dashboard-content");
+      if (!(dashboardContent instanceof HTMLElement)) return;
+
+      const heroCard = dashboardContent.querySelector("div > div");
+      if (!(heroCard instanceof HTMLElement)) return;
+
+      const heading = heroCard.querySelector("h2");
+      const subtitle = heroCard.querySelector("p");
+      const leftTimeWrap = heroCard.querySelector('div[dir="ltr"]');
+      const rightColumn = heroCard.querySelector('div[class*="text-right"]');
+      const weatherImage = rightColumn?.querySelector("img");
+      const rightBigText = rightColumn?.querySelector('div[class*="text-4xl"]');
+      const rightMutedText = rightColumn?.querySelector('div[class*="text-sm"]');
+      const rightMetaRows = rightColumn?.querySelectorAll('div[class*="font-medium"], div[class*="capitalize"]');
+
+      const { city, timezone } = getLocationLabel();
+      const timeText = formatClock();
+      const dateText = formatDate();
+
+      if (heading instanceof HTMLElement) {
+        heading.textContent = `Agora em ${city}`;
+      }
+
+      if (subtitle instanceof HTMLElement) {
+        subtitle.textContent = "Horario local atualizado automaticamente";
+      }
+
+      if (leftTimeWrap instanceof HTMLElement) {
+        leftTimeWrap.textContent = timeText;
+      }
+
+      if (weatherImage instanceof HTMLElement) {
+        weatherImage.style.display = "none";
+      }
+
+      if (rightBigText instanceof HTMLElement) {
+        rightBigText.textContent = city;
+        rightBigText.className = "text-3xl sm:text-4xl font-bold text-[var(--text)]";
+      }
+
+      if (rightMutedText instanceof HTMLElement) {
+        rightMutedText.textContent = "Localizacao atual";
+      }
+
+      if (rightMetaRows && rightMetaRows.length >= 2) {
+        const [firstRow, secondRow] = Array.from(rightMetaRows);
+        if (firstRow instanceof HTMLElement) {
+          firstRow.textContent = timezone;
+        }
+        if (secondRow instanceof HTMLElement) {
+          secondRow.textContent = dateText;
+        }
+      }
+    };
+
     const hideChrome = (iframeDocument: Document) => {
       const iframeWindow = iframe.contentWindow;
       if (!iframeWindow) return;
@@ -41,6 +121,10 @@ export default function Dashboard() {
           width: 100% !important;
           margin: 0 !important;
           padding-top: 0 !important;
+        }
+
+        footer {
+          display: none !important;
         }
       `;
 
@@ -139,6 +223,8 @@ export default function Dashboard() {
           layoutRow.style.setProperty("gap", "0", "important");
         }
       }
+
+      updateHeroCard(iframeDocument);
     };
 
     const updateHeight = () => {
@@ -162,14 +248,41 @@ export default function Dashboard() {
       }
     };
 
-    iframe.addEventListener("load", updateHeight);
+    const attachScrollBridge = () => {
+      iframeWindow = iframe.contentWindow;
+      if (!iframeWindow || wheelHandler) return;
+
+      wheelHandler = (event: WheelEvent) => {
+        event.preventDefault();
+        window.scrollBy({
+          top: event.deltaY,
+          left: 0,
+          behavior: "auto",
+        });
+      };
+
+      iframeWindow.addEventListener("wheel", wheelHandler, { passive: false });
+    };
+
+    iframe.addEventListener("load", () => {
+      updateHeight();
+      attachScrollBridge();
+    });
     const timeoutId = window.setTimeout(updateHeight, 400);
     const secondPassId = window.setTimeout(updateHeight, 1200);
+    const clockIntervalId = window.setInterval(() => {
+      const iframeDocument = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!iframeDocument) return;
+      updateHeroCard(iframeDocument);
+    }, 30000);
 
     return () => {
-      iframe.removeEventListener("load", updateHeight);
+      if (iframeWindow && wheelHandler) {
+        iframeWindow.removeEventListener("wheel", wheelHandler);
+      }
       window.clearTimeout(timeoutId);
       window.clearTimeout(secondPassId);
+      window.clearInterval(clockIntervalId);
     };
   }, []);
 
