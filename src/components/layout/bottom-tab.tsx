@@ -1,8 +1,7 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Home, Search, Wallet, User } from "lucide-react";
+import { Home, Plus, Search, Wallet, User } from "lucide-react";
 import { SwiftButton } from "@/components/ui/swift-button";
-import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 
 const tabItems = [
@@ -14,6 +13,9 @@ const tabItems = [
 ];
 
 export function BottomTab() {
+  const location = useLocation();
+  const isSnapsRoute = location.pathname === "/app/social/snaps";
+
   return (
     <motion.div 
       initial={{ y: 20, opacity: 0 }}
@@ -28,6 +30,22 @@ export function BottomTab() {
                 <div key="swift" className="relative">
                   <SwiftButton size="sm" />
                 </div>
+              );
+            }
+
+            if (isSnapsRoute && item.url === "/app/social/buscar") {
+              return (
+                <button
+                  key="create-snap"
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent("open-create-snap"))}
+                  className="flex min-w-[110px] flex-col items-center gap-1 rounded-full bg-white px-4 py-2 text-black transition-all duration-200 hover:bg-white/90"
+                >
+                  <div className="relative">
+                    <Plus className="h-5 w-5" />
+                  </div>
+                  <span className="text-xs font-medium">Criar snap</span>
+                </button>
               );
             }
 

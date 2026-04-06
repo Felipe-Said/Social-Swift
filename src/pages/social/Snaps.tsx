@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -9,6 +9,7 @@ import {
   Play,
   Plus,
   Share,
+  Video,
   Volume2,
   VolumeX,
 } from "lucide-react";
@@ -40,6 +41,11 @@ interface SnapMusic {
   videoId?: string;
 }
 
+interface SnapMedia {
+  type: "image" | "video";
+  url: string;
+}
+
 interface Snap {
   id: string;
   user: {
@@ -47,7 +53,7 @@ interface Snap {
     username: string;
     avatar: string;
   };
-  image: string;
+  media: SnapMedia;
   description: string;
   likes: number;
   comments: number;
@@ -65,7 +71,10 @@ const initialSnaps: Snap[] = [
       username: "mariasilva",
       avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=160&h=160&fit=crop&crop=face",
     },
-    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=900&h=1400&fit=crop",
+    media: {
+      type: "image",
+      url: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=900&h=1400&fit=crop",
+    },
     description: "Aproveitando o dia! #vibes #social",
     likes: 1234,
     comments: 89,
@@ -107,7 +116,10 @@ const initialSnaps: Snap[] = [
       username: "joaosantos",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&h=160&fit=crop&crop=face",
     },
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&h=1400&fit=crop",
+    media: {
+      type: "video",
+      url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    },
     description: "Trabalhando duro no projeto de hoje. #swift #creator",
     likes: 892,
     comments: 45,
@@ -139,7 +151,10 @@ const initialSnaps: Snap[] = [
       username: "anacosta",
       avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=160&h=160&fit=crop&crop=face",
     },
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&h=1400&fit=crop",
+    media: {
+      type: "image",
+      url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&h=1400&fit=crop",
+    },
     description: "Nova receita testada e aprovada. #culinaria #delicia",
     likes: 567,
     comments: 23,
@@ -229,14 +244,19 @@ export default function Snaps() {
   const [snaps, setSnaps] = useState(initialSnaps);
   const [selectedSnapId, setSelectedSnapId] = useState<string | null>(null);
   const [commentValue, setCommentValue] = useState("");
-  const [mutedSnapIds, setMutedSnapIds] = useState<string[]>([]);
+  const [mutedMusicSnapIds, setMutedMusicSnapIds] = useState<string[]>([]);
+  const [mutedVideoSnapIds, setMutedVideoSnapIds] = useState<string[]>([]);
   const [activeSnapId, setActiveSnapId] = useState<string | null>(initialSnaps[0]?.id ?? null);
   const [isCreateSnapOpen, setIsCreateSnapOpen] = useState(false);
   const [newSnapDescription, setNewSnapDescription] = useState("");
-  const [newSnapImage, setNewSnapImage] = useState("");
+  const [newSnapMedia, setNewSnapMedia] = useState<SnapMedia | null>(null);
   const [newSnapYoutubeUrl, setNewSnapYoutubeUrl] = useState("");
   const [newSnapMusicLabel, setNewSnapMusicLabel] = useState("");
+  const [isCreateMusicMuted, setIsCreateMusicMuted] = useState(false);
+  const [isCreateVideoMuted, setIsCreateVideoMuted] = useState(false);
+  const [videoUploadName, setVideoUploadName] = useState("");
   const snapRefs = useRef<Record<string, HTMLElement | null>>({});
+  const videoInputRef = useRef<HTMLInputElement | null>(null);
 
   const selectedSnap = useMemo(
     () => snaps.find((snap) => snap.id === selectedSnapId) ?? null,
@@ -247,6 +267,17 @@ export default function Snaps() {
     () => snaps.find((snap) => snap.id === activeSnapId) ?? null,
     [activeSnapId, snaps],
   );
+
+  const createPreviewMusicVideoId = useMemo(
+    () => extractYoutubeVideoId(newSnapYoutubeUrl),
+    [newSnapYoutubeUrl],
+  );
+
+  useEffect(() => {
+    const handleOpenCreateSnap = () => setIsCreateSnapOpen(true);
+    window.addEventListener("open-create-snap", handleOpenCreateSnap);
+    return () => window.removeEventListener("open-create-snap", handleOpenCreateSnap);
+  }, []);
 
   useEffect(() => {
     const elements = Object.values(snapRefs.current).filter(Boolean) as HTMLElement[];
@@ -291,18 +322,33 @@ export default function Snaps() {
     setSelectedSnapId(snapId);
   };
 
-  const handleToggleVolume = (snapId: string) => {
-    const isMuted = mutedSnapIds.includes(snapId);
+  const handleToggleMusic = (snapId: string) => {
+    const isMuted = mutedMusicSnapIds.includes(snapId);
 
-    setMutedSnapIds((current) =>
+    setMutedMusicSnapIds((current) =>
       isMuted ? current.filter((id) => id !== snapId) : [...current, snapId],
     );
 
     toast({
-      title: isMuted ? "Som ativado" : "Som desativado",
+      title: isMuted ? "Musica ativada" : "Musica silenciada",
       description: isMuted
-        ? "O audio do YouTube voltou a tocar neste snap."
-        : "O audio do snap foi silenciado para esta visualizacao.",
+        ? "A musica do link voltou a tocar neste snap."
+        : "A musica do link foi silenciada neste snap.",
+    });
+  };
+
+  const handleToggleVideoAudio = (snapId: string) => {
+    const isMuted = mutedVideoSnapIds.includes(snapId);
+
+    setMutedVideoSnapIds((current) =>
+      isMuted ? current.filter((id) => id !== snapId) : [...current, snapId],
+    );
+
+    toast({
+      title: isMuted ? "Audio do video ativado" : "Audio do video silenciado",
+      description: isMuted
+        ? "O som original do video voltou a tocar."
+        : "O som original do video foi silenciado.",
     });
   };
 
@@ -397,11 +443,31 @@ export default function Snaps() {
     setCommentValue("");
   };
 
-  const handleCreateSnap = () => {
-    if (!newSnapImage) {
+  const handleVideoSelected = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("video/")) {
       toast({
-        title: "Adicione uma imagem",
-        description: "O snap precisa ter uma imagem para ser publicado.",
+        title: "Arquivo invalido",
+        description: "Selecione um video compativel com o formato de reels.",
+      });
+      return;
+    }
+
+    const videoUrl = URL.createObjectURL(file);
+    setNewSnapMedia({
+      type: "video",
+      url: videoUrl,
+    });
+    setVideoUploadName(file.name);
+  };
+
+  const handleCreateSnap = () => {
+    if (!newSnapMedia) {
+      toast({
+        title: "Adicione uma midia",
+        description: "O snap precisa ter uma imagem ou video para ser publicado.",
       });
       return;
     }
@@ -435,7 +501,7 @@ export default function Snaps() {
         username: user?.username || "felipesaid_",
         avatar: user?.avatar || "",
       },
-      image: newSnapImage,
+      media: newSnapMedia,
       description: newSnapDescription.trim() || "Novo snap publicado.",
       likes: 0,
       comments: 0,
@@ -447,24 +513,35 @@ export default function Snaps() {
 
     setSnaps((current) => [newSnap, ...current]);
     setActiveSnapId(newSnap.id);
-    setMutedSnapIds((current) => current.filter((id) => id !== newSnap.id));
+    setMutedMusicSnapIds((current) => current.filter((id) => id !== newSnap.id));
+    setMutedVideoSnapIds((current) =>
+      newSnapMedia.type === "video"
+        ? [...current, newSnap.id].filter((id, index, arr) => arr.indexOf(id) === index)
+        : current.filter((id) => id !== newSnap.id),
+    );
     setIsCreateSnapOpen(false);
     setNewSnapDescription("");
-    setNewSnapImage("");
+    setNewSnapMedia(null);
     setNewSnapYoutubeUrl("");
     setNewSnapMusicLabel("");
+    setIsCreateMusicMuted(false);
+    setIsCreateVideoMuted(false);
+    setVideoUploadName("");
+    if (videoInputRef.current) {
+      videoInputRef.current.value = "";
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     toast({
       title: "Snap publicado",
       description: music
-        ? "O snap foi publicado com audio do YouTube."
+        ? "O snap foi publicado com video e audio do YouTube."
         : "O snap foi publicado com sucesso.",
     });
   };
 
   const shouldPlayActiveAudio =
-    activeSnap?.music?.videoId && !mutedSnapIds.includes(activeSnap.id);
+    activeSnap?.music?.videoId && !mutedMusicSnapIds.includes(activeSnap.id);
 
   return (
     <div className="bg-black px-0 pb-24 pt-0 lg:px-0 lg:pb-0">
@@ -480,9 +557,23 @@ export default function Snaps() {
         </div>
       )}
 
+      {isCreateSnapOpen && createPreviewMusicVideoId && !isCreateMusicMuted && (
+        <div className="pointer-events-none fixed left-0 top-0 h-0 w-0 overflow-hidden opacity-0">
+          <iframe
+            key={`create-preview-${createPreviewMusicVideoId}`}
+            title="create-snap-audio-preview"
+            src={getYoutubeAudioEmbedUrl(createPreviewMusicVideoId)}
+            allow="autoplay; encrypted-media"
+            className="h-0 w-0 border-0"
+          />
+        </div>
+      )}
+
       <div className="mx-auto max-w-md snap-y snap-mandatory space-y-0 overflow-y-auto lg:max-w-[420px]">
         {snaps.map((snap) => {
-          const isMuted = mutedSnapIds.includes(snap.id);
+          const isMusicMuted = mutedMusicSnapIds.includes(snap.id);
+          const isVideoMuted = mutedVideoSnapIds.includes(snap.id);
+          const isActiveSnap = activeSnapId === snap.id;
 
           return (
             <section
@@ -493,7 +584,18 @@ export default function Snaps() {
               data-snap-id={snap.id}
               className="relative h-[calc(100vh-56px)] snap-start overflow-hidden border-b border-white/10 bg-black lg:h-[calc(100vh-88px)]"
             >
-              <img src={snap.image} alt={snap.description} className="h-full w-full object-cover" />
+              {snap.media.type === "video" ? (
+                <video
+                  src={snap.media.url}
+                  className="h-full w-full object-cover"
+                  autoPlay
+                  loop
+                  playsInline
+                  muted={!isActiveSnap || isVideoMuted}
+                />
+              ) : (
+                <img src={snap.media.url} alt={snap.description} className="h-full w-full object-cover" />
+              )}
 
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/20" />
 
@@ -533,18 +635,20 @@ export default function Snaps() {
                   <p className="mt-3 text-sm leading-relaxed text-white">{snap.description}</p>
 
                   {snap.music && (
-                    <div
+                    <button
+                      type="button"
+                      onClick={() => handleToggleMusic(snap.id)}
                       className={`mt-4 inline-flex max-w-[270px] items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-xs font-medium backdrop-blur-sm ${
-                        isMuted ? "bg-black/20 text-white/55" : "bg-black/35 text-white/95"
+                        isMusicMuted ? "bg-black/20 text-white/55" : "bg-black/35 text-white/95"
                       }`}
                     >
                       <Disc3
-                        className={`h-4 w-4 shrink-0 ${isMuted ? "" : "animate-spin"} [animation-duration:4s]`}
+                        className={`h-4 w-4 shrink-0 ${isMusicMuted ? "" : "animate-spin"} [animation-duration:4s]`}
                       />
                       <span className="truncate">
                         {snap.music.title} - {snap.music.artist}
                       </span>
-                    </div>
+                    </button>
                   )}
                 </div>
 
@@ -580,12 +684,15 @@ export default function Snaps() {
                     <span className="text-xs font-semibold">{snap.shares.toLocaleString("pt-BR")}</span>
                   </button>
 
-                  <button
-                    onClick={() => handleToggleVolume(snap.id)}
-                    className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 text-white backdrop-blur-sm"
-                  >
-                    {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-                  </button>
+                  {snap.media.type === "video" && (
+                    <button
+                      onClick={() => handleToggleVideoAudio(snap.id)}
+                      className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 text-white backdrop-blur-sm"
+                      aria-label="Controlar audio do video"
+                    >
+                      {isVideoMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                    </button>
+                  )}
 
                   <Link
                     to={getSocialProfilePath(snap.user.username)}
@@ -603,7 +710,7 @@ export default function Snaps() {
         })}
       </div>
 
-      <div className="pointer-events-none fixed inset-x-0 bottom-20 z-30 flex justify-center px-4 lg:bottom-6">
+      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-30 hidden justify-center px-4 lg:flex">
         <Button
           onClick={() => setIsCreateSnapOpen(true)}
           className="pointer-events-auto h-12 rounded-full bg-white px-5 text-sm font-semibold text-black hover:bg-white/90"
@@ -620,18 +727,81 @@ export default function Snaps() {
           </DrawerHeader>
 
           <div className="flex-1 space-y-5 overflow-y-auto px-4 py-4">
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-white">Imagem do snap</p>
-              <ImageUpload
-                onImageSelect={setNewSnapImage}
-                currentImage={newSnapImage}
-                aspectRatio={9 / 16}
-                circular={false}
-                minWidth={320}
-                minHeight={560}
-                maxSize={8}
-                className="rounded-2xl"
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-white">Midia do snap</p>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-9 rounded-full border border-white/10 bg-white/5 px-4 text-white hover:bg-white/10"
+                  onClick={() => {
+                    setNewSnapMedia(null);
+                    setVideoUploadName("");
+                    videoInputRef.current?.click();
+                  }}
+                >
+                  <Video className="mr-2 h-4 w-4" />
+                  Video reels
+                </Button>
+              </div>
+
+              <input
+                ref={videoInputRef}
+                type="file"
+                accept="video/mp4,video/webm,video/quicktime"
+                className="hidden"
+                onChange={handleVideoSelected}
               />
+
+              {newSnapMedia?.type === "video" ? (
+                <div className="mx-auto flex max-w-[280px] flex-col gap-3">
+                  <div className="aspect-[9/16] overflow-hidden rounded-[28px] border border-white/10 bg-black">
+                    <video
+                      src={newSnapMedia.url}
+                      className="h-full w-full object-cover"
+                      controls
+                      playsInline
+                      muted={isCreateVideoMuted}
+                      loop
+                    />
+                  </div>
+                  <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                    <span className="min-w-0 truncate text-xs text-white/70">
+                      {videoUploadName || "Video carregado"}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="h-8 rounded-full px-3 text-white hover:bg-white/10"
+                      onClick={() => setIsCreateVideoMuted((current) => !current)}
+                    >
+                      {isCreateVideoMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                      <span className="ml-2 text-xs">Audio do video</span>
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <ImageUpload
+                  onImageSelect={(image) => {
+                    setNewSnapMedia(
+                      image
+                        ? {
+                            type: "image",
+                            url: image,
+                          }
+                        : null,
+                    );
+                    setVideoUploadName("");
+                  }}
+                  currentImage={newSnapMedia?.type === "image" ? newSnapMedia.url : ""}
+                  aspectRatio={9 / 16}
+                  circular={false}
+                  minWidth={320}
+                  minHeight={560}
+                  maxSize={8}
+                  className="rounded-2xl"
+                />
+              )}
             </div>
 
             <div className="space-y-2">
@@ -653,7 +823,7 @@ export default function Snaps() {
                 className="h-11 rounded-full border-white/10 bg-white/5 text-white placeholder:text-white/35 focus-visible:ring-0"
               />
               <p className="text-xs text-white/45">
-                Apenas o audio do video sera reproduzido no snap ativo.
+                O preview comeca a tocar assim que o link valido for adicionado.
               </p>
             </div>
 
@@ -668,11 +838,24 @@ export default function Snaps() {
             </div>
 
             {(newSnapMusicLabel.trim() || newSnapYoutubeUrl.trim()) && (
-              <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-2 text-xs font-medium text-white/95">
-                <Disc3 className="h-4 w-4 shrink-0" />
-                <span className="truncate">
-                  {(newSnapMusicLabel.trim() || "Audio do YouTube").replace(/\s+/g, " ")}
-                </span>
+              <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/35 px-3 py-3">
+                <div className="inline-flex min-w-0 items-center gap-2 text-xs font-medium text-white/95">
+                  <Disc3
+                    className={`h-4 w-4 shrink-0 ${isCreateMusicMuted ? "" : "animate-spin"} [animation-duration:4s]`}
+                  />
+                  <span className="truncate">
+                    {(newSnapMusicLabel.trim() || "Audio do YouTube").replace(/\s+/g, " ")}
+                  </span>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-8 rounded-full px-3 text-white hover:bg-white/10"
+                  onClick={() => setIsCreateMusicMuted((current) => !current)}
+                >
+                  {isCreateMusicMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  <span className="ml-2 text-xs">Musica</span>
+                </Button>
               </div>
             )}
           </div>
