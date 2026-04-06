@@ -1,44 +1,50 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Heart, MessageCircle, Share, Bookmark, MoreHorizontal, Play } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { GlassCard } from "@/components/ui/glass-card";
 import { useFeed, type Post } from "@/stores/feed";
+import { useAuth } from "@/stores/auth";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/use-toast";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 interface FeedCardProps {
   post: Post;
 }
 
 export function FeedCard({ post }: FeedCardProps) {
-  const { likePost, savePost, commentPost, sharePost } = useFeed();
+  const { likePost, savePost, addComment, sharePost } = useFeed();
+  const { user } = useAuth();
   const [showFullContent, setShowFullContent] = useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const [commentValue, setCommentValue] = useState("");
+
+  const latestPost = useFeed(
+    useMemo(() => (state) => state.posts.find((item) => item.id === post.id) ?? post, [post]),
+  );
 
   const handleLike = () => {
-    likePost(post.id);
+    likePost(latestPost.id);
   };
 
   const handleSave = () => {
-    savePost(post.id);
+    savePost(latestPost.id);
     toast({
-      title: post.isSaved ? "Post removido dos salvos" : "Post salvo",
-      description: post.isSaved ? "O post saiu da sua lista de salvos." : "O post foi adicionado aos seus salvos.",
+      title: latestPost.isSaved ? "Post removido dos salvos" : "Post salvo",
+      description: latestPost.isSaved ? "O post saiu da sua lista de salvos." : "O post foi adicionado aos seus salvos.",
     });
   };
 
   const handleComment = () => {
-    commentPost(post.id);
-    toast({
-      title: "Comentario iniciado",
-      description: "Adicionamos uma interacao de comentario neste post.",
-    });
+    setIsCommentsOpen(true);
   };
 
   const handleShare = () => {
-    sharePost(post.id);
+    sharePost(latestPost.id);
     toast({
       title: "Post compartilhado",
       description: "O contador de compartilhamentos foi atualizado.",
@@ -46,9 +52,22 @@ export function FeedCard({ post }: FeedCardProps) {
   };
 
   const handleDoubleClick = () => {
-    if (!post.isLiked) {
+    if (!latestPost.isLiked) {
       handleLike();
     }
+  };
+
+  const handleSubmitComment = () => {
+    if (!commentValue.trim()) return;
+
+    addComment(latestPost.id, commentValue, {
+      id: user?.id || "bypass-user",
+      name: user?.name || "Felipe Said",
+      username: user?.username || "felipesaid_",
+      avatar: user?.avatar || "",
+    });
+
+    setCommentValue("");
   };
 
   return (
@@ -57,18 +76,18 @@ export function FeedCard({ post }: FeedCardProps) {
         <div className="flex items-center justify-between p-4 pb-2">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={post.author.avatar} alt={post.author.name} />
-              <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
+              <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
+              <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>
               <div className="flex items-center gap-1">
-                <span className="text-[15px] font-semibold text-text">{post.author.name}</span>
-                {post.author.verified && <Badge className="h-4 w-4 rounded-full bg-brand p-0 text-white">✓</Badge>}
+                <span className="text-[15px] font-semibold text-text">{latestPost.author.name}</span>
+                {latestPost.author.verified && <Badge className="h-4 w-4 rounded-full bg-brand p-0 text-white">âœ“</Badge>}
               </div>
               <div className="flex items-center gap-2 text-xs text-text-dim">
-                <span>@{post.author.username}</span>
-                <span>•</span>
-                <span>{post.timestamp}</span>
+                <span>@{latestPost.author.username}</span>
+                <span>â€¢</span>
+                <span>{latestPost.timestamp}</span>
               </div>
             </div>
           </div>
@@ -80,8 +99,10 @@ export function FeedCard({ post }: FeedCardProps) {
 
         <div className="px-4 pb-3">
           <p className="text-[15px] leading-relaxed text-text">
-            {showFullContent || post.content.length <= 150 ? post.content : `${post.content.slice(0, 150)}...`}
-            {post.content.length > 150 && (
+            {showFullContent || latestPost.content.length <= 150
+              ? latestPost.content
+              : `${latestPost.content.slice(0, 150)}...`}
+            {latestPost.content.length > 150 && (
               <button
                 onClick={() => setShowFullContent(!showFullContent)}
                 className="ml-1 text-sm font-semibold text-text-dim hover:underline"
@@ -91,9 +112,9 @@ export function FeedCard({ post }: FeedCardProps) {
             )}
           </p>
 
-          {post.tags.length > 0 && (
+          {latestPost.tags.length > 0 && (
             <div className="mt-2 flex gap-2">
-              {post.tags.map((tag) => (
+              {latestPost.tags.map((tag) => (
                 <span key={tag} className="chip text-xs text-brand">
                   #{tag}
                 </span>
@@ -102,14 +123,14 @@ export function FeedCard({ post }: FeedCardProps) {
           )}
         </div>
 
-        {post.media && (
+        {latestPost.media && (
           <div className="group relative cursor-pointer" onDoubleClick={handleDoubleClick}>
-            {post.media.type === "image" ? (
-              <img src={post.media.url} alt="Post media" className="max-h-96 w-full object-cover" />
+            {latestPost.media.type === "image" ? (
+              <img src={latestPost.media.url} alt="Post media" className="max-h-96 w-full object-cover" />
             ) : (
               <div className="relative">
                 <img
-                  src={post.media.thumbnail || post.media.url}
+                  src={latestPost.media.thumbnail || latestPost.media.url}
                   alt="Video thumbnail"
                   className="max-h-96 w-full object-cover"
                 />
@@ -122,7 +143,7 @@ export function FeedCard({ post }: FeedCardProps) {
             )}
 
             <AnimatePresence>
-              {post.isLiked && (
+              {latestPost.isLiked && (
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1.2, opacity: 1 }}
@@ -139,9 +160,9 @@ export function FeedCard({ post }: FeedCardProps) {
 
         <div className="space-y-3 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[hsl(var(--stroke-soft))] pb-3 text-sm text-text-dim">
-            <span>{post.likes} curtidas</span>
+            <span>{latestPost.likes} curtidas</span>
             <span>
-              {post.comments} comentarios • {post.shares} compartilhamentos
+              {latestPost.comments} comentarios â€¢ {latestPost.shares} compartilhamentos
             </span>
           </div>
 
@@ -150,14 +171,11 @@ export function FeedCard({ post }: FeedCardProps) {
               variant="ghost"
               size="icon"
               onClick={handleLike}
-              className={cn(
-                "h-10 w-10 rounded-full",
-                post.isLiked && "text-status-like"
-              )}
+              className={cn("h-10 w-10 rounded-full", latestPost.isLiked && "text-status-like")}
               aria-label="Curtir"
             >
               <motion.div whileTap={{ scale: 0.8 }} transition={{ duration: 0.1 }}>
-                <Heart className={cn("h-5 w-5", post.isLiked && "fill-current")} />
+                <Heart className={cn("h-5 w-5", latestPost.isLiked && "fill-current")} />
               </motion.div>
             </Button>
 
@@ -185,17 +203,114 @@ export function FeedCard({ post }: FeedCardProps) {
               variant="ghost"
               size="icon"
               onClick={handleSave}
-              className={cn(
-                "h-10 w-10 rounded-full",
-                post.isSaved && "text-brand"
-              )}
+              className={cn("h-10 w-10 rounded-full", latestPost.isSaved && "text-brand")}
               aria-label="Salvar"
             >
-              <Bookmark className={cn("h-4 w-4", post.isSaved && "fill-current")} />
+              <Bookmark className={cn("h-4 w-4", latestPost.isSaved && "fill-current")} />
             </Button>
           </div>
         </div>
       </GlassCard>
+
+      <Dialog open={isCommentsOpen} onOpenChange={setIsCommentsOpen}>
+        <DialogContent className="max-h-[92vh] max-w-[min(96vw,1100px)] overflow-hidden border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))] p-0">
+          <div className="grid h-full max-h-[92vh] md:grid-cols-[1.08fr_0.92fr]">
+            <div className="hidden min-h-[680px] bg-black md:flex md:items-center md:justify-center">
+              {latestPost.media ? (
+                latestPost.media.type === "image" ? (
+                  <img src={latestPost.media.url} alt="Post" className="h-full w-full object-cover" />
+                ) : (
+                  <img
+                    src={latestPost.media.thumbnail || latestPost.media.url}
+                    alt="Video"
+                    className="h-full w-full object-cover"
+                  />
+                )
+              ) : (
+                <div className="flex h-full w-full items-center justify-center px-10 text-center text-lg text-white/85">
+                  {latestPost.content}
+                </div>
+              )}
+            </div>
+
+            <div className="flex min-h-[75vh] flex-col bg-[hsl(var(--surface))]">
+              <div className="flex items-center gap-3 border-b border-[hsl(var(--stroke-soft))] px-4 py-3">
+                <Avatar className="h-9 w-9">
+                  <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
+                  <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm font-semibold text-text">{latestPost.author.name}</p>
+                  <p className="text-xs text-text-dim">@{latestPost.author.username}</p>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-4 py-4">
+                <div className="space-y-4">
+                  <div className="flex gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
+                      <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 text-sm leading-relaxed text-text">
+                      <span className="mr-2 font-semibold">{latestPost.author.username}</span>
+                      {latestPost.content}
+                      <div className="mt-1 text-xs text-text-dim">{latestPost.timestamp}</div>
+                    </div>
+                  </div>
+
+                  {latestPost.commentList.map((comment) => (
+                    <div key={comment.id} className="flex gap-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
+                        <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 text-sm leading-relaxed text-text">
+                        <span className="mr-2 font-semibold">{comment.author.username}</span>
+                        {comment.content}
+                        <div className="mt-1 text-xs text-text-dim">{comment.timestamp}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-[hsl(var(--stroke-soft))] px-4 py-3">
+                <div className="mb-3 flex items-center justify-between text-xs text-text-dim">
+                  <span>{latestPost.likes} curtidas</span>
+                  <span>{latestPost.comments} comentarios</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user?.avatar} alt={user?.name} />
+                    <AvatarFallback>{user?.name?.charAt(0) || "F"}</AvatarFallback>
+                  </Avatar>
+                  <Input
+                    value={commentValue}
+                    onChange={(event) => setCommentValue(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        handleSubmitComment();
+                      }
+                    }}
+                    placeholder="Adicione um comentario..."
+                    className="h-10 rounded-full border-none bg-transparent px-0 shadow-none focus-visible:ring-0"
+                  />
+                  <Button
+                    variant="ghost"
+                    className="h-auto min-w-0 px-1 text-sm font-semibold text-brand"
+                    onClick={handleSubmitComment}
+                    disabled={!commentValue.trim()}
+                  >
+                    Publicar
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

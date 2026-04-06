@@ -23,6 +23,17 @@ export interface Post {
   isLiked: boolean;
   isSaved: boolean;
   tags: string[];
+  commentList: {
+    id: string;
+    author: {
+      id: string;
+      name: string;
+      username: string;
+      avatar: string;
+    };
+    content: string;
+    timestamp: string;
+  }[];
 }
 
 export interface Story {
@@ -52,6 +63,7 @@ interface FeedStore {
   likePost: (postId: string) => void;
   savePost: (postId: string) => void;
   commentPost: (postId: string) => void;
+  addComment: (postId: string, content: string, author?: { id: string; name: string; username: string; avatar: string }) => void;
   sharePost: (postId: string) => void;
   markStoryViewed: (storyId: string) => void;
   addPost: (content: string, media?: { type: 'image' | 'video'; url: string }) => void;
@@ -79,7 +91,31 @@ const mockPosts: Post[] = [
     shares: 8,
     isLiked: false,
     isSaved: false,
-    tags: ['SwiftCoin', 'Cripto']
+    tags: ['SwiftCoin', 'Cripto'],
+    commentList: [
+      {
+        id: 'c1',
+        author: {
+          id: '3',
+          name: 'Carla Mendes',
+          username: 'carlamendes',
+          avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+        },
+        content: 'Ficou muito bom mesmo. A interface esta bem mais fluida.',
+        timestamp: '1 min',
+      },
+      {
+        id: 'c2',
+        author: {
+          id: '4',
+          name: 'Rafael Tech',
+          username: 'rafaeltech',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+        },
+        content: 'Tambem testei aqui e o processo foi rapido.',
+        timestamp: 'agora',
+      },
+    ]
   },
   {
     id: '2',
@@ -97,7 +133,20 @@ const mockPosts: Post[] = [
     shares: 5,
     isLiked: true,
     isSaved: true,
-    tags: []
+    tags: [],
+    commentList: [
+      {
+        id: 'c3',
+        author: {
+          id: '2',
+          name: 'Bruno Costa',
+          username: 'brunocosta',
+          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+        },
+        content: 'Os clientes perceberam mesmo essa melhora no checkout.',
+        timestamp: '8 min',
+      },
+    ]
   },
   {
     id: '3',
@@ -120,7 +169,31 @@ const mockPosts: Post[] = [
     shares: 89,
     isLiked: false,
     isSaved: false,
-    tags: []
+    tags: [],
+    commentList: [
+      {
+        id: 'c4',
+        author: {
+          id: '3',
+          name: 'Carla Mendes',
+          username: 'carlamendes',
+          avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+        },
+        content: 'Quero ver essa thread completa, tema muito bom.',
+        timestamp: '32 min',
+      },
+      {
+        id: 'c5',
+        author: {
+          id: '5',
+          name: 'Juliana Dev',
+          username: 'julianadev',
+          avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
+        },
+        content: 'Explicou de um jeito bem pratico.',
+        timestamp: '12 min',
+      },
+    ]
   }
 ];
 
@@ -215,6 +288,41 @@ export const useFeed = create<FeedStore>()((set, get) => ({
     set({ posts: updatedPosts });
   },
 
+  addComment: (postId: string, content: string, author) => {
+    const { posts } = get();
+    const trimmedContent = content.trim();
+    if (!trimmedContent) return;
+
+    const fallbackAuthor = {
+      id: 'bypass-user',
+      name: 'Felipe Said',
+      username: 'felipesaid_',
+      avatar: '',
+    };
+
+    const nextAuthor = author ?? fallbackAuthor;
+
+    const updatedPosts = posts.map((post) =>
+      post.id === postId
+        ? {
+            ...post,
+            comments: post.comments + 1,
+            commentList: [
+              ...post.commentList,
+              {
+                id: `${postId}-${Date.now()}`,
+                author: nextAuthor,
+                content: trimmedContent,
+                timestamp: 'agora',
+              },
+            ],
+          }
+        : post
+    );
+
+    set({ posts: updatedPosts });
+  },
+
   sharePost: (postId: string) => {
     const { posts } = get();
     const updatedPosts = posts.map(post =>
@@ -262,7 +370,8 @@ export const useFeed = create<FeedStore>()((set, get) => ({
       shares: 0,
       isLiked: false,
       isSaved: false,
-      tags: []
+      tags: [],
+      commentList: []
     };
     
     set({ posts: [newPost, ...posts] });
