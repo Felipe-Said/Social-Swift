@@ -1,19 +1,26 @@
 import {
   Building2,
+  Bot,
   DollarSign,
   FileText,
   FolderOpen,
   Globe,
+  Import,
   KeyRound,
   LayoutTemplate,
   Link2,
   LucideIcon,
   MonitorCog,
+  PackagePlus,
+  PackageSearch,
+  Puzzle,
   PlugZap,
   ReceiptText,
   Settings2,
   ShoppingBag,
+  ShoppingCart,
   Store,
+  ToyBrick,
   WalletCards,
 } from "lucide-react";
 
@@ -131,6 +138,118 @@ export const businessNavigation: BusinessNavItem[] = [
             title: "API Admin",
             url: "/app/negocio/integracoes/checkout-gateway/api-admin",
             icon: Settings2,
+            children: [
+              {
+                title: "Secreta",
+                url: "/app/negocio/integracoes/checkout-gateway/api-admin/secreta",
+                icon: KeyRound,
+              },
+              {
+                title: "Publica",
+                url: "/app/negocio/integracoes/checkout-gateway/api-admin/publica",
+                icon: Globe,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Criador de Quiz",
+        url: "/app/negocio/criador-de-quiz",
+        icon: Puzzle,
+        children: [
+          {
+            title: "Construtor",
+            url: "/app/negocio/criador-de-quiz/construtor",
+            icon: Settings2,
+          },
+          {
+            title: "Dominio",
+            url: "/app/negocio/criador-de-quiz/dominio",
+            icon: Globe,
+          },
+        ],
+      },
+      {
+        title: "Produtos",
+        url: "/app/negocio/produtos",
+        icon: ShoppingCart,
+        children: [
+          {
+            title: "Importar lista CSV",
+            url: "/app/negocio/produtos/importar-lista-csv",
+            icon: Import,
+          },
+          {
+            title: "Criar produto",
+            url: "/app/negocio/produtos/criar-produto",
+            icon: PackagePlus,
+          },
+        ],
+      },
+      {
+        title: "Paginas",
+        url: "/app/negocio/paginas",
+        icon: LayoutTemplate,
+        children: [
+          {
+            title: "Criar pagina",
+            url: "/app/negocio/paginas/criar-pagina",
+            icon: LayoutTemplate,
+          },
+          {
+            title: "Importar pagina",
+            url: "/app/negocio/paginas/importar-pagina",
+            icon: Import,
+          },
+          {
+            title: "Dominio",
+            url: "/app/negocio/paginas/dominio",
+            icon: Globe,
+          },
+        ],
+      },
+      {
+        title: "Shop in Fy",
+        url: "/app/negocio/shop-in-fy",
+        icon: Store,
+        children: [
+          {
+            title: "Importar tema",
+            url: "/app/negocio/shop-in-fy/importar-tema",
+            icon: Import,
+          },
+          {
+            title: "Minhas lojas",
+            url: "/app/negocio/shop-in-fy/minhas-lojas",
+            icon: Store,
+          },
+          {
+            title: "Dominio",
+            url: "/app/negocio/shop-in-fy/dominio",
+            icon: Globe,
+          },
+        ],
+      },
+      {
+        title: "TypeBot",
+        url: "/app/negocio/typebot",
+        icon: Bot,
+        children: [
+          {
+            title: "Importar Type",
+            url: "/app/negocio/typebot/importar-type",
+            icon: Import,
+          },
+          {
+            title: "Meus Types",
+            url: "/app/negocio/typebot/meus-types",
+            icon: ToyBrick,
+          },
+          {
+            title: "Dominio",
+            url: "/app/negocio/typebot/dominio",
+            icon: Globe,
           },
         ],
       },
@@ -441,6 +560,326 @@ export const businessPages: BusinessPageDefinition[] = [
     related: [
       { label: "Checkout + Gateway", href: "/app/negocio/integracoes/checkout-gateway" },
       { label: "Link", href: "/app/negocio/integracoes/checkout-gateway/link" },
+    ],
+  },
+  {
+    title: "Secreta",
+    url: "/app/negocio/integracoes/checkout-gateway/api-admin/secreta",
+    eyebrow: "API Admin",
+    description: "Area para chave secreta e configuracoes privadas da API administrativa.",
+    icon: KeyRound,
+    highlights: [
+      "Credencial privada da operacao.",
+      "Uso restrito a automacoes seguras.",
+      "Base para autenticacao sensivel.",
+    ],
+    related: [
+      { label: "API Admin", href: "/app/negocio/integracoes/checkout-gateway/api-admin" },
+      { label: "Publica", href: "/app/negocio/integracoes/checkout-gateway/api-admin/publica" },
+    ],
+  },
+  {
+    title: "Publica",
+    url: "/app/negocio/integracoes/checkout-gateway/api-admin/publica",
+    eyebrow: "API Admin",
+    description: "Area para chave publica e configuracoes expostas da integracao administrativa.",
+    icon: Globe,
+    highlights: [
+      "Credencial publica da API.",
+      "Uso em ambientes de integracao controlados.",
+      "Base para comunicacao externa autenticada.",
+    ],
+    related: [
+      { label: "API Admin", href: "/app/negocio/integracoes/checkout-gateway/api-admin" },
+      { label: "Secreta", href: "/app/negocio/integracoes/checkout-gateway/api-admin/secreta" },
+    ],
+  },
+  {
+    title: "Criador de Quiz",
+    url: "/app/negocio/criador-de-quiz",
+    eyebrow: "Meu Negocio",
+    description: "Modulo de quiz com construtor e configuracao de dominio para experiencias interativas.",
+    icon: Puzzle,
+    highlights: [
+      "Estrutura de quizzes do negocio.",
+      "Pronto para funis e jornadas interativas.",
+      "Organiza construcao e publicacao do quiz.",
+    ],
+    related: [
+      { label: "Construtor", href: "/app/negocio/criador-de-quiz/construtor" },
+      { label: "Dominio", href: "/app/negocio/criador-de-quiz/dominio" },
+    ],
+  },
+  {
+    title: "Construtor",
+    url: "/app/negocio/criador-de-quiz/construtor",
+    eyebrow: "Criador de Quiz",
+    description: "Editor do quiz para montar perguntas, fluxo e estrutura da experiencia.",
+    icon: Settings2,
+    highlights: [
+      "Construcao do fluxo do quiz.",
+      "Base para perguntas e resultados.",
+      "Pronto para futuras automacoes de lead.",
+    ],
+    related: [
+      { label: "Criador de Quiz", href: "/app/negocio/criador-de-quiz" },
+      { label: "Dominio", href: "/app/negocio/criador-de-quiz/dominio" },
+    ],
+  },
+  {
+    title: "Dominio",
+    url: "/app/negocio/criador-de-quiz/dominio",
+    eyebrow: "Criador de Quiz",
+    description: "Configuracao do dominio de publicacao do quiz.",
+    icon: Globe,
+    highlights: [
+      "URL publica do quiz.",
+      "Base para publicacao externa.",
+      "Conecta branding e experiencia.",
+    ],
+    related: [
+      { label: "Criador de Quiz", href: "/app/negocio/criador-de-quiz" },
+      { label: "Construtor", href: "/app/negocio/criador-de-quiz/construtor" },
+    ],
+  },
+  {
+    title: "Produtos",
+    url: "/app/negocio/produtos",
+    eyebrow: "Meu Negocio",
+    description: "Modulo de produtos com criacao individual e importacao em massa por CSV.",
+    icon: ShoppingCart,
+    highlights: [
+      "Catalogo central de produtos.",
+      "Importacao em lote por CSV.",
+      "Base para venda e checkout.",
+    ],
+    related: [
+      { label: "Importar lista CSV", href: "/app/negocio/produtos/importar-lista-csv" },
+      { label: "Criar produto", href: "/app/negocio/produtos/criar-produto" },
+    ],
+  },
+  {
+    title: "Importar lista CSV",
+    url: "/app/negocio/produtos/importar-lista-csv",
+    eyebrow: "Produtos",
+    description: "Area para importacao de catalogo por arquivo CSV.",
+    icon: Import,
+    highlights: [
+      "Entrada em massa de produtos.",
+      "Ideal para catalogos grandes.",
+      "Preparado para mapeamento de colunas.",
+    ],
+    related: [
+      { label: "Produtos", href: "/app/negocio/produtos" },
+      { label: "Criar produto", href: "/app/negocio/produtos/criar-produto" },
+    ],
+  },
+  {
+    title: "Criar produto",
+    url: "/app/negocio/produtos/criar-produto",
+    eyebrow: "Produtos",
+    description: "Cadastro individual de produto com dados comerciais e operacionais.",
+    icon: PackagePlus,
+    highlights: [
+      "Criacao manual de produto.",
+      "Base para preco, descricao e estoque.",
+      "Pronto para conexao com checkout.",
+    ],
+    related: [
+      { label: "Produtos", href: "/app/negocio/produtos" },
+      { label: "Importar lista CSV", href: "/app/negocio/produtos/importar-lista-csv" },
+    ],
+  },
+  {
+    title: "Paginas",
+    url: "/app/negocio/paginas",
+    eyebrow: "Meu Negocio",
+    description: "Modulo para criar, importar e publicar paginas com dominio proprio.",
+    icon: LayoutTemplate,
+    highlights: [
+      "Criacao de paginas do negocio.",
+      "Importacao de paginas externas.",
+      "Conexao com dominio proprio.",
+    ],
+    related: [
+      { label: "Criar pagina", href: "/app/negocio/paginas/criar-pagina" },
+      { label: "Importar pagina", href: "/app/negocio/paginas/importar-pagina" },
+    ],
+  },
+  {
+    title: "Criar pagina",
+    url: "/app/negocio/paginas/criar-pagina",
+    eyebrow: "Paginas",
+    description: "Editor para criar uma nova pagina dentro da operacao.",
+    icon: LayoutTemplate,
+    highlights: [
+      "Criacao de pagina do zero.",
+      "Base para landing pages e institucionais.",
+      "Pronto para evolucao visual.",
+    ],
+    related: [
+      { label: "Paginas", href: "/app/negocio/paginas" },
+      { label: "Dominio", href: "/app/negocio/paginas/dominio" },
+    ],
+  },
+  {
+    title: "Importar pagina",
+    url: "/app/negocio/paginas/importar-pagina",
+    eyebrow: "Paginas",
+    description: "Espaco para importar uma pagina e adaptar ao ecossistema atual.",
+    icon: Import,
+    highlights: [
+      "Importacao de paginas externas.",
+      "Base para migracoes de layout.",
+      "Acelera entrada de projetos existentes.",
+    ],
+    related: [
+      { label: "Paginas", href: "/app/negocio/paginas" },
+      { label: "Criar pagina", href: "/app/negocio/paginas/criar-pagina" },
+    ],
+  },
+  {
+    title: "Dominio",
+    url: "/app/negocio/paginas/dominio",
+    eyebrow: "Paginas",
+    description: "Configuracao do dominio de publicacao das paginas.",
+    icon: Globe,
+    highlights: [
+      "Dominio das paginas publicas.",
+      "Base para publicacao externa.",
+      "Conecta branding e distribuicao.",
+    ],
+    related: [
+      { label: "Paginas", href: "/app/negocio/paginas" },
+      { label: "Importar pagina", href: "/app/negocio/paginas/importar-pagina" },
+    ],
+  },
+  {
+    title: "Shop in Fy",
+    url: "/app/negocio/shop-in-fy",
+    eyebrow: "Meu Negocio",
+    description: "Modulo para importar tema, gerenciar lojas e conectar dominio no Shop in Fy.",
+    icon: Store,
+    highlights: [
+      "Gestao de lojas conectadas.",
+      "Importacao de tema.",
+      "Configuracao de dominio da loja.",
+    ],
+    related: [
+      { label: "Importar tema", href: "/app/negocio/shop-in-fy/importar-tema" },
+      { label: "Minhas lojas", href: "/app/negocio/shop-in-fy/minhas-lojas" },
+    ],
+  },
+  {
+    title: "Importar tema",
+    url: "/app/negocio/shop-in-fy/importar-tema",
+    eyebrow: "Shop in Fy",
+    description: "Area para importar um novo tema visual para a loja.",
+    icon: Import,
+    highlights: [
+      "Entrada de tema visual.",
+      "Base para personalizacao da loja.",
+      "Acelera setup inicial.",
+    ],
+    related: [
+      { label: "Shop in Fy", href: "/app/negocio/shop-in-fy" },
+      { label: "Minhas lojas", href: "/app/negocio/shop-in-fy/minhas-lojas" },
+    ],
+  },
+  {
+    title: "Minhas lojas",
+    url: "/app/negocio/shop-in-fy/minhas-lojas",
+    eyebrow: "Shop in Fy",
+    description: "Biblioteca das lojas conectadas e administradas no modulo Shop in Fy.",
+    icon: Store,
+    highlights: [
+      "Visao das lojas vinculadas.",
+      "Base para operacao multi-loja.",
+      "Pronto para historico e status.",
+    ],
+    related: [
+      { label: "Shop in Fy", href: "/app/negocio/shop-in-fy" },
+      { label: "Dominio", href: "/app/negocio/shop-in-fy/dominio" },
+    ],
+  },
+  {
+    title: "Dominio",
+    url: "/app/negocio/shop-in-fy/dominio",
+    eyebrow: "Shop in Fy",
+    description: "Configuracao do dominio da loja dentro do fluxo Shop in Fy.",
+    icon: Globe,
+    highlights: [
+      "Dominio da loja conectada.",
+      "Base para publicacao externa.",
+      "Relaciona branding e operacao.",
+    ],
+    related: [
+      { label: "Shop in Fy", href: "/app/negocio/shop-in-fy" },
+      { label: "Minhas lojas", href: "/app/negocio/shop-in-fy/minhas-lojas" },
+    ],
+  },
+  {
+    title: "TypeBot",
+    url: "/app/negocio/typebot",
+    eyebrow: "Meu Negocio",
+    description: "Modulo para importar fluxos TypeBot, gerenciar tipos criados e configurar dominio.",
+    icon: Bot,
+    highlights: [
+      "Central do TypeBot na operacao.",
+      "Importacao de fluxos existentes.",
+      "Base para automacoes conversacionais.",
+    ],
+    related: [
+      { label: "Importar Type", href: "/app/negocio/typebot/importar-type" },
+      { label: "Meus Types", href: "/app/negocio/typebot/meus-types" },
+    ],
+  },
+  {
+    title: "Importar Type",
+    url: "/app/negocio/typebot/importar-type",
+    eyebrow: "TypeBot",
+    description: "Entrada de fluxos TypeBot existentes para dentro da plataforma.",
+    icon: Import,
+    highlights: [
+      "Importacao de fluxos prontos.",
+      "Base para onboarding mais rapido.",
+      "Acelera reaproveitamento de automacoes.",
+    ],
+    related: [
+      { label: "TypeBot", href: "/app/negocio/typebot" },
+      { label: "Meus Types", href: "/app/negocio/typebot/meus-types" },
+    ],
+  },
+  {
+    title: "Meus Types",
+    url: "/app/negocio/typebot/meus-types",
+    eyebrow: "TypeBot",
+    description: "Biblioteca dos fluxos TypeBot ja criados e conectados ao negocio.",
+    icon: ToyBrick,
+    highlights: [
+      "Gestao dos Types existentes.",
+      "Base para organizacao de automacoes.",
+      "Pronto para futuras publicacoes.",
+    ],
+    related: [
+      { label: "TypeBot", href: "/app/negocio/typebot" },
+      { label: "Dominio", href: "/app/negocio/typebot/dominio" },
+    ],
+  },
+  {
+    title: "Dominio",
+    url: "/app/negocio/typebot/dominio",
+    eyebrow: "TypeBot",
+    description: "Configuracao do dominio publico para os fluxos TypeBot.",
+    icon: Globe,
+    highlights: [
+      "Dominio dos fluxos conversacionais.",
+      "Base para publicacao externa.",
+      "Conecta experiencia e distribuicao.",
+    ],
+    related: [
+      { label: "TypeBot", href: "/app/negocio/typebot" },
+      { label: "Meus Types", href: "/app/negocio/typebot/meus-types" },
     ],
   },
 ];
