@@ -13,9 +13,14 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/stores/auth";
 import { useFeed } from "@/stores/feed";
+import { useSnaps } from "@/stores/snaps";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { FeedCard } from "@/components/social/feed-card";
+import {
+  buildPostGridItems,
+  buildSnapGridItems,
+  ProfileMediaGrid,
+} from "@/components/social/profile-media-grid";
 import Profile from "./Profile";
 import { motion } from "framer-motion";
 
@@ -29,6 +34,7 @@ export default function SocialProfilePage() {
   const { username } = useParams();
   const { user } = useAuth();
   const { posts, stories } = useFeed();
+  const { snaps } = useSnaps();
   const [activeTab, setActiveTab] = useState("posts");
 
   const normalizedUsername = username?.toLowerCase();
@@ -47,6 +53,7 @@ export default function SocialProfilePage() {
     if (!author) return null;
 
     const authoredPosts = posts.filter((post) => post.author.username.toLowerCase() === normalizedUsername);
+    const authoredSnaps = snaps.filter((snap) => snap.user.username.toLowerCase() === normalizedUsername);
 
     return {
       ...author,
@@ -56,13 +63,33 @@ export default function SocialProfilePage() {
       profileLink: `socialswift.app/${author.username}`,
       isPrivate: false,
       posts: authoredPosts,
+      snaps: authoredSnaps,
       stats: {
-        posts: authoredPosts.length,
+        posts: authoredPosts.length + authoredSnaps.length,
         followers: 1200 + authoredPosts.length * 37,
         following: 320 + authoredPosts.length * 11,
       },
     };
-  }, [isCurrentUser, normalizedUsername, posts, stories]);
+  }, [isCurrentUser, normalizedUsername, posts, snaps, stories]);
+
+  const imageGridItems = useMemo(
+    () =>
+      profileData
+        ? buildPostGridItems(profileData.posts.filter((post) => post.media?.type === "image"))
+        : [],
+    [profileData],
+  );
+
+  const videoGridItems = useMemo(
+    () =>
+      profileData
+        ? [
+            ...buildPostGridItems(profileData.posts.filter((post) => post.media?.type === "video")),
+            ...buildSnapGridItems(profileData.snaps),
+          ]
+        : [],
+    [profileData],
+  );
 
   if (isCurrentUser) {
     return <Profile />;
@@ -240,30 +267,42 @@ export default function SocialProfilePage() {
 
             <div className="mt-6 min-h-96">
               {activeTab === "posts" ? (
-                profileData.posts.length > 0 ? (
-                  <div className="space-y-4">
-                    {profileData.posts.map((post) => (
-                      <FeedCard key={post.id} post={post} />
-                    ))}
-                  </div>
+                imageGridItems.length > 0 ? (
+                  <ProfileMediaGrid items={imageGridItems} />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20">
                     <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
                       <ImageIcon className="h-12 w-12 text-gray-400" />
                     </div>
-                    <h3 className="mb-2 text-center text-xl font-semibold text-white">Ainda nao ha nenhum post</h3>
+                    <h3 className="mb-2 text-center text-xl font-semibold text-white">Ainda nao ha nenhuma foto</h3>
                     <p className="max-w-md text-center text-gray-400">
-                      Quando este usuario compartilhar fotos e videos, eles aparecerao aqui.
+                      As publicacoes com imagem deste usuario aparecem aqui em grade.
+                    </p>
+                  </div>
+                )
+              ) : activeTab === "videos" ? (
+                videoGridItems.length > 0 ? (
+                  <ProfileMediaGrid items={videoGridItems} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-20">
+                    <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
+                      <Play className="h-12 w-12 text-gray-400" />
+                    </div>
+                    <h3 className="mb-2 text-center text-xl font-semibold text-white">
+                      Ainda nao ha nenhum video
+                    </h3>
+                    <p className="max-w-md text-center text-gray-400">
+                      Videos e snaps deste usuario vao aparecer aqui.
                     </p>
                   </div>
                 )
               ) : (
                 <div className="flex flex-col items-center justify-center py-20">
                   <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
-                    {activeTab === "videos" ? <Play className="h-12 w-12 text-gray-400" /> : <User className="h-12 w-12 text-gray-400" />}
+                    <User className="h-12 w-12 text-gray-400" />
                   </div>
                   <h3 className="mb-2 text-center text-xl font-semibold text-white">
-                    {activeTab === "videos" ? "Ainda nao ha nenhum video" : "Ainda nao ha marcacoes"}
+                    Ainda nao ha marcacoes
                   </h3>
                   <p className="max-w-md text-center text-gray-400">
                     Esse conteudo aparecera aqui quando houver novas publicacoes.

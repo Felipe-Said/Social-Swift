@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/stores/auth";
 import { useFeed } from "@/stores/feed";
 import { FeedCard } from "@/components/social/feed-card";
+import {
+  buildPostGridItems,
+  buildSnapGridItems,
+  ProfileMediaGrid,
+} from "@/components/social/profile-media-grid";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
@@ -30,10 +35,12 @@ import {
   Lock,
   Globe,
 } from "lucide-react";
+import { useSnaps } from "@/stores/snaps";
 
 export default function Profile() {
   const { user, updateProfile } = useAuth();
   const { posts, loadFeed, isLoading } = useFeed();
+  const { snaps } = useSnaps();
   const [activeTab, setActiveTab] = useState("posts");
   const [bannerImage, setBannerImage] = useState(user?.banner || "");
   const [avatarImage, setAvatarImage] = useState(user?.avatar || "");
@@ -61,8 +68,45 @@ export default function Profile() {
     loadFeed();
   }, [loadFeed]);
 
+  const currentUsername = user?.username?.toLowerCase();
+
+  const authoredImagePosts = useMemo(
+    () =>
+      posts.filter(
+        (post) =>
+          post.author.username.toLowerCase() === currentUsername &&
+          post.media?.type === "image",
+      ),
+    [currentUsername, posts],
+  );
+
+  const authoredVideoPosts = useMemo(
+    () =>
+      posts.filter(
+        (post) =>
+          post.author.username.toLowerCase() === currentUsername &&
+          post.media?.type === "video",
+      ),
+    [currentUsername, posts],
+  );
+
+  const authoredSnaps = useMemo(
+    () => snaps.filter((snap) => snap.user.username.toLowerCase() === currentUsername),
+    [currentUsername, snaps],
+  );
+
+  const imageGridItems = useMemo(
+    () => buildPostGridItems(authoredImagePosts),
+    [authoredImagePosts],
+  );
+
+  const videoGridItems = useMemo(
+    () => [...buildPostGridItems(authoredVideoPosts), ...buildSnapGridItems(authoredSnaps)],
+    [authoredSnaps, authoredVideoPosts],
+  );
+
   const stats = {
-    posts: user?.posts ?? 0,
+    posts: user?.posts ?? imageGridItems.length + videoGridItems.length,
     followers: user?.followers ?? 1757,
     following: user?.following ?? 1274,
   };
@@ -324,7 +368,42 @@ export default function Profile() {
             </div>
 
             <div className="mt-6 min-h-96">
-              {activeTab === "saved" ? (
+              {activeTab === "posts" ? (
+                imageGridItems.length > 0 ? (
+                  <ProfileMediaGrid items={imageGridItems} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-20">
+                    <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
+                      <ImageIcon className="h-12 w-12 text-gray-400" />
+                    </div>
+                    <h3 className="mb-2 text-center text-xl font-semibold text-white">
+                      Ainda nao ha nenhuma foto
+                    </h3>
+                    <p className="max-w-md text-center text-gray-400">
+                      As publicacoes com imagem vao aparecer aqui em grade, como no Instagram.
+                    </p>
+                    <Button className="mt-6 bg-blue-600 text-white hover:bg-blue-700">
+                      Compartilhar sua primeira foto
+                    </Button>
+                  </div>
+                )
+              ) : activeTab === "videos" ? (
+                videoGridItems.length > 0 ? (
+                  <ProfileMediaGrid items={videoGridItems} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-20">
+                    <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
+                      <Play className="h-12 w-12 text-gray-400" />
+                    </div>
+                    <h3 className="mb-2 text-center text-xl font-semibold text-white">
+                      Ainda nao ha nenhum video
+                    </h3>
+                    <p className="max-w-md text-center text-gray-400">
+                      Videos e snaps publicados vao aparecer aqui em grade.
+                    </p>
+                  </div>
+                )
+              ) : activeTab === "saved" ? (
                 savedPosts.length > 0 ? (
                   <div className="space-y-4">
                     {savedPosts.map((post) => (
@@ -347,17 +426,14 @@ export default function Profile() {
               ) : (
                 <div className="flex flex-col items-center justify-center py-20">
                   <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
-                    <ImageIcon className="h-12 w-12 text-gray-400" />
+                    <User className="h-12 w-12 text-gray-400" />
                   </div>
                   <h3 className="mb-2 text-center text-xl font-semibold text-white">
-                    {activeTab === "videos" ? "Ainda nao ha nenhum video" : "Ainda nao ha nenhum post"}
+                    Ainda nao ha marcacoes
                   </h3>
                   <p className="max-w-md text-center text-gray-400">
-                    Quando voce compartilhar fotos e videos, eles aparecerao no seu perfil.
+                    Quando voce for marcado em publicacoes, elas aparecerao aqui.
                   </p>
-                  <Button className="mt-6 bg-blue-600 text-white hover:bg-blue-700">
-                    Compartilhar sua primeira foto
-                  </Button>
                 </div>
               )}
             </div>
