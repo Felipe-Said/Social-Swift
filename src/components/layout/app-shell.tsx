@@ -14,6 +14,7 @@ export function AppShell() {
 
   const isGroupsRoute = location.pathname.startsWith("/app/social/grupos");
   const isBusinessDashboardRoute = location.pathname.startsWith("/app/dashboard");
+  const isWalletRoute = location.pathname.startsWith("/app/carteira");
 
   if (!isAuthenticated) {
     return <Outlet />;
@@ -41,7 +42,7 @@ export function AppShell() {
           <Outlet />
         </main>
 
-        {!isGroupsRoute && !isBusinessDashboardRoute && <RightRail />}
+        {!isGroupsRoute && !isBusinessDashboardRoute && !isWalletRoute && <RightRail />}
         <BottomTab />
       </div>
 
