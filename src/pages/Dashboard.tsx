@@ -35,6 +35,31 @@ export default function Dashboard() {
         year: "numeric",
       }).format(new Date());
 
+    const ensureHeroCardMarkup = (heroCard: HTMLElement) => {
+      if (heroCard.querySelector("[data-social-swift-hero]")) return;
+
+      heroCard.innerHTML = `
+        <div data-social-swift-hero class="relative z-10 flex h-full flex-col justify-between gap-8 p-6 sm:p-8">
+          <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div class="min-w-0">
+              <h2 data-role="hero-title" class="text-2xl font-bold text-[var(--text)] sm:text-3xl"></h2>
+              <p data-role="hero-subtitle" class="mt-2 text-sm text-[var(--text-muted)]"></p>
+            </div>
+            <div class="text-left sm:text-right">
+              <div data-role="hero-city" class="text-3xl font-bold text-[var(--text)] sm:text-4xl"></div>
+              <div data-role="hero-label" class="mt-2 text-sm text-[var(--text-muted)]"></div>
+              <div data-role="hero-timezone" class="mt-4 text-base font-medium text-[var(--text)]"></div>
+              <div data-role="hero-date" class="mt-1 text-sm text-[var(--text-muted)]"></div>
+            </div>
+          </div>
+          <div class="flex items-end gap-3">
+            <div data-role="hero-time" class="text-4xl font-bold tracking-tight text-[var(--text)] sm:text-6xl"></div>
+            <div class="pb-1 text-lg font-semibold uppercase text-[var(--text-muted)] sm:text-2xl">hrs</div>
+          </div>
+        </div>
+      `;
+    };
+
     const updateHeroCard = (iframeDocument: Document) => {
       const dashboardContent = iframeDocument.getElementById("dashboard-content");
       if (!(dashboardContent instanceof HTMLElement)) return;
@@ -42,14 +67,15 @@ export default function Dashboard() {
       const heroCard = dashboardContent.querySelector("div > div");
       if (!(heroCard instanceof HTMLElement)) return;
 
-      const heading = heroCard.querySelector("h2");
-      const subtitle = heroCard.querySelector("p");
-      const leftTimeWrap = heroCard.querySelector('div[dir="ltr"]');
-      const rightColumn = heroCard.querySelector('div[class*="text-right"]');
-      const weatherImage = rightColumn?.querySelector("img");
-      const rightBigText = rightColumn?.querySelector('div[class*="text-4xl"]');
-      const rightMutedText = rightColumn?.querySelector('div[class*="text-sm"]');
-      const rightMetaRows = rightColumn?.querySelectorAll('div[class*="font-medium"], div[class*="capitalize"]');
+      ensureHeroCardMarkup(heroCard);
+
+      const heading = heroCard.querySelector('[data-role="hero-title"]');
+      const subtitle = heroCard.querySelector('[data-role="hero-subtitle"]');
+      const time = heroCard.querySelector('[data-role="hero-time"]');
+      const cityText = heroCard.querySelector('[data-role="hero-city"]');
+      const label = heroCard.querySelector('[data-role="hero-label"]');
+      const timezoneText = heroCard.querySelector('[data-role="hero-timezone"]');
+      const dateTextNode = heroCard.querySelector('[data-role="hero-date"]');
 
       const { city, timezone } = getLocationLabel();
       const timeText = formatClock();
@@ -63,31 +89,24 @@ export default function Dashboard() {
         subtitle.textContent = "Horario local atualizado automaticamente";
       }
 
-      if (leftTimeWrap instanceof HTMLElement) {
-        leftTimeWrap.textContent = timeText;
+      if (time instanceof HTMLElement) {
+        time.textContent = timeText;
       }
 
-      if (weatherImage instanceof HTMLElement) {
-        weatherImage.style.display = "none";
+      if (cityText instanceof HTMLElement) {
+        cityText.textContent = city;
       }
 
-      if (rightBigText instanceof HTMLElement) {
-        rightBigText.textContent = city;
-        rightBigText.className = "text-3xl sm:text-4xl font-bold text-[var(--text)]";
+      if (label instanceof HTMLElement) {
+        label.textContent = "Localizacao atual";
       }
 
-      if (rightMutedText instanceof HTMLElement) {
-        rightMutedText.textContent = "Localizacao atual";
+      if (timezoneText instanceof HTMLElement) {
+        timezoneText.textContent = timezone;
       }
 
-      if (rightMetaRows && rightMetaRows.length >= 2) {
-        const [firstRow, secondRow] = Array.from(rightMetaRows);
-        if (firstRow instanceof HTMLElement) {
-          firstRow.textContent = timezone;
-        }
-        if (secondRow instanceof HTMLElement) {
-          secondRow.textContent = dateText;
-        }
+      if (dateTextNode instanceof HTMLElement) {
+        dateTextNode.textContent = dateText;
       }
     };
 
