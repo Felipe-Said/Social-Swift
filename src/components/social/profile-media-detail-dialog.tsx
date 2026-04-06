@@ -221,7 +221,7 @@ export function ProfileMediaDetailDialog({
                   </Button>
                 </div>
 
-                <div className="mb-3 space-y-1 text-xs text-text-dim">
+                <div className="mb-3 flex items-center gap-4 text-xs text-text-dim">
                   <p>{content.likes} curtidas</p>
                   <p>{content.comments} comentarios</p>
                 </div>
