@@ -127,12 +127,12 @@ export function ProfileMediaDetailDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[92vh] max-w-[min(96vw,1100px)] overflow-hidden border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))] p-0">
         {content && (
-          <div className="grid h-full max-h-[92vh] md:grid-cols-[1.08fr_0.92fr]">
-            <div className="hidden min-h-[680px] bg-black md:flex md:items-center md:justify-center">
+          <div className="grid h-full max-h-[92vh] grid-rows-[minmax(220px,42vh)_1fr] md:grid-cols-[1.08fr_0.92fr] md:grid-rows-1">
+            <div className="min-h-[220px] bg-black md:min-h-[680px] md:flex md:items-center md:justify-center">
               {content.mediaType === "video" ? (
                 <video
                   src={content.mediaUrl}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover md:h-full md:w-full"
                   controls
                   autoPlay
                   playsInline
@@ -142,7 +142,7 @@ export function ProfileMediaDetailDialog({
               )}
             </div>
 
-            <div className="flex min-h-[75vh] flex-col bg-[hsl(var(--surface))]">
+            <div className="flex min-h-0 flex-col bg-[hsl(var(--surface))] md:min-h-[75vh]">
               <div className="flex items-center gap-3 border-b border-[hsl(var(--stroke-soft))] px-4 py-3">
                 <Link to={getSocialProfilePath(content.author.username)} onClick={() => onOpenChange(false)}>
                   <Avatar className="h-9 w-9 cursor-pointer">
