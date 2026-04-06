@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageCircle, Share, MoreHorizontal, Play, Volume2, Disc3 } from "lucide-react";
 import { getSocialProfilePath } from "@/lib/profile";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/stores/auth";
 
 interface Snap {
   id: string;
@@ -23,6 +26,16 @@ interface Snap {
     title: string;
     artist: string;
   };
+  commentList: {
+    id: string;
+    author: {
+      name: string;
+      username: string;
+      avatar: string;
+    };
+    content: string;
+    timestamp: string;
+  }[];
 }
 
 const initialSnaps: Snap[] = [
@@ -43,6 +56,28 @@ const initialSnaps: Snap[] = [
       title: "Good Vibes",
       artist: "Artist Name",
     },
+    commentList: [
+      {
+        id: "s1c1",
+        author: {
+          name: "Pedro Lima",
+          username: "pedrolima",
+          avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&crop=face",
+        },
+        content: "Esse snap ficou muito bom.",
+        timestamp: "2 min",
+      },
+      {
+        id: "s1c2",
+        author: {
+          name: "Clara Souza",
+          username: "clarasouza",
+          avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&h=160&fit=crop&crop=face",
+        },
+        content: "A luz dessa foto ficou perfeita.",
+        timestamp: "agora",
+      },
+    ],
   },
   {
     id: "2",
@@ -61,6 +96,18 @@ const initialSnaps: Snap[] = [
       title: "Energy Boost",
       artist: "Motivation",
     },
+    commentList: [
+      {
+        id: "s2c1",
+        author: {
+          name: "Bianca Melo",
+          username: "biancamelo",
+          avatar: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=160&h=160&fit=crop&crop=face",
+        },
+        content: "Brabo demais.",
+        timestamp: "5 min",
+      },
+    ],
   },
   {
     id: "3",
@@ -79,11 +126,31 @@ const initialSnaps: Snap[] = [
       title: "Late Night Mood",
       artist: "DJ Swift",
     },
+    commentList: [
+      {
+        id: "s3c1",
+        author: {
+          name: "Lucas Rocha",
+          username: "lucasrocha",
+          avatar: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=160&h=160&fit=crop&crop=face",
+        },
+        content: "Quero a receita depois.",
+        timestamp: "12 min",
+      },
+    ],
   },
 ];
 
 export default function Snaps() {
+  const { user } = useAuth();
   const [snaps, setSnaps] = useState(initialSnaps);
+  const [selectedSnapId, setSelectedSnapId] = useState<string | null>(null);
+  const [commentValue, setCommentValue] = useState("");
+
+  const selectedSnap = useMemo(
+    () => snaps.find((snap) => snap.id === selectedSnapId) ?? null,
+    [selectedSnapId, snaps],
+  );
 
   const handleLike = (snapId: string) => {
     setSnaps((current) =>
@@ -97,6 +164,40 @@ export default function Snaps() {
           : snap,
       ),
     );
+  };
+
+  const handleOpenComments = (snapId: string) => {
+    setSelectedSnapId(snapId);
+  };
+
+  const handleSubmitComment = () => {
+    if (!selectedSnap || !commentValue.trim()) return;
+
+    setSnaps((current) =>
+      current.map((snap) =>
+        snap.id === selectedSnap.id
+          ? {
+              ...snap,
+              comments: snap.comments + 1,
+              commentList: [
+                ...snap.commentList,
+                {
+                  id: `${snap.id}-${Date.now()}`,
+                  author: {
+                    name: user?.name || "Felipe Said",
+                    username: user?.username || "felipesaid_",
+                    avatar: user?.avatar || "",
+                  },
+                  content: commentValue.trim(),
+                  timestamp: "agora",
+                },
+              ],
+            }
+          : snap,
+      ),
+    );
+
+    setCommentValue("");
   };
 
   return (
@@ -164,7 +265,10 @@ export default function Snaps() {
                   <span className="text-xs font-semibold">{snap.likes.toLocaleString("pt-BR")}</span>
                 </motion.button>
 
-                <button className="flex flex-col items-center gap-1 text-white">
+                <button
+                  onClick={() => handleOpenComments(snap.id)}
+                  className="flex flex-col items-center gap-1 text-white"
+                >
                   <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
                     <MessageCircle className="h-6 w-6" />
                   </span>
@@ -196,6 +300,75 @@ export default function Snaps() {
           </section>
         ))}
       </div>
+
+      <Drawer open={Boolean(selectedSnap)} onOpenChange={(open) => !open && setSelectedSnapId(null)}>
+        <DrawerContent className="mx-auto h-[78vh] max-w-md rounded-t-[24px] border-none bg-[#111111] text-white">
+          {selectedSnap && (
+            <>
+              <DrawerHeader className="border-b border-white/10 px-4 pb-3 pt-2 text-left">
+                <DrawerTitle className="text-base font-semibold text-white">Comentarios</DrawerTitle>
+              </DrawerHeader>
+
+              <div className="flex-1 overflow-y-auto px-4 py-4">
+                <div className="space-y-4">
+                  {selectedSnap.commentList.map((comment) => (
+                    <div key={comment.id} className="flex items-start gap-3">
+                      <Link to={getSocialProfilePath(comment.author.username)} onClick={() => setSelectedSnapId(null)}>
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
+                          <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                      </Link>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm leading-relaxed text-white">
+                          <Link
+                            to={getSocialProfilePath(comment.author.username)}
+                            onClick={() => setSelectedSnapId(null)}
+                            className="mr-2 font-semibold hover:underline"
+                          >
+                            {comment.author.username}
+                          </Link>
+                          {comment.content}
+                        </p>
+                        <p className="mt-1 text-xs text-white/55">{comment.timestamp}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-9 w-9 shrink-0">
+                    <AvatarImage src={user?.avatar} alt={user?.name} />
+                    <AvatarFallback>{user?.name?.charAt(0) || "F"}</AvatarFallback>
+                  </Avatar>
+                  <Input
+                    value={commentValue}
+                    onChange={(event) => setCommentValue(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        handleSubmitComment();
+                      }
+                    }}
+                    placeholder="Adicione um comentario..."
+                    className="h-11 flex-1 rounded-full border-white/10 bg-white/5 px-4 text-white placeholder:text-white/40 focus-visible:ring-0"
+                  />
+                  <Button
+                    variant="ghost"
+                    className="h-auto min-w-0 shrink-0 px-1 text-sm font-semibold text-[#4c9eff]"
+                    onClick={handleSubmitComment}
+                    disabled={!commentValue.trim()}
+                  >
+                    Publicar
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }
