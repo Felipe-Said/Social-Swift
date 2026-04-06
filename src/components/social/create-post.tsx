@@ -75,22 +75,22 @@ export function CreatePost({ onPostCreated, className = "" }: CreatePostProps) {
 
   return (
     <GlassCard className={`space-y-0 overflow-hidden p-0 ${className}`}>
-      <div className="flex items-center gap-3 p-4 pb-3">
-        <Avatar className="h-10 w-10">
+      <div className="flex items-start gap-3 px-4 pb-3 pt-4 sm:items-center">
+        <Avatar className="mt-0.5 h-10 w-10 shrink-0 sm:mt-0">
           <AvatarImage src={user?.avatar} />
           <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
         </Avatar>
-        <button className="flex h-10 flex-1 items-center rounded-full bg-[hsl(var(--accent))] px-4 text-left text-[17px] text-text-dim">
+        <button className="flex min-h-[52px] flex-1 items-center rounded-[22px] bg-[hsl(var(--accent))] px-4 py-2 text-left text-[16px] leading-[1.3] text-text-dim sm:min-h-[40px] sm:rounded-full sm:py-0 sm:text-[17px]">
           No que voce esta pensando, {user?.name?.split(" ")[0] || "Felipe"}?
         </button>
       </div>
 
-      <div className="border-t border-[hsl(var(--stroke-soft))] px-4 py-3">
+      <div className="border-t border-[hsl(var(--stroke-soft))] px-4 pb-3 pt-2">
         <Textarea
           placeholder="Compartilhe uma atualizacao"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="min-h-[88px] resize-none border-0 bg-transparent px-0 text-[16px] text-text placeholder:text-text-dim focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="min-h-[76px] resize-none border-0 bg-transparent px-0 py-2 text-[15px] leading-relaxed text-text placeholder:text-text-dim focus-visible:ring-0 focus-visible:ring-offset-0 sm:min-h-[88px] sm:text-[16px]"
         />
       </div>
 
