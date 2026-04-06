@@ -26,14 +26,14 @@ export function AppShell() {
       <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
         <SheetContent
           side="left"
-          className="w-[272px] max-w-[80vw] border-none bg-transparent p-2 shadow-none"
+          className="w-[272px] max-w-[80vw] border-none bg-[hsl(var(--sidebar-bg))] p-0 shadow-none"
         >
           <Sidebar />
         </SheetContent>
       </Sheet>
 
-      <div className="fb-shell mx-auto flex w-full max-w-[1920px] gap-0 px-0 lg:px-6">
-        <div className="hidden lg:block lg:w-[220px] lg:shrink-0 lg:pr-4">
+      <div className="fb-shell mx-auto flex w-full max-w-[1920px] gap-0 px-0 lg:px-4">
+        <div className="hidden bg-[hsl(var(--sidebar-bg))] lg:block lg:w-[264px] lg:shrink-0 lg:pr-4">
           <Sidebar />
         </div>
 
