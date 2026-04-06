@@ -12,6 +12,9 @@ export default function Dashboard() {
     if (!iframe) return;
 
     const hideChrome = (iframeDocument: Document) => {
+      const iframeWindow = iframe.contentWindow;
+      if (!iframeWindow) return;
+
       const injectedStyle = iframeDocument.createElement("style");
       injectedStyle.setAttribute("data-social-swift-dashboard-cleanup", "true");
       injectedStyle.textContent = `
@@ -110,6 +113,24 @@ export default function Dashboard() {
         )
       );
 
+      Array.from(iframeDocument.querySelectorAll("body *")).forEach((element) => {
+        if (!(element instanceof HTMLElement)) return;
+
+        const rect = element.getBoundingClientRect();
+        const style = iframeWindow.getComputedStyle(element);
+        const isLeftRailCandidate =
+          rect.left <= 24 &&
+          rect.top <= 140 &&
+          rect.width >= 180 &&
+          rect.width <= 340 &&
+          rect.height >= iframeWindow.innerHeight * 0.55 &&
+          ["fixed", "sticky", "absolute"].includes(style.position);
+
+        if (isLeftRailCandidate) {
+          hideElement(element);
+        }
+      });
+
       const mainElement = iframeDocument.querySelector("main");
       if (mainElement instanceof HTMLElement) {
         mainElement.style.setProperty("width", "100%", "important");
@@ -141,10 +162,12 @@ export default function Dashboard() {
 
     iframe.addEventListener("load", updateHeight);
     const timeoutId = window.setTimeout(updateHeight, 400);
+    const secondPassId = window.setTimeout(updateHeight, 1200);
 
     return () => {
       iframe.removeEventListener("load", updateHeight);
       window.clearTimeout(timeoutId);
+      window.clearTimeout(secondPassId);
     };
   }, []);
 
