@@ -222,8 +222,8 @@ function getYoutubeAudioEmbedUrl(videoId: string) {
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
 }
 
-function getMusicMeta(label: string) {
-  const normalizedLabel = label.trim() || "Audio do YouTube";
+function getMusicMeta(label: string, fallbackTitle?: string | null) {
+  const normalizedLabel = label.trim() || fallbackTitle?.trim() || "Audio do YouTube";
   const parts = normalizedLabel.split(" - ").map((part) => part.trim()).filter(Boolean);
 
   if (parts.length >= 2) {
@@ -252,6 +252,7 @@ export default function Snaps() {
   const [newSnapMedia, setNewSnapMedia] = useState<SnapMedia | null>(null);
   const [newSnapYoutubeUrl, setNewSnapYoutubeUrl] = useState("");
   const [newSnapMusicLabel, setNewSnapMusicLabel] = useState("");
+  const [youtubePreviewTitle, setYoutubePreviewTitle] = useState("");
   const [isCreateMusicMuted, setIsCreateMusicMuted] = useState(false);
   const [isCreateVideoMuted, setIsCreateVideoMuted] = useState(false);
   const [videoUploadName, setVideoUploadName] = useState("");
@@ -272,6 +273,48 @@ export default function Snaps() {
     () => extractYoutubeVideoId(newSnapYoutubeUrl),
     [newSnapYoutubeUrl],
   );
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    if (!newSnapYoutubeUrl.trim()) {
+      setYoutubePreviewTitle("");
+      return;
+    }
+
+    const videoId = extractYoutubeVideoId(newSnapYoutubeUrl);
+    if (!videoId) {
+      setYoutubePreviewTitle("");
+      return;
+    }
+
+    const loadYoutubeTitle = async () => {
+      try {
+        const response = await fetch(
+          `https://www.youtube.com/oembed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${videoId}`)}&format=json`,
+        );
+
+        if (!response.ok) {
+          throw new Error("oEmbed request failed");
+        }
+
+        const data = (await response.json()) as { title?: string };
+        if (!isCancelled) {
+          setYoutubePreviewTitle(data.title?.trim() || "");
+        }
+      } catch {
+        if (!isCancelled) {
+          setYoutubePreviewTitle("");
+        }
+      }
+    };
+
+    void loadYoutubeTitle();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [newSnapYoutubeUrl]);
 
   useEffect(() => {
     const handleOpenCreateSnap = () => setIsCreateSnapOpen(true);
@@ -485,7 +528,7 @@ export default function Snaps() {
         return;
       }
 
-      const meta = getMusicMeta(newSnapMusicLabel);
+      const meta = getMusicMeta(newSnapMusicLabel, youtubePreviewTitle);
       music = {
         title: meta.title,
         artist: meta.artist,
@@ -524,6 +567,7 @@ export default function Snaps() {
     setNewSnapMedia(null);
     setNewSnapYoutubeUrl("");
     setNewSnapMusicLabel("");
+    setYoutubePreviewTitle("");
     setIsCreateMusicMuted(false);
     setIsCreateVideoMuted(false);
     setVideoUploadName("");
@@ -832,19 +876,24 @@ export default function Snaps() {
               <Input
                 value={newSnapMusicLabel}
                 onChange={(event) => setNewSnapMusicLabel(event.target.value)}
-                placeholder="Ex.: Energy Boost - Motivation"
+                placeholder={youtubePreviewTitle || "Ex.: Energy Boost - Motivation"}
                 className="h-11 rounded-full border-white/10 bg-white/5 text-white placeholder:text-white/35 focus-visible:ring-0"
               />
+              {!newSnapMusicLabel.trim() && youtubePreviewTitle && (
+                <p className="text-xs text-white/45">
+                  Se voce nao preencher, vamos usar automaticamente: {youtubePreviewTitle}
+                </p>
+              )}
             </div>
 
-            {(newSnapMusicLabel.trim() || newSnapYoutubeUrl.trim()) && (
+            {(newSnapMusicLabel.trim() || youtubePreviewTitle || newSnapYoutubeUrl.trim()) && (
               <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/35 px-3 py-3">
                 <div className="inline-flex min-w-0 items-center gap-2 text-xs font-medium text-white/95">
                   <Disc3
                     className={`h-4 w-4 shrink-0 ${isCreateMusicMuted ? "" : "animate-spin"} [animation-duration:4s]`}
                   />
                   <span className="truncate">
-                    {(newSnapMusicLabel.trim() || "Audio do YouTube").replace(/\s+/g, " ")}
+                    {(newSnapMusicLabel.trim() || youtubePreviewTitle || "Audio do YouTube").replace(/\s+/g, " ")}
                   </span>
                 </div>
                 <Button
