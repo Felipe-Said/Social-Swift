@@ -33,7 +33,7 @@ export function AppShell() {
       </Sheet>
 
       <div className="fb-shell mx-auto flex w-full max-w-[1920px] gap-0 px-0 lg:px-4">
-        <div className="hidden bg-[hsl(var(--sidebar-bg))] lg:block lg:w-[300px] lg:shrink-0 lg:pr-4">
+        <div className="hidden bg-[hsl(var(--sidebar-bg))] lg:block lg:w-[264px] lg:shrink-0 lg:pr-4">
           <Sidebar />
         </div>
 

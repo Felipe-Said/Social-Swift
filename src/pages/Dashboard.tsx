@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const DASHBOARD_CROP_TOP = 88;
-const DASHBOARD_CROP_LEFT = 290;
+const DASHBOARD_CROP_LEFT = 220;
 
 export default function Dashboard() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
