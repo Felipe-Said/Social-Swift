@@ -280,8 +280,8 @@ export function FeedCard({ post }: FeedCardProps) {
                   <span>{latestPost.likes} curtidas</span>
                   <span>{latestPost.comments} comentarios</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8">
+                <div className="flex items-center gap-3 sm:gap-2">
+                  <Avatar className="h-8 w-8 shrink-0">
                     <AvatarImage src={user?.avatar} alt={user?.name} />
                     <AvatarFallback>{user?.name?.charAt(0) || "F"}</AvatarFallback>
                   </Avatar>
@@ -295,11 +295,11 @@ export function FeedCard({ post }: FeedCardProps) {
                       }
                     }}
                     placeholder="Adicione um comentario..."
-                    className="h-10 rounded-full border-none bg-transparent px-0 shadow-none focus-visible:ring-0"
+                    className="h-10 flex-1 rounded-full border border-[hsl(var(--stroke-soft))] bg-[hsl(var(--accent))] px-4 shadow-none focus-visible:ring-0"
                   />
                   <Button
                     variant="ghost"
-                    className="h-auto min-w-0 px-1 text-sm font-semibold text-brand"
+                    className="h-auto min-w-0 shrink-0 px-1 text-sm font-semibold text-brand"
                     onClick={handleSubmitComment}
                     disabled={!commentValue.trim()}
                   >
