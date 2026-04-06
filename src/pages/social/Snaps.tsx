@@ -1,13 +1,34 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import {
+  Disc3,
+  Heart,
+  MessageCircle,
+  MoreHorizontal,
+  Play,
+  Share,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, Share, MoreHorizontal, Play, Volume2, Disc3 } from "lucide-react";
-import { getSocialProfilePath } from "@/lib/profile";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import { getSocialProfilePath } from "@/lib/profile";
 import { useAuth } from "@/stores/auth";
+
+interface SnapComment {
+  id: string;
+  author: {
+    name: string;
+    username: string;
+    avatar: string;
+  };
+  content: string;
+  timestamp: string;
+}
 
 interface Snap {
   id: string;
@@ -26,16 +47,7 @@ interface Snap {
     title: string;
     artist: string;
   };
-  commentList: {
-    id: string;
-    author: {
-      name: string;
-      username: string;
-      avatar: string;
-    };
-    content: string;
-    timestamp: string;
-  }[];
+  commentList: SnapComment[];
 }
 
 const initialSnaps: Snap[] = [
@@ -47,7 +59,7 @@ const initialSnaps: Snap[] = [
       avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=160&h=160&fit=crop&crop=face",
     },
     image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=900&h=1400&fit=crop",
-    description: "Aproveitando o dia! ☀️ #vibes #social",
+    description: "Aproveitando o dia! #vibes #social",
     likes: 1234,
     comments: 89,
     shares: 12,
@@ -102,7 +114,7 @@ const initialSnaps: Snap[] = [
         author: {
           name: "Bianca Melo",
           username: "biancamelo",
-          avatar: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=160&h=160&fit=crop&crop=face",
+          avatar: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df2?w=160&h=160&fit=crop&crop=face",
         },
         content: "Brabo demais.",
         timestamp: "5 min",
@@ -146,6 +158,7 @@ export default function Snaps() {
   const [snaps, setSnaps] = useState(initialSnaps);
   const [selectedSnapId, setSelectedSnapId] = useState<string | null>(null);
   const [commentValue, setCommentValue] = useState("");
+  const [mutedSnapIds, setMutedSnapIds] = useState<string[]>([]);
 
   const selectedSnap = useMemo(
     () => snaps.find((snap) => snap.id === selectedSnapId) ?? null,
@@ -168,6 +181,82 @@ export default function Snaps() {
 
   const handleOpenComments = (snapId: string) => {
     setSelectedSnapId(snapId);
+  };
+
+  const handleToggleVolume = (snapId: string) => {
+    const isMuted = mutedSnapIds.includes(snapId);
+
+    setMutedSnapIds((current) =>
+      isMuted ? current.filter((id) => id !== snapId) : [...current, snapId],
+    );
+
+    toast({
+      title: isMuted ? "Som ativado" : "Som desativado",
+      description: isMuted
+        ? "O snap voltou a reproduzir com audio."
+        : "O snap foi silenciado para esta visualizacao.",
+    });
+  };
+
+  const handleShare = async (snapId: string) => {
+    const snap = snaps.find((item) => item.id === snapId);
+    if (!snap) return;
+
+    const shareUrl = `${window.location.origin}/app/social/snaps?snap=${snap.id}`;
+    const shareData = {
+      title: `${snap.user.name} no Social Swift`,
+      text: snap.description,
+      url: shareUrl,
+    };
+
+    let shareCompleted = false;
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        shareCompleted = true;
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          try {
+            await navigator.clipboard.writeText(shareUrl);
+            shareCompleted = true;
+          } catch {
+            shareCompleted = false;
+          }
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        shareCompleted = true;
+      } catch {
+        shareCompleted = false;
+      }
+    }
+
+    if (!shareCompleted) {
+      toast({
+        title: "Nao foi possivel compartilhar",
+        description: "Tente novamente em alguns instantes.",
+      });
+      return;
+    }
+
+    setSnaps((current) =>
+      current.map((item) =>
+        item.id === snapId
+          ? {
+              ...item,
+              shares: item.shares + 1,
+            }
+          : item,
+      ),
+    );
+
+    toast({
+      title: "Snap compartilhado",
+      description: "O link foi preparado para compartilhamento.",
+    });
   };
 
   const handleSubmitComment = () => {
@@ -203,102 +292,124 @@ export default function Snaps() {
   return (
     <div className="bg-black px-0 pb-24 pt-0 lg:px-0 lg:pb-0">
       <div className="mx-auto max-w-md snap-y snap-mandatory space-y-0 overflow-y-auto lg:max-w-[420px]">
-        {snaps.map((snap) => (
-          <section
-            key={snap.id}
-            className="relative h-[calc(100vh-56px)] snap-start overflow-hidden border-b border-white/10 bg-black lg:h-[calc(100vh-88px)]"
-          >
-            <img src={snap.image} alt={snap.description} className="h-full w-full object-cover" />
+        {snaps.map((snap) => {
+          const isMuted = mutedSnapIds.includes(snap.id);
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/20" />
+          return (
+            <section
+              key={snap.id}
+              className="relative h-[calc(100vh-56px)] snap-start overflow-hidden border-b border-white/10 bg-black lg:h-[calc(100vh-88px)]"
+            >
+              <img src={snap.image} alt={snap.description} className="h-full w-full object-cover" />
 
-            <div className="absolute left-0 right-0 top-0 flex items-center justify-between px-4 py-4">
-              <Link
-                to={getSocialProfilePath(snap.user.username)}
-                className="flex min-w-0 items-center gap-3"
-              >
-                <Avatar className="h-11 w-11 border-2 border-white">
-                  <AvatarImage src={snap.user.avatar} alt={snap.user.name} />
-                  <AvatarFallback>{snap.user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-white">{snap.user.name}</p>
-                  <p className="truncate text-xs text-white/70">@{snap.user.username}</p>
-                </div>
-              </Link>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/20" />
 
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-black/20 text-white hover:bg-black/30">
-                <MoreHorizontal className="h-5 w-5" />
-              </Button>
-            </div>
-
-            <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-4 px-4 pb-6">
-              <div className="min-w-0 flex-1 pr-2">
+              <div className="absolute left-0 right-0 top-0 flex items-center justify-between px-4 py-4">
                 <Link
                   to={getSocialProfilePath(snap.user.username)}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:underline"
+                  className="flex min-w-0 items-center gap-3"
                 >
-                  <Play className="h-3.5 w-3.5 fill-current" />
-                  {snap.user.name}
-                </Link>
-                <p className="mt-3 text-sm leading-relaxed text-white">{snap.description}</p>
-
-                {snap.music && (
-                  <div className="mt-4 flex max-w-[240px] items-center gap-2 rounded-full bg-black/25 px-3 py-2 text-xs text-white/90 backdrop-blur-sm">
-                    <Disc3 className="h-4 w-4 shrink-0 animate-spin [animation-duration:4s]" />
-                    <span className="truncate">
-                      {snap.music.title} · {snap.music.artist}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex flex-col items-center gap-4">
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => handleLike(snap.id)}
-                  className="flex flex-col items-center gap-1 text-white"
-                >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
-                    <Heart className={`h-6 w-6 ${snap.isLiked ? "fill-red-500 text-red-500" : ""}`} />
-                  </span>
-                  <span className="text-xs font-semibold">{snap.likes.toLocaleString("pt-BR")}</span>
-                </motion.button>
-
-                <button
-                  onClick={() => handleOpenComments(snap.id)}
-                  className="flex flex-col items-center gap-1 text-white"
-                >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
-                    <MessageCircle className="h-6 w-6" />
-                  </span>
-                  <span className="text-xs font-semibold">{snap.comments.toLocaleString("pt-BR")}</span>
-                </button>
-
-                <button className="flex flex-col items-center gap-1 text-white">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
-                    <Share className="h-6 w-6" />
-                  </span>
-                  <span className="text-xs font-semibold">{snap.shares.toLocaleString("pt-BR")}</span>
-                </button>
-
-                <button className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 text-white backdrop-blur-sm">
-                  <Volume2 className="h-5 w-5" />
-                </button>
-
-                <Link
-                  to={getSocialProfilePath(snap.user.username)}
-                  className="overflow-hidden rounded-full border-2 border-white bg-white"
-                >
-                  <Avatar className="h-11 w-11">
+                  <Avatar className="h-11 w-11 border-2 border-white">
                     <AvatarImage src={snap.user.avatar} alt={snap.user.name} />
                     <AvatarFallback>{snap.user.name.charAt(0)}</AvatarFallback>
                   </Avatar>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-white">{snap.user.name}</p>
+                    <p className="truncate text-xs text-white/70">@{snap.user.username}</p>
+                  </div>
                 </Link>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-full bg-black/20 text-white hover:bg-black/30"
+                >
+                  <MoreHorizontal className="h-5 w-5" />
+                </Button>
               </div>
-            </div>
-          </section>
-        ))}
+
+              <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-4 px-4 pb-6">
+                <div className="min-w-0 flex-1 pr-2">
+                  <Link
+                    to={getSocialProfilePath(snap.user.username)}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:underline"
+                  >
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                    {snap.user.name}
+                  </Link>
+                  <p className="mt-3 text-sm leading-relaxed text-white">{snap.description}</p>
+
+                  {snap.music && (
+                    <div
+                      className={`mt-4 flex max-w-[240px] items-center gap-2 rounded-full px-3 py-2 text-xs backdrop-blur-sm ${
+                        isMuted ? "bg-black/20 text-white/55" : "bg-black/25 text-white/90"
+                      }`}
+                    >
+                      <Disc3
+                        className={`h-4 w-4 shrink-0 [animation-duration:4s] ${
+                          isMuted ? "" : "animate-spin"
+                        }`}
+                      />
+                      <span className="truncate">
+                        {snap.music.title} - {snap.music.artist}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col items-center gap-4">
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleLike(snap.id)}
+                    className="flex flex-col items-center gap-1 text-white"
+                  >
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
+                      <Heart className={`h-6 w-6 ${snap.isLiked ? "fill-red-500 text-red-500" : ""}`} />
+                    </span>
+                    <span className="text-xs font-semibold">{snap.likes.toLocaleString("pt-BR")}</span>
+                  </motion.button>
+
+                  <button
+                    onClick={() => handleOpenComments(snap.id)}
+                    className="flex flex-col items-center gap-1 text-white"
+                  >
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
+                      <MessageCircle className="h-6 w-6" />
+                    </span>
+                    <span className="text-xs font-semibold">{snap.comments.toLocaleString("pt-BR")}</span>
+                  </button>
+
+                  <button
+                    onClick={() => void handleShare(snap.id)}
+                    className="flex flex-col items-center gap-1 text-white"
+                  >
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
+                      <Share className="h-6 w-6" />
+                    </span>
+                    <span className="text-xs font-semibold">{snap.shares.toLocaleString("pt-BR")}</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleToggleVolume(snap.id)}
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 text-white backdrop-blur-sm"
+                  >
+                    {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                  </button>
+
+                  <Link
+                    to={getSocialProfilePath(snap.user.username)}
+                    className="overflow-hidden rounded-full border-2 border-white bg-white"
+                  >
+                    <Avatar className="h-11 w-11">
+                      <AvatarImage src={snap.user.avatar} alt={snap.user.name} />
+                      <AvatarFallback>{snap.user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  </Link>
+                </div>
+              </div>
+            </section>
+          );
+        })}
       </div>
 
       <Drawer open={Boolean(selectedSnap)} onOpenChange={(open) => !open && setSelectedSnapId(null)}>
