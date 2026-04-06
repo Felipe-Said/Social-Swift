@@ -57,34 +57,34 @@ export function Sidebar({ className }: SidebarProps) {
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       className={cn(
-        "flex min-h-full w-full flex-col gap-2 bg-[hsl(var(--sidebar-bg))] px-1.5 py-4 shadow-none lg:sticky lg:top-[72px] lg:min-h-[calc(100vh-88px)] lg:rounded-none lg:border-none lg:bg-[hsl(var(--sidebar-bg))] lg:px-2",
+        "flex min-h-full w-full flex-col gap-3 rounded-md border border-white/30 bg-[hsl(var(--sidebar-bg))] px-3 py-4 shadow-[var(--shadow-elevated)] lg:sticky lg:top-[calc(var(--page-padding)+0.75rem)] lg:min-h-[calc(100vh-5.75rem)] lg:px-3",
         className
       )}
     >
-      <nav className="flex flex-1 flex-col gap-1">
+      <nav className="flex flex-1 flex-col gap-2">
         <NavLink
           to="/app/social/perfil"
           className={({ isActive }) =>
             cn(
-              "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-[hsl(var(--accent))]",
+              "flex items-center gap-3 rounded-md px-3 py-2.5 transition-all duration-200 hover:bg-[hsl(var(--accent))]",
               isActive && "bg-[hsl(var(--sidebar-active))]"
             )
           }
         >
-          <Avatar className="h-9 w-9">
-            <AvatarImage src={user?.avatar} alt={user?.name} />
+          <Avatar className="h-9 w-9 rounded-full border border-white/30 bg-white p-1 shadow-[var(--button-shell)]">
+            <AvatarImage src={user?.avatar} alt={user?.name} className="rounded-full object-cover" />
             <AvatarFallback>{user?.name?.charAt(0) || "F"}</AvatarFallback>
           </Avatar>
-          <span className="text-[15px] font-semibold text-text">{user?.name || "Felipe Said"}</span>
+          <span className="text-[0.875rem] font-medium text-text">{user?.name || "Felipe Said"}</span>
         </NavLink>
 
         <button
           onClick={() => setIsSocialOpen(!isSocialOpen)}
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[15px] font-semibold text-text transition-colors hover:bg-[hsl(var(--accent))]"
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-[0.875rem] font-medium text-text transition-all duration-200 hover:bg-[hsl(var(--accent))]"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[hsl(var(--accent))]">
-            <Home className="h-5 w-5 text-brand" />
-          </div>
+          <span className="ds-icon-circle h-9 w-9 !bg-[image:var(--primary-gradient-strong)] !text-white">
+            <Home className="h-4 w-4" />
+          </span>
           <span className="flex-1">Social</span>
           {isSocialOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </button>
@@ -92,24 +92,24 @@ export function Sidebar({ className }: SidebarProps) {
         <motion.div
           initial={false}
           animate={{ height: isSocialOpen ? "auto" : 0, opacity: isSocialOpen ? 1 : 0 }}
-          transition={{ duration: 0.18 }}
+          transition={{ duration: 0.2 }}
           className="overflow-hidden"
         >
-          <div className="ml-2 flex flex-col gap-1 pl-2">
+          <div className="flex flex-col gap-1 pl-2">
             {socialNavItems.map((item) => (
               <NavLink
                 key={item.url}
                 to={item.url}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors",
+                    "flex items-center gap-3 rounded-md px-3 py-2.5 text-[0.875rem] font-medium transition-all duration-200",
                     isActive
                       ? "bg-[hsl(var(--sidebar-active))] text-text"
                       : "text-text hover:bg-[hsl(var(--accent))]"
                   )
                 }
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className="h-4 w-4" />
                 <span>{item.title}</span>
               </NavLink>
             ))}
@@ -118,11 +118,11 @@ export function Sidebar({ className }: SidebarProps) {
 
         <button
           onClick={() => setIsBusinessOpen(!isBusinessOpen)}
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[15px] font-semibold text-text transition-colors hover:bg-[hsl(var(--accent))]"
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-[0.875rem] font-medium text-text transition-all duration-200 hover:bg-[hsl(var(--accent))]"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[hsl(var(--accent))]">
-            <Building2 className="h-5 w-5 text-brand" />
-          </div>
+          <span className="ds-icon-circle h-9 w-9 !bg-[image:var(--primary-gradient-strong)] !text-white">
+            <Building2 className="h-4 w-4" />
+          </span>
           <span className="flex-1">Meu Negocio</span>
           {isBusinessOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </button>
@@ -130,24 +130,24 @@ export function Sidebar({ className }: SidebarProps) {
         <motion.div
           initial={false}
           animate={{ height: isBusinessOpen ? "auto" : 0, opacity: isBusinessOpen ? 1 : 0 }}
-          transition={{ duration: 0.18 }}
+          transition={{ duration: 0.2 }}
           className="overflow-hidden"
         >
-          <div className="ml-2 flex flex-col gap-1 pl-2">
+          <div className="flex flex-col gap-1 pl-2">
             {businessNavItems.map((item) => (
               <NavLink
                 key={item.url}
                 to={item.url}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors",
+                    "flex items-center gap-3 rounded-md px-3 py-2.5 text-[0.875rem] font-medium transition-all duration-200",
                     isActive
                       ? "bg-[hsl(var(--sidebar-active))] text-text"
                       : "text-text hover:bg-[hsl(var(--accent))]"
                   )
                 }
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className="h-4 w-4" />
                 <span>{item.title}</span>
               </NavLink>
             ))}
@@ -161,23 +161,23 @@ export function Sidebar({ className }: SidebarProps) {
               to={item.url}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors",
+                  "flex items-center gap-3 rounded-md px-3 py-2.5 text-[0.875rem] font-medium transition-all duration-200",
                   isActive
                     ? "bg-[hsl(var(--sidebar-active))] text-text"
                     : "text-text hover:bg-[hsl(var(--accent))]"
                 )
               }
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[hsl(var(--accent))]">
-                <item.icon className="h-5 w-5 text-brand" />
-              </div>
+              <span className="ds-icon-circle h-9 w-9 !bg-[image:var(--primary-gradient-strong)] !text-white">
+                <item.icon className="h-4 w-4" />
+              </span>
               <span>{item.title}</span>
             </NavLink>
           ))}
         </div>
       </nav>
 
-      <div className="px-2 pt-2">
+      <div className="rounded-md bg-[hsl(var(--accent))] p-2">
         <SwiftCoinPrice className="hidden lg:block" />
       </div>
     </motion.aside>

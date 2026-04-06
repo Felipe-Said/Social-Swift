@@ -5,26 +5,26 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "btn-pill inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center whitespace-nowrap text-[0.75rem] font-normal leading-[1.2] ring-offset-background transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/95",
+          "gap-2 rounded-[0.875rem] border border-white/30 bg-white px-4 py-1 text-black shadow-[var(--button-shell)] hover:gap-3",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/92",
+          "gap-2 rounded-[0.875rem] bg-destructive px-4 py-1 text-destructive-foreground shadow-[var(--button-shell)] hover:gap-3",
         outline:
-          "border border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface-solid))] text-foreground hover:bg-[hsl(var(--accent))] hover:text-accent-foreground",
+          "gap-2 rounded-[0.875rem] border border-white/30 bg-white px-4 py-1 text-black shadow-[var(--button-shell)] hover:gap-3",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/85",
-        ghost: "bg-transparent text-foreground shadow-none hover:bg-[hsl(var(--accent))] hover:text-accent-foreground",
+          "h-8 w-full justify-center rounded-md bg-[image:var(--primary-gradient-strong)] px-3 py-1 text-white shadow-none",
+        ghost: "h-auto justify-start gap-2 rounded-md bg-transparent px-0 py-0 text-foreground shadow-none hover:bg-transparent",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-10 px-4",
-        sm: "h-8 px-3 text-[13px]",
-        lg: "h-11 px-6 text-[15px]",
-        icon: "h-10 w-10 rounded-full",
+        default: "h-9 min-w-[9rem]",
+        sm: "h-8 min-w-[7.5rem]",
+        lg: "h-9 min-w-[10rem]",
+        icon: "h-9 w-9 rounded-full p-0",
       },
     },
     defaultVariants: {
