@@ -48,12 +48,21 @@ export default function Feed() {
         <div className="hidden overflow-x-auto rounded-xl pb-1 lg:block">
           <div className="flex gap-2">
             <button className="relative h-[190px] w-[112px] shrink-0 overflow-hidden rounded-xl bg-[hsl(var(--surface))] shadow-[var(--shadow)]">
-              <img
-                src={user?.avatar}
-                alt={user?.name}
-                className="h-[140px] w-full object-cover"
-              />
-              <div className="absolute inset-x-0 bottom-0 flex h-[54px] flex-col items-center justify-center border-t border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))]">
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user?.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-[hsl(var(--accent))]">
+                  <span className="text-3xl font-semibold text-text">
+                    {user?.name?.charAt(0) || "F"}
+                  </span>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/20" />
+              <div className="absolute inset-x-0 bottom-0 flex h-[58px] flex-col items-center justify-center border-t border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))]">
                 <div className="absolute -top-5 flex h-10 w-10 items-center justify-center rounded-full border-4 border-[hsl(var(--surface))] bg-[hsl(var(--brand))] text-white">
                   <Plus className="h-5 w-5" />
                 </div>
