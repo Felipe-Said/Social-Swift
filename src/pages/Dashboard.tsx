@@ -113,29 +113,31 @@ export default function Dashboard() {
         )
       );
 
-      Array.from(iframeDocument.querySelectorAll("body *")).forEach((element) => {
-        if (!(element instanceof HTMLElement)) return;
-
-        const rect = element.getBoundingClientRect();
-        const style = iframeWindow.getComputedStyle(element);
-        const isLeftRailCandidate =
-          rect.left <= 24 &&
-          rect.top <= 140 &&
-          rect.width >= 180 &&
-          rect.width <= 340 &&
-          rect.height >= iframeWindow.innerHeight * 0.55 &&
-          ["fixed", "sticky", "absolute"].includes(style.position);
-
-        if (isLeftRailCandidate) {
-          hideElement(element);
-        }
-      });
-
       const mainElement = iframeDocument.querySelector("main");
       if (mainElement instanceof HTMLElement) {
         mainElement.style.setProperty("width", "100%", "important");
         mainElement.style.setProperty("max-width", "none", "important");
         mainElement.style.setProperty("margin", "0", "important");
+      }
+
+      const dashboardRoot = iframeDocument.getElementById("dashboard-root");
+      if (dashboardRoot instanceof HTMLElement) {
+        dashboardRoot.style.setProperty("width", "100%", "important");
+        dashboardRoot.style.setProperty("max-width", "none", "important");
+        dashboardRoot.style.setProperty("padding-inline-start", "0", "important");
+        dashboardRoot.style.setProperty("padding-left", "0", "important");
+        dashboardRoot.style.setProperty("margin-left", "0", "important");
+
+        const leftRail = dashboardRoot.previousElementSibling;
+        hideElement(leftRail);
+
+        const layoutRow = dashboardRoot.parentElement;
+        if (layoutRow instanceof HTMLElement) {
+          layoutRow.style.setProperty("display", "block", "important");
+          layoutRow.style.setProperty("padding-left", "0", "important");
+          layoutRow.style.setProperty("margin-left", "0", "important");
+          layoutRow.style.setProperty("gap", "0", "important");
+        }
       }
     };
 
