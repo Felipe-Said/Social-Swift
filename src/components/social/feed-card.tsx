@@ -1,18 +1,26 @@
 import { useMemo, useState } from "react";
-import { Heart, MessageCircle, Share, Bookmark, MoreHorizontal, Play } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { GlassCard } from "@/components/ui/glass-card";
-import { useFeed, type Post } from "@/stores/feed";
-import { useAuth } from "@/stores/auth";
+import {
+  Bookmark,
+  Check,
+  Heart,
+  MessageCircle,
+  MoreHorizontal,
+  Play,
+  Share,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { toast } from "@/components/ui/use-toast";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { GlassCard } from "@/components/ui/glass-card";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
 import { getSocialProfilePath } from "@/lib/profile";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/stores/auth";
+import { useFeed, type Post } from "@/stores/feed";
 
 interface FeedCardProps {
   post: Post;
@@ -37,7 +45,9 @@ export function FeedCard({ post }: FeedCardProps) {
     savePost(latestPost.id);
     toast({
       title: latestPost.isSaved ? "Post removido dos salvos" : "Post salvo",
-      description: latestPost.isSaved ? "O post saiu da sua lista de salvos." : "O post foi adicionado aos seus salvos.",
+      description: latestPost.isSaved
+        ? "O post saiu da sua lista de salvos."
+        : "O post foi adicionado aos seus salvos.",
     });
   };
 
@@ -73,7 +83,11 @@ export function FeedCard({ post }: FeedCardProps) {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       <GlassCard className="overflow-hidden p-0">
         <div className="flex items-center justify-between p-4 pb-2">
           <div className="flex items-center gap-3">
@@ -83,16 +97,25 @@ export function FeedCard({ post }: FeedCardProps) {
                 <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
               </Avatar>
             </Link>
+
             <div>
               <div className="flex items-center gap-1">
-                <Link to={getSocialProfilePath(latestPost.author.username)} className="text-[15px] font-semibold text-text hover:underline">
+                <Link
+                  to={getSocialProfilePath(latestPost.author.username)}
+                  className="text-[15px] font-semibold text-text hover:underline"
+                >
                   {latestPost.author.name}
                 </Link>
-                {latestPost.author.verified && <Badge className="h-4 w-4 rounded-full bg-brand p-0 text-white">âœ“</Badge>}
+                {latestPost.author.verified && (
+                  <Badge className="ml-0.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border-0 bg-[#0095f6] p-0 text-white shadow-none">
+                    <Check className="h-[10px] w-[10px] stroke-[3]" />
+                  </Badge>
+                )}
               </div>
+
               <div className="flex items-center gap-2 text-xs text-text-dim">
                 <span>@{latestPost.author.username}</span>
-                <span>â€¢</span>
+                <span>&bull;</span>
                 <span>{latestPost.timestamp}</span>
               </div>
             </div>
@@ -168,7 +191,7 @@ export function FeedCard({ post }: FeedCardProps) {
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[hsl(var(--stroke-soft))] pb-3 text-sm text-text-dim">
             <span>{latestPost.likes} curtidas</span>
             <span>
-              {latestPost.comments} comentarios â€¢ {latestPost.shares} compartilhamentos
+              {latestPost.comments} comentarios &bull; {latestPost.shares} compartilhamentos
             </span>
           </div>
 
@@ -241,7 +264,10 @@ export function FeedCard({ post }: FeedCardProps) {
 
             <div className="flex min-h-[75vh] flex-col bg-[hsl(var(--surface))]">
               <div className="flex items-center gap-3 border-b border-[hsl(var(--stroke-soft))] px-4 py-3">
-                <Link to={getSocialProfilePath(latestPost.author.username)} onClick={() => setIsCommentsOpen(false)}>
+                <Link
+                  to={getSocialProfilePath(latestPost.author.username)}
+                  onClick={() => setIsCommentsOpen(false)}
+                >
                   <Avatar className="h-9 w-9 cursor-pointer">
                     <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
                     <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
@@ -262,7 +288,10 @@ export function FeedCard({ post }: FeedCardProps) {
               <div className="flex-1 overflow-y-auto px-4 py-4">
                 <div className="space-y-4">
                   <div className="flex gap-3">
-                    <Link to={getSocialProfilePath(latestPost.author.username)} onClick={() => setIsCommentsOpen(false)}>
+                    <Link
+                      to={getSocialProfilePath(latestPost.author.username)}
+                      onClick={() => setIsCommentsOpen(false)}
+                    >
                       <Avatar className="h-8 w-8 cursor-pointer">
                         <AvatarImage src={latestPost.author.avatar} alt={latestPost.author.name} />
                         <AvatarFallback>{latestPost.author.name.charAt(0)}</AvatarFallback>
@@ -283,7 +312,10 @@ export function FeedCard({ post }: FeedCardProps) {
 
                   {latestPost.commentList.map((comment) => (
                     <div key={comment.id} className="flex gap-3">
-                      <Link to={getSocialProfilePath(comment.author.username)} onClick={() => setIsCommentsOpen(false)}>
+                      <Link
+                        to={getSocialProfilePath(comment.author.username)}
+                        onClick={() => setIsCommentsOpen(false)}
+                      >
                         <Avatar className="h-8 w-8 cursor-pointer">
                           <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
                           <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
