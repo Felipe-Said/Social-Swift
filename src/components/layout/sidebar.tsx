@@ -57,7 +57,7 @@ export function Sidebar({ className }: SidebarProps) {
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       className={cn(
-        "flex min-h-full w-full flex-col gap-2 bg-[hsl(var(--sidebar-bg))] px-2 py-4 shadow-none lg:sticky lg:top-[72px] lg:min-h-[calc(100vh-88px)] lg:rounded-none lg:border-none lg:bg-[hsl(var(--sidebar-bg))]",
+        "flex min-h-full w-full flex-col gap-2 bg-[hsl(var(--sidebar-bg))] px-1.5 py-4 shadow-none lg:sticky lg:top-[72px] lg:min-h-[calc(100vh-88px)] lg:rounded-none lg:border-none lg:bg-[hsl(var(--sidebar-bg))] lg:px-2",
         className
       )}
     >

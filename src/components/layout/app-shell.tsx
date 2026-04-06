@@ -26,7 +26,7 @@ export function AppShell() {
       <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
         <SheetContent
           side="left"
-          className="w-[308px] border-none bg-[hsl(var(--sidebar-bg))] p-0 shadow-none"
+          className="w-[272px] max-w-[80vw] border-none bg-[hsl(var(--sidebar-bg))] p-0 shadow-none"
         >
           <Sidebar />
         </SheetContent>
