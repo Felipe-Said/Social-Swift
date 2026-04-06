@@ -1,37 +1,26 @@
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
-  Home,
-  BarChart3,
-  ArrowDownToLine,
-  CreditCard,
-  Percent,
   Building2,
-  Heart,
-  Search,
-  MessageCircle,
-  Users,
-  UserPlus,
-  User,
   ChevronDown,
   ChevronRight,
+  Heart,
+  Home,
+  MessageCircle,
+  Search,
   Store,
+  User,
+  UserPlus,
+  Users,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { SwiftCoinPrice } from "@/components/ui/swift-coin-price";
 import { useAuth } from "@/stores/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { businessNavigation, BusinessNavItem } from "@/lib/business-navigation";
 
 const mainNavItems = [{ title: "Marketplace", url: "/app/marketplace", icon: Store }];
-
-const businessNavItems = [
-  { title: "Dashboard", url: "/app/dashboard", icon: BarChart3 },
-  { title: "Saques", url: "/app/saques", icon: ArrowDownToLine },
-  { title: "Vendas", url: "/app/vendas", icon: CreditCard },
-  { title: "Taxas", url: "/app/taxas", icon: Percent },
-  { title: "Projetos", url: "/app/projetos", icon: Building2 },
-];
 
 const socialNavItems = [
   { title: "Feed", url: "/app/social/feed", icon: Home },
@@ -45,6 +34,64 @@ const socialNavItems = [
 
 interface SidebarProps {
   className?: string;
+}
+
+function BusinessTreeItem({
+  item,
+  depth = 0,
+}: {
+  item: BusinessNavItem;
+  depth?: number;
+}) {
+  const [open, setOpen] = useState(depth < 2);
+  const hasChildren = Boolean(item.children?.length);
+
+  if (!hasChildren) {
+    return (
+      <NavLink
+        to={item.url}
+        className={({ isActive }) =>
+          cn(
+            "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors",
+            isActive
+              ? "bg-[hsl(var(--sidebar-active))] text-text"
+              : "text-text hover:bg-[hsl(var(--accent))]"
+          )
+        }
+        style={{ marginLeft: `${depth * 12}px` }}
+      >
+        <item.icon className="h-4.5 w-4.5 shrink-0" />
+        <span>{item.title}</span>
+      </NavLink>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[15px] font-medium text-text transition-colors hover:bg-[hsl(var(--accent))]"
+        style={{ marginLeft: `${depth * 12}px` }}
+      >
+        <item.icon className="h-4.5 w-4.5 shrink-0" />
+        <span className="flex-1">{item.title}</span>
+        {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+      </button>
+
+      <motion.div
+        initial={false}
+        animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.18 }}
+        className="overflow-hidden"
+      >
+        <div className="flex flex-col gap-1">
+          {item.children?.map((child) => (
+            <BusinessTreeItem key={child.url} item={child} depth={depth + 1} />
+          ))}
+        </div>
+      </motion.div>
+    </div>
+  );
 }
 
 export function Sidebar({ className }: SidebarProps) {
@@ -134,22 +181,8 @@ export function Sidebar({ className }: SidebarProps) {
           className="overflow-hidden"
         >
           <div className="ml-2 flex flex-col gap-1 pl-2">
-            {businessNavItems.map((item) => (
-              <NavLink
-                key={item.url}
-                to={item.url}
-                className={({ isActive }) =>
-                  cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors",
-                    isActive
-                      ? "bg-[hsl(var(--sidebar-active))] text-text"
-                      : "text-text hover:bg-[hsl(var(--accent))]"
-                  )
-                }
-              >
-                <item.icon className="h-5 w-5" />
-                <span>{item.title}</span>
-              </NavLink>
+            {businessNavigation.map((item) => (
+              <BusinessTreeItem key={item.url} item={item} />
             ))}
           </div>
         </motion.div>
