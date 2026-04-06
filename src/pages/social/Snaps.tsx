@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -7,6 +7,7 @@ import {
   MessageCircle,
   MoreHorizontal,
   Play,
+  Plus,
   Share,
   Volume2,
   VolumeX,
@@ -14,7 +15,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { getSocialProfilePath } from "@/lib/profile";
 import { useAuth } from "@/stores/auth";
@@ -30,6 +33,13 @@ interface SnapComment {
   timestamp: string;
 }
 
+interface SnapMusic {
+  title: string;
+  artist: string;
+  youtubeUrl?: string;
+  videoId?: string;
+}
+
 interface Snap {
   id: string;
   user: {
@@ -43,10 +53,7 @@ interface Snap {
   comments: number;
   shares: number;
   isLiked: boolean;
-  music?: {
-    title: string;
-    artist: string;
-  };
+  music?: SnapMusic;
   commentList: SnapComment[];
 }
 
@@ -67,6 +74,8 @@ const initialSnaps: Snap[] = [
     music: {
       title: "Good Vibes",
       artist: "Artist Name",
+      youtubeUrl: "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+      videoId: "M7lc1UVf-VE",
     },
     commentList: [
       {
@@ -107,6 +116,8 @@ const initialSnaps: Snap[] = [
     music: {
       title: "Energy Boost",
       artist: "Motivation",
+      youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      videoId: "dQw4w9WgXcQ",
     },
     commentList: [
       {
@@ -137,6 +148,8 @@ const initialSnaps: Snap[] = [
     music: {
       title: "Late Night Mood",
       artist: "DJ Swift",
+      youtubeUrl: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
+      videoId: "ysz5S6PUM-U",
     },
     commentList: [
       {
@@ -153,17 +166,112 @@ const initialSnaps: Snap[] = [
   },
 ];
 
+function extractYoutubeVideoId(url: string) {
+  const value = url.trim();
+  if (!value) return null;
+
+  const patterns = [
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = value.match(pattern);
+    if (match?.[1]) return match[1];
+  }
+
+  try {
+    const parsedUrl = new URL(value);
+    const v = parsedUrl.searchParams.get("v");
+    if (v && v.length === 11) return v;
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function getYoutubeAudioEmbedUrl(videoId: string) {
+  const params = new URLSearchParams({
+    autoplay: "1",
+    controls: "0",
+    loop: "1",
+    playlist: videoId,
+    playsinline: "1",
+    modestbranding: "1",
+    rel: "0",
+  });
+
+  return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+}
+
+function getMusicMeta(label: string) {
+  const normalizedLabel = label.trim() || "Audio do YouTube";
+  const parts = normalizedLabel.split(" - ").map((part) => part.trim()).filter(Boolean);
+
+  if (parts.length >= 2) {
+    return {
+      title: parts[0],
+      artist: parts.slice(1).join(" - "),
+    };
+  }
+
+  return {
+    title: normalizedLabel,
+    artist: "YouTube",
+  };
+}
+
 export default function Snaps() {
   const { user } = useAuth();
   const [snaps, setSnaps] = useState(initialSnaps);
   const [selectedSnapId, setSelectedSnapId] = useState<string | null>(null);
   const [commentValue, setCommentValue] = useState("");
   const [mutedSnapIds, setMutedSnapIds] = useState<string[]>([]);
+  const [activeSnapId, setActiveSnapId] = useState<string | null>(initialSnaps[0]?.id ?? null);
+  const [isCreateSnapOpen, setIsCreateSnapOpen] = useState(false);
+  const [newSnapDescription, setNewSnapDescription] = useState("");
+  const [newSnapImage, setNewSnapImage] = useState("");
+  const [newSnapYoutubeUrl, setNewSnapYoutubeUrl] = useState("");
+  const [newSnapMusicLabel, setNewSnapMusicLabel] = useState("");
+  const snapRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const selectedSnap = useMemo(
     () => snaps.find((snap) => snap.id === selectedSnapId) ?? null,
     [selectedSnapId, snaps],
   );
+
+  const activeSnap = useMemo(
+    () => snaps.find((snap) => snap.id === activeSnapId) ?? null,
+    [activeSnapId, snaps],
+  );
+
+  useEffect(() => {
+    const elements = Object.values(snapRefs.current).filter(Boolean) as HTMLElement[];
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        const nextActiveId = visibleEntries[0]?.target.getAttribute("data-snap-id");
+        if (nextActiveId) {
+          setActiveSnapId(nextActiveId);
+        }
+      },
+      {
+        threshold: [0.55, 0.7, 0.85],
+      },
+    );
+
+    elements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, [snaps]);
 
   const handleLike = (snapId: string) => {
     setSnaps((current) =>
@@ -193,8 +301,8 @@ export default function Snaps() {
     toast({
       title: isMuted ? "Som ativado" : "Som desativado",
       description: isMuted
-        ? "O snap voltou a reproduzir com audio."
-        : "O snap foi silenciado para esta visualizacao.",
+        ? "O audio do YouTube voltou a tocar neste snap."
+        : "O audio do snap foi silenciado para esta visualizacao.",
     });
   };
 
@@ -289,8 +397,89 @@ export default function Snaps() {
     setCommentValue("");
   };
 
+  const handleCreateSnap = () => {
+    if (!newSnapImage) {
+      toast({
+        title: "Adicione uma imagem",
+        description: "O snap precisa ter uma imagem para ser publicado.",
+      });
+      return;
+    }
+
+    let music: SnapMusic | undefined;
+
+    if (newSnapYoutubeUrl.trim()) {
+      const videoId = extractYoutubeVideoId(newSnapYoutubeUrl);
+
+      if (!videoId) {
+        toast({
+          title: "Link do YouTube invalido",
+          description: "Cole um link valido para reproduzir apenas o audio do snap.",
+        });
+        return;
+      }
+
+      const meta = getMusicMeta(newSnapMusicLabel);
+      music = {
+        title: meta.title,
+        artist: meta.artist,
+        youtubeUrl: newSnapYoutubeUrl.trim(),
+        videoId,
+      };
+    }
+
+    const newSnap: Snap = {
+      id: `snap-${Date.now()}`,
+      user: {
+        name: user?.name || "Felipe Said",
+        username: user?.username || "felipesaid_",
+        avatar: user?.avatar || "",
+      },
+      image: newSnapImage,
+      description: newSnapDescription.trim() || "Novo snap publicado.",
+      likes: 0,
+      comments: 0,
+      shares: 0,
+      isLiked: false,
+      music,
+      commentList: [],
+    };
+
+    setSnaps((current) => [newSnap, ...current]);
+    setActiveSnapId(newSnap.id);
+    setMutedSnapIds((current) => current.filter((id) => id !== newSnap.id));
+    setIsCreateSnapOpen(false);
+    setNewSnapDescription("");
+    setNewSnapImage("");
+    setNewSnapYoutubeUrl("");
+    setNewSnapMusicLabel("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    toast({
+      title: "Snap publicado",
+      description: music
+        ? "O snap foi publicado com audio do YouTube."
+        : "O snap foi publicado com sucesso.",
+    });
+  };
+
+  const shouldPlayActiveAudio =
+    activeSnap?.music?.videoId && !mutedSnapIds.includes(activeSnap.id);
+
   return (
     <div className="bg-black px-0 pb-24 pt-0 lg:px-0 lg:pb-0">
+      {shouldPlayActiveAudio && activeSnap?.music?.videoId && (
+        <div className="pointer-events-none fixed left-0 top-0 h-0 w-0 overflow-hidden opacity-0">
+          <iframe
+            key={`${activeSnap.id}-${activeSnap.music.videoId}`}
+            title={`snap-audio-${activeSnap.id}`}
+            src={getYoutubeAudioEmbedUrl(activeSnap.music.videoId)}
+            allow="autoplay; encrypted-media"
+            className="h-0 w-0 border-0"
+          />
+        </div>
+      )}
+
       <div className="mx-auto max-w-md snap-y snap-mandatory space-y-0 overflow-y-auto lg:max-w-[420px]">
         {snaps.map((snap) => {
           const isMuted = mutedSnapIds.includes(snap.id);
@@ -298,6 +487,10 @@ export default function Snaps() {
           return (
             <section
               key={snap.id}
+              ref={(element) => {
+                snapRefs.current[snap.id] = element;
+              }}
+              data-snap-id={snap.id}
               className="relative h-[calc(100vh-56px)] snap-start overflow-hidden border-b border-white/10 bg-black lg:h-[calc(100vh-88px)]"
             >
               <img src={snap.image} alt={snap.description} className="h-full w-full object-cover" />
@@ -341,14 +534,12 @@ export default function Snaps() {
 
                   {snap.music && (
                     <div
-                      className={`mt-4 flex max-w-[240px] items-center gap-2 rounded-full px-3 py-2 text-xs backdrop-blur-sm ${
-                        isMuted ? "bg-black/20 text-white/55" : "bg-black/25 text-white/90"
+                      className={`mt-4 inline-flex max-w-[270px] items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-xs font-medium backdrop-blur-sm ${
+                        isMuted ? "bg-black/20 text-white/55" : "bg-black/35 text-white/95"
                       }`}
                     >
                       <Disc3
-                        className={`h-4 w-4 shrink-0 [animation-duration:4s] ${
-                          isMuted ? "" : "animate-spin"
-                        }`}
+                        className={`h-4 w-4 shrink-0 ${isMuted ? "" : "animate-spin"} [animation-duration:4s]`}
                       />
                       <span className="truncate">
                         {snap.music.title} - {snap.music.artist}
@@ -412,6 +603,100 @@ export default function Snaps() {
         })}
       </div>
 
+      <div className="pointer-events-none fixed inset-x-0 bottom-20 z-30 flex justify-center px-4 lg:bottom-6">
+        <Button
+          onClick={() => setIsCreateSnapOpen(true)}
+          className="pointer-events-auto h-12 rounded-full bg-white px-5 text-sm font-semibold text-black hover:bg-white/90"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Criar snap
+        </Button>
+      </div>
+
+      <Drawer open={isCreateSnapOpen} onOpenChange={setIsCreateSnapOpen}>
+        <DrawerContent className="mx-auto h-[88vh] max-w-xl rounded-t-[24px] border-none bg-[#111111] text-white">
+          <DrawerHeader className="border-b border-white/10 px-4 pb-3 pt-2 text-left">
+            <DrawerTitle className="text-base font-semibold text-white">Novo snap</DrawerTitle>
+          </DrawerHeader>
+
+          <div className="flex-1 space-y-5 overflow-y-auto px-4 py-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-white">Imagem do snap</p>
+              <ImageUpload
+                onImageSelect={setNewSnapImage}
+                currentImage={newSnapImage}
+                aspectRatio={9 / 16}
+                circular={false}
+                minWidth={320}
+                minHeight={560}
+                maxSize={8}
+                className="rounded-2xl"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-white">Descricao</p>
+              <Textarea
+                value={newSnapDescription}
+                onChange={(event) => setNewSnapDescription(event.target.value)}
+                placeholder="Escreva a legenda do snap"
+                className="min-h-[110px] rounded-2xl border-white/10 bg-white/5 text-white placeholder:text-white/35 focus-visible:ring-0"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-white">Link do YouTube</p>
+              <Input
+                value={newSnapYoutubeUrl}
+                onChange={(event) => setNewSnapYoutubeUrl(event.target.value)}
+                placeholder="Cole o link da musica que deve tocar no snap"
+                className="h-11 rounded-full border-white/10 bg-white/5 text-white placeholder:text-white/35 focus-visible:ring-0"
+              />
+              <p className="text-xs text-white/45">
+                Apenas o audio do video sera reproduzido no snap ativo.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-white">Rotulo do audio</p>
+              <Input
+                value={newSnapMusicLabel}
+                onChange={(event) => setNewSnapMusicLabel(event.target.value)}
+                placeholder="Ex.: Energy Boost - Motivation"
+                className="h-11 rounded-full border-white/10 bg-white/5 text-white placeholder:text-white/35 focus-visible:ring-0"
+              />
+            </div>
+
+            {(newSnapMusicLabel.trim() || newSnapYoutubeUrl.trim()) && (
+              <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-2 text-xs font-medium text-white/95">
+                <Disc3 className="h-4 w-4 shrink-0" />
+                <span className="truncate">
+                  {(newSnapMusicLabel.trim() || "Audio do YouTube").replace(/\s+/g, " ")}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-white/10 px-4 py-3">
+            <div className="flex gap-3">
+              <Button
+                variant="ghost"
+                className="h-11 flex-1 rounded-full border border-white/10 bg-transparent text-white hover:bg-white/5"
+                onClick={() => setIsCreateSnapOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                className="h-11 flex-1 rounded-full bg-[#0095f6] text-white hover:bg-[#0095f6]/90"
+                onClick={handleCreateSnap}
+              >
+                Publicar snap
+              </Button>
+            </div>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
       <Drawer open={Boolean(selectedSnap)} onOpenChange={(open) => !open && setSelectedSnapId(null)}>
         <DrawerContent className="mx-auto h-[78vh] max-w-md rounded-t-[24px] border-none bg-[#111111] text-white">
           {selectedSnap && (
@@ -424,7 +709,10 @@ export default function Snaps() {
                 <div className="space-y-4">
                   {selectedSnap.commentList.map((comment) => (
                     <div key={comment.id} className="flex items-start gap-3">
-                      <Link to={getSocialProfilePath(comment.author.username)} onClick={() => setSelectedSnapId(null)}>
+                      <Link
+                        to={getSocialProfilePath(comment.author.username)}
+                        onClick={() => setSelectedSnapId(null)}
+                      >
                         <Avatar className="h-9 w-9">
                           <AvatarImage src={comment.author.avatar} alt={comment.author.name} />
                           <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
