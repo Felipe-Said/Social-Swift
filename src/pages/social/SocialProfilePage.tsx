@@ -22,9 +22,9 @@ import {
   type MediaGridItem,
   ProfileMediaGrid,
 } from "@/components/social/profile-media-grid";
+import { ProfileMediaDetailDialog } from "@/components/social/profile-media-detail-dialog";
 import Profile from "./Profile";
 import { motion } from "framer-motion";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const tabs = [
   { id: "posts", label: "Posts", icon: Grid3X3 },
@@ -317,34 +317,11 @@ export default function SocialProfilePage() {
         </div>
       </div>
 
-      <Dialog open={Boolean(selectedMediaItem)} onOpenChange={(open) => !open && setSelectedMediaItem(null)}>
-        <DialogContent className="max-w-[min(96vw,760px)] overflow-hidden border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))] p-0">
-          {selectedMediaItem && (
-            <div className="bg-black">
-              <div className="max-h-[78vh] overflow-hidden bg-black">
-                {selectedMediaItem.mediaType === "video" ? (
-                  <video
-                    src={selectedMediaItem.imageUrl}
-                    className="max-h-[78vh] w-full object-contain"
-                    controls
-                    autoPlay
-                    playsInline
-                  />
-                ) : (
-                  <img
-                    src={selectedMediaItem.imageUrl}
-                    alt={selectedMediaItem.label}
-                    className="max-h-[78vh] w-full object-contain"
-                  />
-                )}
-              </div>
-              <div className="border-t border-white/10 bg-[hsl(var(--surface))] px-4 py-3">
-                <p className="text-sm text-text">{selectedMediaItem.label}</p>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <ProfileMediaDetailDialog
+        item={selectedMediaItem}
+        open={Boolean(selectedMediaItem)}
+        onOpenChange={(open) => !open && setSelectedMediaItem(null)}
+      />
     </div>
   );
 }
