@@ -58,7 +58,7 @@ export function ProfileMediaGrid({ items, onSelect }: ProfileMediaGridProps) {
           type="button"
           key={`${item.kind}-${item.id}`}
           onClick={() => onSelect?.(item)}
-          className="group relative aspect-square overflow-hidden bg-[#111111] text-left"
+          className="group relative aspect-square overflow-hidden bg-[hsl(var(--muted))] text-left"
         >
           <img
             src={item.imageUrl}
@@ -70,15 +70,15 @@ export function ProfileMediaGrid({ items, onSelect }: ProfileMediaGridProps) {
           />
 
           {item.mediaType === "video" && (
-            <div className="absolute right-2 top-2 rounded-full bg-black/45 p-1 text-white">
+            <div className="absolute right-2 top-2 rounded-full border border-black/10 bg-white/88 p-1 text-black shadow-sm backdrop-blur dark:border-white/10 dark:bg-black/45 dark:text-white">
               <Play className="h-3.5 w-3.5 fill-current" />
             </div>
           )}
 
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100 dark:from-black/60 dark:via-transparent" />
 
           {typeof item.count === "number" && (
-            <div className="pointer-events-none absolute bottom-2 left-2 text-[11px] font-semibold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <div className="pointer-events-none absolute bottom-2 left-2 rounded-full bg-black/60 px-2 py-1 text-[11px] font-semibold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
               {item.count.toLocaleString("pt-BR")}
             </div>
           )}

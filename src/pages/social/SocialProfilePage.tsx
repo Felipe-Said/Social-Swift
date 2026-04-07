@@ -154,10 +154,10 @@ export default function SocialProfilePage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Button variant="outline" size="sm" className="bg-gray-200 text-gray-800 hover:bg-gray-300">
+                  <Button variant="outline" size="sm" className="shadow-none">
                     Seguir
                   </Button>
-                  <Button variant="outline" size="sm" className="bg-gray-200 text-gray-800 hover:bg-gray-300">
+                  <Button variant="outline" size="sm" className="shadow-none">
                     Mensagem
                   </Button>
                 </div>
@@ -237,17 +237,17 @@ export default function SocialProfilePage() {
               </div>
 
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="h-10 flex-1 bg-gray-800 text-white hover:bg-gray-700">
+                <Button variant="outline" size="sm" className="h-10 flex-1 shadow-none">
                   Seguir
                 </Button>
-                <Button variant="outline" size="sm" className="h-10 flex-1 bg-gray-800 text-white hover:bg-gray-700">
+                <Button variant="outline" size="sm" className="h-10 flex-1 shadow-none">
                   Mensagem
                 </Button>
               </div>
             </div>
 
             <div className="mt-6">
-              <div className="flex justify-center border-b border-gray-600">
+              <div className="flex justify-center border-b border-[hsl(var(--stroke-soft))]">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
                   return (
@@ -255,12 +255,14 @@ export default function SocialProfilePage() {
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
                       className={`relative flex items-center justify-center px-6 py-4 text-sm font-medium transition-colors ${
-                        activeTab === tab.id ? "text-white" : "text-gray-400 hover:text-white"
+                        activeTab === tab.id
+                          ? "text-[hsl(var(--text))]"
+                          : "text-[hsl(var(--text-dim))] hover:text-[hsl(var(--text))]"
                       }`}
                     >
                       <Icon className="h-5 w-5" />
                       {activeTab === tab.id && (
-                        <motion.div layoutId="externalProfileTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-white" />
+                        <motion.div layoutId="externalProfileTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[hsl(var(--text))]" />
                       )}
                     </button>
                   );
@@ -274,11 +276,11 @@ export default function SocialProfilePage() {
                   <ProfileMediaGrid items={imageGridItems} onSelect={setSelectedMediaItem} />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20">
-                    <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
-                      <ImageIcon className="h-12 w-12 text-gray-400" />
+                    <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-[hsl(var(--stroke-strong))]">
+                      <ImageIcon className="h-12 w-12 text-[hsl(var(--text-dim))]" />
                     </div>
-                    <h3 className="mb-2 text-center text-xl font-semibold text-white">Ainda nao ha nenhuma foto</h3>
-                    <p className="max-w-md text-center text-gray-400">
+                    <h3 className="mb-2 text-center text-xl font-semibold text-[hsl(var(--text))]">Ainda nao ha nenhuma foto</h3>
+                    <p className="max-w-md text-center text-[hsl(var(--text-dim))]">
                       As publicacoes com imagem deste usuario aparecem aqui em grade.
                     </p>
                   </div>
@@ -288,26 +290,26 @@ export default function SocialProfilePage() {
                   <ProfileMediaGrid items={videoGridItems} onSelect={setSelectedMediaItem} />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20">
-                    <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
-                      <Play className="h-12 w-12 text-gray-400" />
+                    <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-[hsl(var(--stroke-strong))]">
+                      <Play className="h-12 w-12 text-[hsl(var(--text-dim))]" />
                     </div>
-                    <h3 className="mb-2 text-center text-xl font-semibold text-white">
+                    <h3 className="mb-2 text-center text-xl font-semibold text-[hsl(var(--text))]">
                       Ainda nao ha nenhum video
                     </h3>
-                    <p className="max-w-md text-center text-gray-400">
+                    <p className="max-w-md text-center text-[hsl(var(--text-dim))]">
                       Videos e snaps deste usuario vao aparecer aqui.
                     </p>
                   </div>
                 )
               ) : (
                 <div className="flex flex-col items-center justify-center py-20">
-                  <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-600">
-                    <User className="h-12 w-12 text-gray-400" />
+                  <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full border-2 border-[hsl(var(--stroke-strong))]">
+                    <User className="h-12 w-12 text-[hsl(var(--text-dim))]" />
                   </div>
-                  <h3 className="mb-2 text-center text-xl font-semibold text-white">
+                  <h3 className="mb-2 text-center text-xl font-semibold text-[hsl(var(--text))]">
                     Ainda nao ha marcacoes
                   </h3>
-                  <p className="max-w-md text-center text-gray-400">
+                  <p className="max-w-md text-center text-[hsl(var(--text-dim))]">
                     Esse conteudo aparecera aqui quando houver novas publicacoes.
                   </p>
                 </div>
