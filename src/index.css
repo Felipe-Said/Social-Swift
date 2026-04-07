@@ -273,19 +273,6 @@
     --circle-transition: 0.3s cubic-bezier(0, -0.02, 0.35, 1.17);
   }
 
-  .theme-switch--compact {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 999px;
-    background: hsl(var(--surface-solid) / 0.42);
-    box-shadow: inset 0 1px 0 hsl(var(--hairline));
-    overflow: hidden;
-  }
-
   .theme-switch,
   .theme-switch *,
   .theme-switch *::before,
@@ -308,14 +295,6 @@
       0em 0.062em 0.125em rgba(255, 255, 255, 0.94);
     transition: var(--transition);
     position: relative;
-  }
-
-  .theme-switch--compact .theme-switch__container {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%) scale(0.38);
-    transform-origin: center;
   }
 
   .theme-switch__container::before {
