@@ -274,6 +274,7 @@
   }
 
   .theme-switch--compact {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -282,6 +283,7 @@
     border-radius: 999px;
     background: hsl(var(--surface-solid) / 0.42);
     box-shadow: inset 0 1px 0 hsl(var(--hairline));
+    overflow: hidden;
   }
 
   .theme-switch,
@@ -309,7 +311,10 @@
   }
 
   .theme-switch--compact .theme-switch__container {
-    transform: scale(0.38);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.38);
     transform-origin: center;
   }
 
