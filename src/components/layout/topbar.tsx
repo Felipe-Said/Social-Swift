@@ -68,8 +68,8 @@ export function Topbar({ onMenuClick }: TopbarProps) {
                 [
                   "group flex min-w-[92px] flex-col items-center justify-center rounded-2xl px-5 py-2 transition-all duration-200",
                   isActive
-                    ? "bg-[#181818] text-white shadow-[inset_0_-3px_0_0_hsl(var(--brand))]"
-                    : "text-white/75 hover:bg-[#181818] hover:text-white",
+                    ? "bg-[hsl(var(--sidebar-active))] text-[hsl(var(--text))] shadow-[inset_0_-3px_0_0_hsl(var(--brand))]"
+                    : "text-[hsl(var(--text-dim))] hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--text))]",
                 ].join(" ")
               }
             >
