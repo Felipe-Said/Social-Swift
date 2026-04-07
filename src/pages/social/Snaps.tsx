@@ -23,6 +23,7 @@ import { toast } from "@/components/ui/use-toast";
 import { getSocialProfilePath } from "@/lib/profile";
 import { useAuth } from "@/stores/auth";
 import { useSnaps, type Snap, type SnapMedia, type SnapMusic } from "@/stores/snaps";
+import { useTheme } from "@/stores/theme";
 
 function extractYoutubeVideoId(url: string) {
   const value = url.trim();
@@ -84,6 +85,7 @@ function getMusicMeta(label: string, fallbackTitle?: string | null) {
 
 export default function Snaps() {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const { snaps, toggleLike, incrementShare, addComment, addSnap } = useSnaps();
   const [selectedSnapId, setSelectedSnapId] = useState<string | null>(null);
   const [commentValue, setCommentValue] = useState("");
@@ -399,8 +401,23 @@ export default function Snaps() {
   const shouldPlayActiveAudio =
     activeSnap?.music?.videoId && !mutedMusicSnapIds.includes(activeSnap.id);
 
+  const isDark = theme === "dark";
+  const shellClass = isDark ? "bg-black" : "bg-[hsl(var(--bg))]";
+  const reelChromeButtonClass = isDark
+    ? "bg-black/25 text-white hover:bg-black/35"
+    : "bg-white/82 text-[hsl(var(--text))] hover:bg-white";
+  const reelMetricClass = isDark ? "text-white" : "text-[hsl(var(--text))]";
+  const modalSurfaceClass = "bg-[hsl(var(--surface))] text-[hsl(var(--text))]";
+  const modalBorderClass = "border-[hsl(var(--stroke-soft))]";
+  const subtleSurfaceClass = "bg-[hsl(var(--accent))]";
+  const subtleBorderClass = "border-[hsl(var(--stroke-soft))]";
+  const subtleTextClass = "text-[hsl(var(--text-dim))]";
+  const primaryTextClass = "text-[hsl(var(--text))]";
+  const themedInputClass =
+    "border-[hsl(var(--stroke-soft))] bg-[hsl(var(--input))] text-[hsl(var(--text))] placeholder:text-[hsl(var(--text-dim))] focus-visible:ring-0";
+
   return (
-    <div className="bg-black px-0 pb-24 pt-0 lg:px-0 lg:pb-0">
+    <div className={`${shellClass} px-0 pb-24 pt-0 lg:px-0 lg:pb-0`}>
       {shouldPlayActiveAudio && activeSnap?.music?.videoId && (
         <div className="pointer-events-none fixed left-0 top-0 h-0 w-0 overflow-hidden opacity-0">
           <iframe
@@ -438,7 +455,7 @@ export default function Snaps() {
                 snapRefs.current[snap.id] = element;
               }}
               data-snap-id={snap.id}
-              className="relative h-[calc(100vh-56px)] snap-start overflow-hidden border-b border-white/10 bg-black lg:h-[calc(100vh-88px)]"
+              className={`relative h-[calc(100vh-56px)] snap-start overflow-hidden border-b lg:h-[calc(100vh-88px)] ${isDark ? "border-white/10 bg-black" : "border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))]"}`}
             >
               {snap.media.type === "video" ? (
                 <video
@@ -473,7 +490,7 @@ export default function Snaps() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 rounded-full bg-black/20 text-white hover:bg-black/30"
+                  className={`h-9 w-9 rounded-full ${reelChromeButtonClass}`}
                 >
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>
@@ -494,8 +511,14 @@ export default function Snaps() {
                     <button
                       type="button"
                       onClick={() => handleToggleMusic(snap.id)}
-                      className={`mt-4 inline-flex max-w-[270px] items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-xs font-medium backdrop-blur-sm ${
-                        isMusicMuted ? "bg-black/20 text-white/55" : "bg-black/35 text-white/95"
+                      className={`mt-4 inline-flex max-w-[270px] items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium backdrop-blur-sm ${
+                        isMusicMuted
+                          ? isDark
+                            ? "border-white/10 bg-black/20 text-white/55"
+                            : `${subtleBorderClass} bg-white/75 text-[hsl(var(--text-dim))]`
+                          : isDark
+                            ? "border-white/10 bg-black/35 text-white/95"
+                            : `${subtleBorderClass} bg-white text-[hsl(var(--text))]`
                       }`}
                     >
                       <Disc3
@@ -512,9 +535,9 @@ export default function Snaps() {
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleLike(snap.id)}
-                    className="flex flex-col items-center gap-1 text-white"
+                    className={`flex flex-col items-center gap-1 ${reelMetricClass}`}
                   >
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
+                    <span className={`flex h-12 w-12 items-center justify-center rounded-full backdrop-blur-sm ${reelChromeButtonClass}`}>
                       <Heart className={`h-6 w-6 ${snap.isLiked ? "fill-red-500 text-red-500" : ""}`} />
                     </span>
                     <span className="text-xs font-semibold">{snap.likes.toLocaleString("pt-BR")}</span>
@@ -522,9 +545,9 @@ export default function Snaps() {
 
                   <button
                     onClick={() => handleOpenComments(snap.id)}
-                    className="flex flex-col items-center gap-1 text-white"
+                    className={`flex flex-col items-center gap-1 ${reelMetricClass}`}
                   >
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
+                    <span className={`flex h-12 w-12 items-center justify-center rounded-full backdrop-blur-sm ${reelChromeButtonClass}`}>
                       <MessageCircle className="h-6 w-6" />
                     </span>
                     <span className="text-xs font-semibold">{snap.comments.toLocaleString("pt-BR")}</span>
@@ -532,9 +555,9 @@ export default function Snaps() {
 
                   <button
                     onClick={() => void handleShare(snap.id)}
-                    className="flex flex-col items-center gap-1 text-white"
+                    className={`flex flex-col items-center gap-1 ${reelMetricClass}`}
                   >
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 backdrop-blur-sm">
+                    <span className={`flex h-12 w-12 items-center justify-center rounded-full backdrop-blur-sm ${reelChromeButtonClass}`}>
                       <Share className="h-6 w-6" />
                     </span>
                     <span className="text-xs font-semibold">{snap.shares.toLocaleString("pt-BR")}</span>
@@ -543,7 +566,7 @@ export default function Snaps() {
                   {snap.media.type === "video" && (
                     <button
                       onClick={() => handleToggleVideoAudio(snap.id)}
-                      className="flex h-12 w-12 items-center justify-center rounded-full bg-black/25 text-white backdrop-blur-sm"
+                      className={`flex h-12 w-12 items-center justify-center rounded-full backdrop-blur-sm ${reelChromeButtonClass}`}
                       aria-label="Controlar audio do video"
                     >
                       {isVideoMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
@@ -569,7 +592,7 @@ export default function Snaps() {
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-30 hidden justify-center px-4 lg:flex">
         <Button
           onClick={() => setIsCreateSnapOpen(true)}
-          className="pointer-events-auto h-12 rounded-full bg-white px-5 text-sm font-semibold text-black hover:bg-white/90"
+          className="pointer-events-auto h-12 rounded-full border border-[hsl(var(--stroke-soft))] bg-[hsl(var(--surface))] px-5 text-sm font-semibold text-[hsl(var(--text))] hover:bg-[hsl(var(--accent))]"
         >
           <Plus className="mr-2 h-4 w-4" />
           Criar snap
@@ -577,19 +600,19 @@ export default function Snaps() {
       </div>
 
       <Drawer open={isCreateSnapOpen} onOpenChange={setIsCreateSnapOpen}>
-        <DrawerContent className="mx-auto h-[88vh] max-w-xl rounded-t-[24px] border-none bg-[#111111] text-white">
-          <DrawerHeader className="border-b border-white/10 px-4 pb-3 pt-2 text-left">
-            <DrawerTitle className="text-base font-semibold text-white">Novo snap</DrawerTitle>
+        <DrawerContent className={`mx-auto h-[88vh] max-w-xl rounded-t-[24px] ${modalBorderClass} ${modalSurfaceClass}`}>
+          <DrawerHeader className={`border-b px-4 pb-3 pt-2 text-left ${modalBorderClass}`}>
+            <DrawerTitle className={`text-base font-semibold ${primaryTextClass}`}>Novo snap</DrawerTitle>
           </DrawerHeader>
 
           <div className="flex-1 space-y-5 overflow-y-auto px-4 py-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-white">Midia do snap</p>
+                <p className={`text-sm font-medium ${primaryTextClass}`}>Midia do snap</p>
                 <Button
                   type="button"
                   variant="ghost"
-                  className="h-9 rounded-full border border-white/10 bg-white/5 px-4 text-white hover:bg-white/10"
+                  className={`h-9 rounded-full border px-4 ${subtleBorderClass} ${subtleSurfaceClass} ${primaryTextClass} hover:bg-[hsl(var(--muted))]`}
                   onClick={() => {
                     setNewSnapMedia(null);
                     setVideoUploadName("");
@@ -611,7 +634,7 @@ export default function Snaps() {
 
               {newSnapMedia?.type === "video" ? (
                 <div className="mx-auto flex max-w-[280px] flex-col gap-3">
-                  <div className="aspect-[9/16] overflow-hidden rounded-[28px] border border-white/10 bg-black">
+                  <div className={`aspect-[9/16] overflow-hidden rounded-[28px] border ${subtleBorderClass} ${isDark ? "bg-black" : "bg-[hsl(var(--muted))]"}`}>
                     <video
                       src={newSnapMedia.url}
                       className="h-full w-full object-cover"
@@ -621,14 +644,14 @@ export default function Snaps() {
                       loop
                     />
                   </div>
-                  <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
-                    <span className="min-w-0 truncate text-xs text-white/70">
+                  <div className={`flex items-center justify-between gap-3 rounded-2xl border px-3 py-2 ${subtleBorderClass} ${subtleSurfaceClass}`}>
+                    <span className={`min-w-0 truncate text-xs ${subtleTextClass}`}>
                       {videoUploadName || "Video carregado"}
                     </span>
                     <Button
                       type="button"
                       variant="ghost"
-                      className="h-8 rounded-full px-3 text-white hover:bg-white/10"
+                      className={`h-8 rounded-full px-3 ${primaryTextClass} hover:bg-[hsl(var(--muted))]`}
                       onClick={() => setIsCreateVideoMuted((current) => !current)}
                     >
                       {isCreateVideoMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
@@ -661,46 +684,46 @@ export default function Snaps() {
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium text-white">Descricao</p>
+              <p className={`text-sm font-medium ${primaryTextClass}`}>Descricao</p>
               <Textarea
                 value={newSnapDescription}
                 onChange={(event) => setNewSnapDescription(event.target.value)}
                 placeholder="Escreva a legenda do snap"
-                className="min-h-[110px] rounded-2xl border-white/10 bg-white/5 text-white placeholder:text-white/35 focus-visible:ring-0"
+                className={`min-h-[110px] rounded-2xl ${themedInputClass}`}
               />
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium text-white">Link do YouTube</p>
+              <p className={`text-sm font-medium ${primaryTextClass}`}>Link do YouTube</p>
               <Input
                 value={newSnapYoutubeUrl}
                 onChange={(event) => setNewSnapYoutubeUrl(event.target.value)}
                 placeholder="Cole o link da musica que deve tocar no snap"
-                className="h-11 rounded-full border-white/10 bg-white/5 text-white placeholder:text-white/35 focus-visible:ring-0"
+                className={`h-11 rounded-full ${themedInputClass}`}
               />
-              <p className="text-xs text-white/45">
+              <p className={`text-xs ${subtleTextClass}`}>
                 O preview comeca a tocar assim que o link valido for adicionado.
               </p>
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium text-white">Rotulo do audio</p>
+              <p className={`text-sm font-medium ${primaryTextClass}`}>Rotulo do audio</p>
               <Input
                 value={newSnapMusicLabel}
                 onChange={(event) => setNewSnapMusicLabel(event.target.value)}
                 placeholder={youtubePreviewTitle || "Ex.: Energy Boost - Motivation"}
-                className="h-11 rounded-full border-white/10 bg-white/5 text-white placeholder:text-white/35 focus-visible:ring-0"
+                className={`h-11 rounded-full ${themedInputClass}`}
               />
               {!newSnapMusicLabel.trim() && youtubePreviewTitle && (
-                <p className="text-xs text-white/45">
+                <p className={`text-xs ${subtleTextClass}`}>
                   Se voce nao preencher, vamos usar automaticamente: {youtubePreviewTitle}
                 </p>
               )}
             </div>
 
             {(newSnapMusicLabel.trim() || youtubePreviewTitle || newSnapYoutubeUrl.trim()) && (
-              <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/35 px-3 py-3">
-                <div className="inline-flex min-w-0 items-center gap-2 text-xs font-medium text-white/95">
+              <div className={`flex items-center justify-between gap-3 rounded-2xl border px-3 py-3 ${subtleBorderClass} ${subtleSurfaceClass}`}>
+                <div className={`inline-flex min-w-0 items-center gap-2 text-xs font-medium ${primaryTextClass}`}>
                   <Disc3
                     className={`h-4 w-4 shrink-0 ${isCreateMusicMuted ? "" : "animate-spin"} [animation-duration:4s]`}
                   />
@@ -711,7 +734,7 @@ export default function Snaps() {
                 <Button
                   type="button"
                   variant="ghost"
-                  className="h-8 rounded-full px-3 text-white hover:bg-white/10"
+                  className={`h-8 rounded-full px-3 ${primaryTextClass} hover:bg-[hsl(var(--muted))]`}
                   onClick={() => setIsCreateMusicMuted((current) => !current)}
                 >
                   {isCreateMusicMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
@@ -721,17 +744,17 @@ export default function Snaps() {
             )}
           </div>
 
-          <div className="border-t border-white/10 px-4 py-3">
+          <div className={`border-t px-4 py-3 ${modalBorderClass}`}>
             <div className="flex gap-3">
               <Button
                 variant="ghost"
-                className="h-11 flex-1 rounded-full border border-white/10 bg-transparent text-white hover:bg-white/5"
+                className={`h-11 flex-1 rounded-full border bg-transparent ${subtleBorderClass} ${primaryTextClass} hover:bg-[hsl(var(--muted))]`}
                 onClick={() => setIsCreateSnapOpen(false)}
               >
                 Cancelar
               </Button>
               <Button
-                className="h-11 flex-1 rounded-full bg-[#0095f6] text-white hover:bg-[#0095f6]/90"
+                className="h-11 flex-1 rounded-full bg-[hsl(var(--brand))] text-white hover:bg-[hsl(var(--brand-glow))]"
                 onClick={handleCreateSnap}
               >
                 Publicar snap
@@ -742,11 +765,11 @@ export default function Snaps() {
       </Drawer>
 
       <Drawer open={Boolean(selectedSnap)} onOpenChange={(open) => !open && setSelectedSnapId(null)}>
-        <DrawerContent className="mx-auto h-[78vh] max-w-md rounded-t-[24px] border-none bg-[#111111] text-white">
+        <DrawerContent className={`mx-auto h-[78vh] max-w-md rounded-t-[24px] ${modalBorderClass} ${modalSurfaceClass}`}>
           {selectedSnap && (
             <>
-              <DrawerHeader className="border-b border-white/10 px-4 pb-3 pt-2 text-left">
-                <DrawerTitle className="text-base font-semibold text-white">Comentarios</DrawerTitle>
+              <DrawerHeader className={`border-b px-4 pb-3 pt-2 text-left ${modalBorderClass}`}>
+                <DrawerTitle className={`text-base font-semibold ${primaryTextClass}`}>Comentarios</DrawerTitle>
               </DrawerHeader>
 
               <div className="flex-1 overflow-y-auto px-4 py-4">
@@ -763,7 +786,7 @@ export default function Snaps() {
                         </Avatar>
                       </Link>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm leading-relaxed text-white">
+                        <p className={`text-sm leading-relaxed ${primaryTextClass}`}>
                           <Link
                             to={getSocialProfilePath(comment.author.username)}
                             onClick={() => setSelectedSnapId(null)}
@@ -773,14 +796,14 @@ export default function Snaps() {
                           </Link>
                           {comment.content}
                         </p>
-                        <p className="mt-1 text-xs text-white/55">{comment.timestamp}</p>
+                        <p className={`mt-1 text-xs ${subtleTextClass}`}>{comment.timestamp}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="border-t border-white/10 px-4 py-3">
+              <div className={`border-t px-4 py-3 ${modalBorderClass}`}>
                 <div className="flex items-center gap-3">
                   <Avatar className="h-9 w-9 shrink-0">
                     <AvatarImage src={user?.avatar} alt={user?.name} />
@@ -796,11 +819,11 @@ export default function Snaps() {
                       }
                     }}
                     placeholder="Adicione um comentario..."
-                    className="h-11 flex-1 rounded-full border-white/10 bg-white/5 px-4 text-white placeholder:text-white/40 focus-visible:ring-0"
+                    className={`h-11 flex-1 rounded-full px-4 ${themedInputClass}`}
                   />
                   <Button
                     variant="ghost"
-                    className="h-auto min-w-0 shrink-0 px-1 text-sm font-semibold text-[#4c9eff]"
+                    className="h-auto min-w-0 shrink-0 px-1 text-sm font-semibold text-[hsl(var(--brand))]"
                     onClick={handleSubmitComment}
                     disabled={!commentValue.trim()}
                   >
