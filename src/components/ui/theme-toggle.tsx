@@ -5,8 +5,7 @@ export function ThemeToggle() {
 
   return (
     <label
-      className="theme-switch"
-      style={{ ["--toggle-size" as string]: "10px" }}
+      className="theme-switch theme-switch--compact"
       aria-label="Alternar tema"
     >
       <input
